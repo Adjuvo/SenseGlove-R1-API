@@ -8,7 +8,7 @@ This is the python API to interface with Rembrandt, an active force feedback glo
 
 #### ROS vs ROS2 support
 
-ROS2 will be supported. Please let us know if your project requires ROS1. Our current API also supports ROS1, requiring **python 3.8.x** (instead of a newer python version). Knowing demand for ROS1 helps us consider if python can be upgraded (breaking ROS compatibility).
+ROS2 is supported. Please let us know if your project requires ROS1. Our current API also supports ROS1, requiring **python 3.8.x**.
 
 
 
@@ -21,9 +21,6 @@ ROS2 will be supported. Please let us know if your project requires ROS1. Our cu
 🎯 **[Tracking Data](tracking.md)** - Finger tracking and position data  
 ⚡ **[Control](control.md)** - Force feedback  
 🤖 **[Robot hand mapper](robot_hand_mapper.md)** - Robot hand mapper, easily map to robot hands.  
-📦 **[Releases](releases.md)** - Changelog of new releases
-\
 📖 **[API Reference](api-reference.md)** - Available functions and their docs.
 
-
-
+📦 **[Releases](releases.md)** - Changelog of new releases
