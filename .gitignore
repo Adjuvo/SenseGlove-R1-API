@@ -1,0 +1,16 @@
+__pycache__/
+*.py[co]
+*.dat
+*.egg-info/
+
+dist/
+build/
+logs/
+profiles/
+*.prof
+
+Rembrandt_CPP_SDK/
+
+# Token files (never commit!)
+tokens/
+*.tok

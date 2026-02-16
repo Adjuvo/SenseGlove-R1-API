@@ -1,0 +1,77 @@
+site_name: SenseGlove Rembrandt API docs
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - content.code.annotate
+    - content.code.highlight
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/signatures.js
+  - javascripts/function-highlighting.js
+
+nav:
+  - Home: index.md
+  - Getting started: getting_started.md
+  - Tracking data: tracking.md
+  - Control: control.md
+  - Robot hand mapper: robot_hand_mapper.md
+  - Simulated glove: simulated_glove.md
+  - API Reference: api-reference.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      use_pygments: true
+      auto_title: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_root_heading: true
+            show_source: false
+            merge_init_into_class: true
+            heading_level: 3
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+            docstring_section_style: table
+            members_order: source
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
