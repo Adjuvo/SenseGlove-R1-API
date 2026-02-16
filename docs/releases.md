@@ -2,8 +2,11 @@
 
 ## v0.0
 
+### v0.0.15
+Minor changes to the documentation. First version actually sent to customers.
+
 ### v0.0.14
-Minor changes to the
+Minor changes to the documentation.
 
 ### v0.0.13
 Github pages update
