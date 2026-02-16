@@ -797,7 +797,7 @@
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">)</span>
 </span></code></pre></div>
-This will start a steady simulated glove, for which you can set the angles, or make it open/close (see main_example.py). 
+This will start a steady simulated glove, which you can set to continually open/close, or set to steady (see main_example.py). 
 For in depth simulated glove functions see <a href="../simulated_glove/">Simulated Glove</a></p>
 <p>For using an actual glove, change SIMULATED_GLOVE to REAL_GLOVE_USB :
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">REAL_GLOVE_USB</span><span class="p">)</span>
@@ -823,7 +823,7 @@ For in depth simulated glove functions see <a href="../simulated_glove/">Simulat
 <p>Keep what is in the new_data callback as brief as possible (preferably just copying the data). Heavy calculations will drop the 1kHz framerate required for crisp haptic feedback. For more info see <a href="../fps-performance/">Performance</a>.</p>
 </blockquote>
 <h4 id="keep-the-script-running">Keep the script running</h4>
-<p>The data callback will automatically update with new data at &gt;1khz, but only if the file is still running.
+<p>The data callback will automatically update with new data at 1khz, but only if the file is still running.
 To do this, call:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>    <span class="n">SG_main</span><span class="o">.</span><span class="n">keep_program_running</span><span class="p">()</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="c1"># after this will not execute. It blocks until stopping the program. </span>
@@ -852,7 +852,7 @@ Don't forget that you can always hover on a function to see how to use it (in Vs
 <p><img alt="GUI" src="../images/gui.png" /> </p>
 <p>Additionally, forces can be turned on that apply to all fingers in gradual sine waves, minimal force, to maximal force, and back to minimal repeatedly.</p>
 <h2 id="record_glovepy-and-play_recordingpy">record_glove.py and play_recording.py</h2>
-<p>Aside from simulation, you play back captured motions, and also record your owns. Currently this only records and plays back the tracking, and not forces.</p>
+<p>Aside from simulation, you play back captured motions as if the glove were connected, and also record your own. Currently this only records and plays back the tracking, and not forces.</p>
 <p>You can record from any script using the following:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recording glove data for 10 seconds...&quot;</span><span class="p">)</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">SG_recorder</span><span class="o">.</span><span class="n">record_glove_data</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;myrecording.json&quot;</span><span class="p">)</span>

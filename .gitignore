@@ -1,0 +1,14 @@
+# GitHub Pages - block sensitive files
+tokens/
+*.tok
+internal/
+__pycache__/
+*.pyc
+*.py
+*.dat
+*.prof
+.env
+venv/
+env/
+.venv/
+.git/
