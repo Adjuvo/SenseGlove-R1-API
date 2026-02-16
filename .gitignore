@@ -9,6 +9,9 @@ logs/
 profiles/
 *.prof
 
+# MkDocs build output
+site/
+
 Rembrandt_CPP_SDK/
 
 # Token files (never commit!)
