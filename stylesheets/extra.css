@@ -1,0 +1,772 @@
+/* Custom CSS for better function separation in API docs */
+
+/* Add clear separation between function entries */
+.doc.doc-object.doc-function {
+    margin-bottom: 1.5rem;
+    padding: 0;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #f6f7fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+    color: #000000;
+    overflow: hidden;
+}
+
+/* Improve function signature styling */
+.doc-heading {
+    background: #009ddd;
+    color: white;
+    padding: 0.8rem 1rem;
+    margin: 0;
+    border-radius: 8px 8px 0 0;
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+/* Add padding to function content areas */
+.doc.doc-object.doc-function .doc-content,
+.doc.doc-object.doc-function > *:not(.doc-heading),
+.doc.doc-object.doc-function > div {
+    padding: 1rem;
+}
+
+/* Ensure headers start at the very top */
+.doc.doc-object.doc-function > h3:first-child,
+.doc.doc-object.doc-function .doc-heading:first-child,
+.doc.doc-object.doc-function > *:first-child {
+    margin-top: 0 ;
+}
+
+/* Remove any default spacing on function headers */
+.doc.doc-object.doc-function h3.doc-heading {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* Target mkdocstrings function headings specifically */
+
+/* Style function signature blocks prominently */
+.doc-signature,
+.doc-signature-block {
+    background-color: #f8f9fa;
+    border: 1px solid #009ddd;
+    border-left: 4px solid #009ddd;
+    padding: 1rem;
+    border-radius: 6px;
+    font-family: 'Roboto Mono', 'Consolas', monospace;
+    font-size: 0.95em;
+    overflow-x: auto;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+/* Ensure signature blocks are visible and prominent */
+.doc.doc-object.doc-function .doc-signature,
+.doc-contents > .doc:not(.doc-children) .doc-signature {
+    display: block;
+    visibility: visible ;
+    background-color: #f8f9fa ;
+    border: 1px solid #009ddd ;
+    border-left: 4px solid #009ddd ;
+}
+
+/* Add signature display in content area */
+.doc.doc-object.doc-function .doc-content:before,
+.doc-contents > .doc:not(.doc-children) .doc-content:before {
+    content: "";
+    display: block;
+    height: 0;
+}
+
+/* Style any mkdocstrings signature elements that might exist */
+.doc .signature,
+.doc-signature-line,
+.doc-signature-parameters,
+div[class*="signature"],
+pre[class*="signature"],
+code[class*="signature"]:not(.doc-heading code) {
+    background-color: #f8f9fa;
+    border: 1px solid #009ddd;
+    border-left: 4px solid #009ddd;
+    padding: 1rem;
+    border-radius: 6px;
+    font-family: 'Roboto Mono', 'Consolas', monospace;
+    font-size: 0.95em;
+    color: #2d3748;
+    font-weight: 500;
+    display: block ;  /* Keep this - forces visibility */
+    visibility: visible ;  /* Keep this - forces visibility */
+    white-space: pre-wrap;
+}
+
+/* Style for manually created signature blocks */
+.custom-signature-block {
+    background-color: #f8f9fa;
+    border: 1px solid #009ddd;
+    border-left: 4px solid #009ddd;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 6px;
+    font-family: 'Roboto Mono', 'Consolas', monospace;
+    font-size: 0.95em;
+    color: #2d3748;
+    font-weight: 500;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
+/* JavaScript to create signature blocks */
+
+/* Improve code block styling */
+.doc-content pre {
+    background-color: #2d3748;
+    border: 1px solid #4a5568;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0;
+    /* Removed color override to allow syntax highlighting */
+}
+
+/* Code blocks within function boxes */
+.doc.doc-object.doc-function .doc-content pre,
+.doc-contents > .doc:not(.doc-children) .doc-content pre {
+    background-color: #2d3748;
+    /* Removed color override to allow syntax highlighting */
+}
+
+.doc.doc-object.doc-function .doc-content pre code,
+.doc-contents > .doc:not(.doc-children) .doc-content pre code {
+    background-color: transparent;
+    /* Removed color override to allow syntax highlighting */
+}
+
+/* Inline code styling within function boxes */
+.doc.doc-object.doc-function .doc-content code:not(.js-function-highlight),
+.doc-contents > .doc:not(.doc-children) .doc-content code:not(.js-function-highlight) {
+    background-color: #e2e8f0;
+    color: #2d3748;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+/* General inline code styling */
+.doc-content code {
+    background-color: #e2e8f0;
+    color: #2d3748;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+/* Style warning admonitions - make them VERY prominent */
+.admonition.warning {
+    border: 2px solid #f57c00;
+    border-left: 8px solid #f57c00;
+    background-color: #fff9c4;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(245, 124, 0, 0.3);
+    color: #000000;
+}
+
+.admonition.warning .admonition-title {
+    color: #000000;
+    font-weight: 700;
+    font-size: 1.1em;
+    margin-bottom: 0.5rem;
+}
+
+
+
+/* Style blockquote warnings (from markdown) - make them stand out like admonitions */
+blockquote {
+    border: 2px solid #f57c00 ;
+    border-left: 8px solid #f57c00 !important; 
+    background-color: #fff9c4 ;
+    border-radius: 8px ;
+    box-shadow: 0 4px 12px rgba(245, 124, 0, 0.3) ;
+    color: #000000 ;
+    font-weight: 500 ;
+}
+
+/* Style the warning emoji and Important Note text in blockquotes */
+blockquote strong {
+    color: #000000 ;
+    font-weight: 700 ;
+    font-size: 1.1em ;
+}
+
+/* Ensure all child elements in warning boxes have black text */
+.admonition.warning *,
+blockquote *,
+.important-warning * {
+    color: #000000 ;
+}
+
+/* Style inline warnings with emoji in API docs - using a more reliable approach */
+.doc-content p {
+    /* This will be applied to paragraphs that contain warning emoji */
+}
+
+/* Target any text that looks like a warning in API docs */
+.doc-content *[title*="Important"],
+.doc-content *[alt*="Important"] {
+    background-color: #fff9c4;
+    border: 2px solid #f57c00;
+    border-left: 8px solid #f57c00;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    color: #000000;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(245, 124, 0, 0.3);
+}
+
+/* Add a CSS class that we can target for important warnings */
+.important-warning {
+    background-color: #fff9c4 ;
+    border: 2px solid #f57c00 ;
+    border-left: 8px solid #f57c00 ;
+    padding: 1rem 1.5rem ;
+    margin: 1rem 0 ;
+    border-radius: 8px ;
+    color: #000000 ;
+    font-weight: 600 ;
+    box-shadow: 0 4px 12px rgba(245, 124, 0, 0.3) ;
+}
+
+/* Add section dividers */
+.doc-section::after {
+    content: "";
+    display: block;
+    height: 2px;
+    background: #009ddd;
+    margin: 2rem auto;
+    width: 80%;
+}
+
+/* Improve parameter lists */
+.doc-content ul {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    border-left: 3px solid #009ddd;
+}
+
+/* Style bold text in documentation */
+.doc-content strong {
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Ensure all text in function boxes is black */
+
+.doc-signature {
+    color: #000000;
+}
+.md-code__content
+{
+    color: white;
+}
+
+/* Keep headers blue background with white text */
+.doc.doc-object.doc-function .doc-heading,
+.doc-contents > .doc:not(.doc-children) .doc-heading,
+.doc.doc-object.doc-function h3.doc-heading,
+.doc-contents > .doc:not(.doc-children) h3.doc-heading {
+    color: white ;
+}
+
+/* Add hover effects for better interactivity */
+.doc.doc-object.doc-function:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+/* Alternative targeting for function sections */
+.doc-contents > .doc:not(.doc-children) {
+    margin-bottom: 1.5rem ;
+    padding: 0;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #f6f7fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+    color: #000000;
+    overflow: hidden;
+}
+
+/* Style function headings with better contrast */
+.doc-contents h3[id] {
+    background: #009ddd;
+    color: white ;
+    padding: 0.8rem 1rem;
+    margin: 0;
+    border-radius: 8px 8px 0 0;
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+/* Add padding to alternative function content area */
+.doc-contents > .doc:not(.doc-children) .doc-content {
+    padding: 1rem;
+}
+
+/* Ensure headers start at the very top for alternative targeting */
+.doc-contents > .doc:not(.doc-children) > h3:first-child,
+.doc-contents > .doc:not(.doc-children) .doc-heading:first-child,
+.doc-contents > .doc:not(.doc-children) > *:first-child {
+    margin-top: 0 ;
+}
+
+/* Remove any default spacing on alternative function headers */
+.doc-contents > .doc:not(.doc-children) h3.doc-heading {
+    margin-top: 0 ;
+    margin-bottom: 0 ;
+}
+
+/* Add clear separation between function groups */
+.doc-contents > .doc + .doc {
+    border-top: 3px solid #009ddd;
+    margin-top: 2rem;
+    padding-top: 2rem;
+}
+
+/* Improve table of contents */
+.md-nav__link--active {
+    color: #009ddd ;
+    font-weight: 600;
+}
+
+/* Make regular document headings stand out more */
+.md-typeset h1 {
+    color: #2d3748;
+    font-weight: 800;
+    font-size: 2.2em;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #009ddd;
+}
+
+
+
+.md-typeset h2 {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 1.8em;
+    margin-top: 1.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.3rem;
+    
+}
+
+.md-clipboard
+{
+    color: black;
+}
+
+
+
+.md-typeset h3 {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 1.4em;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.md-typeset h4 {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.2em;
+    margin-bottom: 0rem;
+}
+
+.md-typeset h5 {
+
+    margin-bottom: 0rem;
+}
+
+/* Better spacing for nested lists */
+.doc-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Style example sections specially */
+.doc-content h4:contains("Examples") + pre,
+.doc-content p:contains("Examples:") + pre {
+    border-left: 4px solid #4caf50;
+    background-color: #f1f8e9 ;
+}
+
+.md-code__content
+{
+    color: white;
+}
+
+.md-header {
+    background-color: #003150 !important;
+}
+
+
+h3.doc-heading {
+    background: #f0f3f8;
+    border: 1.5px solid #d1d5db;
+    border-radius: 12px 12px 0 0;
+    color: black;
+    padding: 0.8rem 1rem;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+    font-weight: 700;
+    font-size: 2em;
+    letter-spacing: 0.5px;
+}
+
+
+
+/* Add a subtle shine effect */
+h3.doc-heading::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent);
+    transition: left 0.5s ease;
+}
+
+/* Hover effect for interactivity */
+h3.doc-heading:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 6px 20px rgba(102, 126, 234, 0.4),
+        0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+h3.doc-heading:hover::before {
+    left: 100%;
+}
+
+/* Remove colored backgrounds from mod/func labels */
+code.doc-symbol,
+code.doc-symbol-module,
+code.doc-symbol-function,
+code.doc-symbol-method,
+code.doc-symbol-class,
+code.doc-symbol-attribute {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+/* Hide "Python" language labels above code blocks */
+.doc-content .highlight .language-name,
+.doc-content .highlight .language-python,
+.doc-content .codehilite .language-name,
+.doc-content .codehilite .language-python,
+.doc-content pre::before,
+.doc-content .highlight::before,
+.doc-content .codehilite::before,
+.highlight .filename,
+.highlight span.filename,
+.codehilite .filename,
+.codehilite span.filename,
+.md-typeset .highlight .filename,
+.md-typeset .codehilite .filename {
+    display: none !important;
+}
+
+/* Hide any language indicator divs or spans */
+.doc-content .language-python,
+.doc-content .language-name,
+.doc-content [data-lang="python"],
+.doc-content [data-language="python"],
+.highlight .language-python,
+.highlight .language-name,
+.codehilite .language-python,
+.codehilite .language-name {
+    display: none !important;
+}
+
+/* Module name styling - target only actual modules, not functions */
+
+/* VS Code Dark+ Syntax Highlighting Color Variables */
+:root {
+    --syntax-keyword: #C586C0;        /* Keywords (def, class, import) - purple */
+    --syntax-function: #DCDCAA;       /* Function names and calls - yellow */
+    --syntax-string: #CE9178;         /* Strings - orange */
+    --syntax-number: #B5CEA8;         /* Numbers - light green */
+    --syntax-comment: #5C7A5C;        /* Comments - muted green (darker than original) */
+    --syntax-builtin: #569CD6;        /* Built-ins (print, len) - blue */
+    --syntax-variable: #D4D4D4;       /* Variables - light gray */
+    --syntax-variable-bright: #E8E8E8; /* Brighter variables when used */
+    --syntax-variable-assigned: #569CD6; /* Variables assigned from functions - blue */
+    --syntax-parameter: #E8D4B0;      /* Function parameters - warm light beige */
+    --syntax-parameter-signature: #4A90A4; /* Function parameters in signatures - dark teal */
+    --syntax-class: #4EC9B0;          /* Class names - teal */
+    --syntax-operator: #D4D4D4;       /* Operators - light gray */
+    --syntax-punctuation: #D4D4D4;    /* Punctuation - light gray */
+    --syntax-error: #F44747;          /* Errors - red */
+    --syntax-attribute: #92C5F8;      /* Attributes - light blue */
+}
+
+/* Enhanced syntax highlighting colors using CSS variables */
+
+/* Comments */
+.doc-content pre code .highlight .c,
+.doc-content pre code .highlight .cm,
+.doc-content pre code .highlight .cp,
+.doc-content pre code .highlight .c1,
+.doc-content pre code .highlight .cs { color: var(--syntax-comment); }
+
+/* Keywords */
+.doc-content pre code .highlight .k,
+.doc-content pre code .highlight .kd,
+.doc-content pre code .highlight .kn,
+.doc-content pre code .highlight .kp,
+.doc-content pre code .highlight .kr { color: var(--syntax-keyword); }
+
+.doc-content pre code .highlight .kc,
+.doc-content pre code .highlight .kt { color: var(--syntax-builtin); }
+
+/* Strings */
+.doc-content pre code .highlight .s,
+.doc-content pre code .highlight .s1,
+.doc-content pre code .highlight .s2,
+.doc-content pre code .highlight .sd,
+.doc-content pre code .highlight .sh,
+.doc-content pre code .highlight .si,
+.doc-content pre code .highlight .sx,
+.doc-content pre code .highlight .sr,
+.doc-content pre code .highlight .ss { color: var(--syntax-string); }
+
+/* Numbers */
+.doc-content pre code .highlight .m,
+.doc-content pre code .highlight .mi,
+.doc-content pre code .highlight .mf,
+.doc-content pre code .highlight .mh,
+.doc-content pre code .highlight .mo,
+.doc-content pre code .highlight .mb { color: var(--syntax-number); }
+
+/* Functions and Methods */
+.doc-content pre code .highlight .nf,
+.doc-content pre code .highlight .fm,
+.doc-content pre code .highlight .nd { color: var(--syntax-function); }
+
+/* Classes */
+.doc-content pre code .highlight .nc,
+.doc-content pre code .highlight .ne { color: var(--syntax-class); }
+
+/* Built-ins */
+.doc-content pre code .highlight .nb,
+.doc-content pre code .highlight .bp,
+.doc-content pre code .highlight .no { color: var(--syntax-builtin); }
+
+/* Variables and Names */
+.doc-content pre code .highlight .n,
+.doc-content pre code .highlight .ni,
+.doc-content pre code .highlight .nl,
+.doc-content pre code .highlight .nn,
+.doc-content pre code .highlight .nx,
+.doc-content pre code .highlight .py,
+.doc-content pre code .highlight .nv,
+.doc-content pre code .highlight .vc,
+.doc-content pre code .highlight .vg,
+.doc-content pre code .highlight .vi,
+.doc-content pre code .highlight .vm { color: var(--syntax-variable); }
+
+/* Attributes */
+.doc-content pre code .highlight .na { color: var(--syntax-attribute); }
+
+/* Tags */
+.doc-content pre code .highlight .nt { color: var(--syntax-builtin); }
+
+/* Operators */
+.doc-content pre code .highlight .o { color: var(--syntax-operator); }
+.doc-content pre code .highlight .ow { color: var(--syntax-builtin); }
+
+/* Punctuation */
+.doc-content pre code .highlight .p { color: var(--syntax-punctuation); }
+
+/* Specific punctuation and operator overrides */
+/* Custom classes for specific punctuation - see consolidated section at bottom */
+
+/* highlight.js specific overrides */
+.doc-content pre code .hljs-punctuation { color: var(--syntax-punctuation); }
+.doc-content pre code .hljs-operator { color: var(--syntax-operator); }
+
+/* Errors */
+.doc-content pre code .highlight .err { color: var(--syntax-error); background-color: #1e0010; }
+
+/* highlight.js support using CSS variables */
+.doc-content pre code .hljs-keyword { color: var(--syntax-keyword); }
+.doc-content pre code .hljs-string { color: var(--syntax-string); }
+.doc-content pre code .hljs-number { color: var(--syntax-number); }
+.doc-content pre code .hljs-comment { color: var(--syntax-comment); }
+.doc-content pre code .hljs-function { color: var(--syntax-function); }
+.doc-content pre code .hljs-built_in { color: var(--syntax-builtin); }
+.doc-content pre code .hljs-title { color: var(--syntax-function); }
+.doc-content pre code .hljs-variable { color: var(--syntax-variable); }
+.doc-content pre code .hljs-literal { color: var(--syntax-builtin); }
+.doc-content pre code .hljs-params { color: var(--syntax-variable); }
+.doc-content pre code .hljs-class { color: var(--syntax-class); }
+.doc-content pre code .hljs-type { color: var(--syntax-builtin); }
+.doc-content pre code .hljs-attr { color: var(--syntax-attribute); }
+.doc-content pre code .hljs-subst { color: var(--syntax-variable); }
+.doc-content pre code .hljs-tag { color: var(--syntax-builtin); }
+.doc-content pre code .hljs-name { color: var(--syntax-class); }
+.doc-content pre code .hljs-regexp { color: var(--syntax-string); }
+.doc-content pre code .hljs-link { color: var(--syntax-builtin); }
+.doc-content pre code .hljs-symbol { color: var(--syntax-string); }
+.doc-content pre code .hljs-bullet { color: var(--syntax-builtin); }
+.doc-content pre code .hljs-addition { color: var(--syntax-number); background-color: #1e2b2e; }
+.doc-content pre code .hljs-deletion { color: var(--syntax-error); background-color: #2b1e1e; }
+
+/* Function call highlighting patterns */
+.doc-content pre code .hljs-title.function_,
+.doc-content pre code .hljs-title.function,
+.doc-content pre code .hljs-property { color: var(--syntax-function); }
+
+.doc-content pre code .hljs-title.class_,
+.doc-content pre code .hljs-title.class { color: var(--syntax-class); }
+
+/* Fallback patterns */
+.doc-content pre code span[class*="nf"] { color: var(--syntax-function); }
+.doc-content pre code span[class*="na"] { color: var(--syntax-function); }
+.doc-content pre code span[class*="nb"] { color: var(--syntax-builtin); }
+
+/* Function highlighting will be handled by JavaScript for better accuracy */
+
+/* black background box code - but not for function signatures */
+.md-typeset .doc-content pre code,
+.md-typeset pre code,
+
+/*all code blocks*/
+.md-code__content
+{
+    background-color: rgb(25, 25, 25);
+    color: white;
+    border-radius: 8px;
+}
+
+/* mostly for the code quotes mid text */
+.md-typeset p code:not(.doc-signature):not([class*="signature"]) 
+{
+    background-color: rgb(25, 25, 25);
+    color: white;
+    border-radius: 4px;
+}
+
+/* API Reference specific: make default text white in code blocks */
+.doc-content pre code,
+.doc-content .highlight,
+.doc-content code {
+    color: white;
+}
+
+/* Ensure function signatures have normal styling */
+.md-typeset .doc-signature,
+.md-typeset .doc-signature code,
+.md-typeset [class*="signature"],
+.md-typeset [class*="signature"] code {
+    background-color: transparent !important;
+    color: inherit !important;
+    border-radius: 0 !important;
+    padding: 0.2rem 0 0.2rem 1rem !important;
+}
+
+/* Allow parameter highlighting in function signatures */
+.md-typeset .doc-signature .js-variable-bright,
+.md-typeset [class*="signature"] .js-variable-bright {
+    background-color: transparent !important;
+    color: var(--syntax-parameter-signature) !important;
+}
+
+/* Dedicated class for signature parameters */
+.js-parameter-signature {
+    color: var(--syntax-parameter-signature) !important;
+    background-color: transparent !important;
+}
+
+
+/* JavaScript function highlighting - see consolidated section at bottom */
+
+/* Variable context highlighting classes */
+.js-variable-bright {
+    color: var(--syntax-variable-bright) !important;
+    background-color: transparent;
+}
+
+.js-variable-assigned {
+    color: var(--syntax-variable-assigned) !important;
+    background-color: transparent;
+}
+
+.js-variable-parameter {
+    color: var(--syntax-parameter) !important;
+    font-style: italic;
+    background-color: transparent;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .doc.doc-object.doc-function,
+    .doc-contents > .doc:not(.doc-children) {
+        margin-bottom: 1rem;
+    }
+    
+    .doc.doc-object.doc-function .doc-content,
+    .doc-contents > .doc:not(.doc-children) .doc-content {
+        padding: 0.8rem;
+    }
+    
+    .doc-heading,
+    .doc-contents h3[id],
+    h3.doc-heading {
+        padding: 0.6rem 0.8rem;
+        margin: 0;
+        font-size: 1em;
+    }
+} 
+
+/* CSS classes for JavaScript-enhanced syntax highlighting */
+.js-function-highlight {
+    color: var(--syntax-function) !important;
+    font-weight: 500 !important;
+    background-color: transparent !important;
+}
+
+.js-variable-highlight {
+    color: var(--syntax-variable-bright) !important;
+    background-color: transparent !important;
+}
+
+/* CSS classes for JavaScript-enhanced punctuation */
+.js-paren {
+    color: var(--syntax-function) !important; /* Yellow for parentheses */
+}
+
+.js-bracket {
+    color: white !important; /* White for square brackets */
+}
+
+.js-equals {
+    color: white !important; /* White for equals signs */
+}
+
+.js-colon {
+    color: white !important; /* White for colons */
+}
+
+.js-comma {
+    color: white !important; /* White for commas */
+}
+
+.js-dot {
+    color: white !important; /* White for dots */
+} 

@@ -1,0 +1,961 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../tracking/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Getting started - SenseGlove Rembrandt API docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#getting-started" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="SenseGlove Rembrandt API docs" class="md-header__button md-logo" aria-label="SenseGlove Rembrandt API docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SenseGlove Rembrandt API docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Getting started
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="SenseGlove Rembrandt API docs" class="md-nav__button md-logo" aria-label="SenseGlove Rembrandt API docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SenseGlove Rembrandt API docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#supported-os" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported OS:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-python-versions-currently" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported python versions (currently)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-softwaredrivers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Required Software/drivers:
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Required Software/drivers:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Windows
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linux
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples-quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples / Quick start
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples / Quick start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch-between-simulated-and-real-glove" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switch between Simulated and Real glove
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#on-new-data-callback" class="md-nav__link">
+    <span class="md-ellipsis">
+      On new data callback
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keep-the-script-running" class="md-nav__link">
+    <span class="md-ellipsis">
+      Keep the script running
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hover-to-get-docs-in-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hover to get Docs in code
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tracking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tracking data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Control
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../robot_hand_mapper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Robot hand mapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simulated_glove/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Simulated glove
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#supported-os" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported OS:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-python-versions-currently" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported python versions (currently)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-softwaredrivers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Required Software/drivers:
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Required Software/drivers:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Windows
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linux
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples-quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples / Quick start
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples / Quick start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch-between-simulated-and-real-glove" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switch between Simulated and Real glove
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#on-new-data-callback" class="md-nav__link">
+    <span class="md-ellipsis">
+      On new data callback
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keep-the-script-running" class="md-nav__link">
+    <span class="md-ellipsis">
+      Keep the script running
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hover-to-get-docs-in-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hover to get Docs in code
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="getting-started">Getting Started</h1>
+<h2 id="supported-os">Supported OS:</h2>
+<ul>
+<li>Windows</li>
+<li>Linux Ubuntu &gt;= 20.04, and other Linux systems with &gt;= GCC 9 </li>
+</ul>
+<h2 id="supported-python-versions-currently">Supported python versions (currently)</h2>
+<ul>
+<li>python 3.8</li>
+<li>python 3.12</li>
+</ul>
+<p>We recommend anaconda to install these to manage multiple versions (now or in the future) easily.</p>
+<p>If you require a different version &gt;3.8, we can support it by recompiling the library. Send us a message if required.</p>
+<h2 id="installation">Installation</h2>
+<h3 id="required-softwaredrivers">Required Software/drivers:</h3>
+<h4 id="windows">Windows</h4>
+<p>For Windows, install the WinUSB driver: <a href="https://zadig.akeo.ie/">Zadig</a>. Linux does not require a driver.
+   * Opening this, with the glove plugged in, Select R1 (Composite Parent) in the dropdown. Don't change any other settings. Click Install Driver.</p>
+<h4 id="linux">Linux</h4>
+<p>To allow non-root access to the Rembrandt device over USB, you need to add a custom udev rule.
+1. Create a new rule file:</p>
+<div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code>    sudo nano /etc/udev/rules.d/99-rembrandt.rules
+</code></pre></div>
+<ol>
+<li>
+<p>Paste the following:</p>
+<div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code>SUBSYSTEM==&quot;usb&quot;, ATTR{idVendor}==&quot;2e8a&quot;, ATTR{idProduct}==&quot;10f3&quot;, MODE=&quot;0666&quot;
+</code></pre></div>
+</li>
+<li>
+<p>Reload &amp; Apply:</p>
+<div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code>sudo udevadm control --reload-rules &amp;&amp; sudo udevadm trigger
+</code></pre></div>
+</li>
+</ol>
+<h2 id="setup">Setup</h2>
+<p>See <a href="#troubleshooting">Troubleshooting</a> for common errors and issues.
+* Install <strong>python 3.8.x</strong> or <strong>python 3.12</strong>. Use <a href="https://www.python.org/downloads/">Python</a> or <a href="https://www.anaconda.com/download/success">Anaconda</a> (virtual env manager for python, allowing multiple python versions on one pc). 
+*  <strong>Clone the Repository</strong>
+   <div class="language-bash highlight"><span class="filename">Bash</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://gitlab.com/senseglove/rembrandt-api/
+</span></code></pre></div>
+   You can clone this to a subfolder of your project, or run examples directly from the provided API.
+* <strong>Install python packages</strong>
+* Set your python interpreter to your python environment (VScode: Ctrl+Shift+P &gt; Python interpreter). 
+1. In terminal, navigate to the parent directory of <code>SG_API</code> (where the setup.py file is).
+    <div class="language-bash highlight"><span class="filename">Bash</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>Rembrandt-API
+</span></code></pre></div></p>
+<ol>
+<li>
+<p>Run pip install. Make sure it uses the python version from your anaconda environment.</p>
+<p>Example for Windows anaconda (replace your environment). 
+<div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>%USERPROFILE%/anaconda3/envs/yourEnvironment/python.exe -m pip install -e .
+</span></code></pre></div></p>
+<p>If normal python (no anaconda):
+<div class="language-bash highlight"><span class="filename">Bash</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">    </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</span></code></pre></div></p>
+<p>Similar for Linux, <code>conda activate yourenv</code> before running <code>pip install -e .</code>, or alternatively use the python path of your environment with the <code>your/path/to/python -m pip install -e .</code></p>
+</li>
+</ol>
+<h3 id="examples-quick-start">Examples / Quick start</h3>
+<p>PLEASE READ THIS SECTION ENTIRELY BEFORE STARTING</p>
+<p>This section walks you through the most important features of the script <code>main_example.py</code> which is a script using the main features of the API, as you would in your project. You can find this and more in the <code>examples</code> folder. </p>
+<h4 id="switch-between-simulated-and-real-glove">Switch between Simulated and Real glove</h4>
+<p>You can develop even without a physical glove. For that, use the following init:
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">SG_API</span><span class="w"> </span><span class="kn">import</span> <span class="n">SG_main</span><span class="p">,</span> <span class="n">SG_types</span> <span class="k">as</span> <span class="n">SG_T</span> 
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">)</span>
+</span></code></pre></div>
+This will start a steady simulated glove, for which you can set the angles, or make it open/close (see main_example.py). 
+For in depth simulated glove functions see <a href="../simulated_glove/">Simulated Glove</a></p>
+<p>For using an actual glove, change SIMULATED_GLOVE to REAL_GLOVE_USB :
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">REAL_GLOVE_USB</span><span class="p">)</span>
+</span></code></pre></div></p>
+<h4 id="on-new-data-callback">On new data callback</h4>
+<p>The on_new_data callback fires when the glove has updated the data in the API, such as tracking or force data. <code>SG_main</code> contains all functions you need. Some commonly needed functions are given here.</p>
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_new_data</span><span class="p">(</span><span class="n">from_device_id</span><span class="p">):</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>        <span class="k">if</span> <span class="n">from_device_id</span> <span class="o">==</span> <span class="n">hand_id</span><span class="p">:</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>            <span class="n">exo_poss</span><span class="p">,</span> <span class="n">exo_rots</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_exo_joints_poss_rots</span><span class="p">(</span><span class="n">hand_id</span><span class="p">)</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>            <span class="n">gui</span><span class="o">.</span><span class="n">update_hand_exo</span><span class="p">(</span><span class="n">exo_poss</span><span class="p">)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>            <span class="n">fingertips_poss</span><span class="p">,</span> <span class="n">fingertips_rots</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_fingertips_pos_rot</span><span class="p">(</span><span class="n">hand_id</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>            <span class="n">flexion_perc_bents</span><span class="p">,</span> <span class="n">abduction_perc_bents</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_percentage_bents</span><span class="p">(</span><span class="n">hand_id</span><span class="p">)</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>            <span class="n">forces</span> <span class="o">=</span> <span class="n">simulate_forces</span><span class="p">()</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>            <span class="n">SG_main</span><span class="o">.</span><span class="n">set_force_goals</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span> <span class="n">forces</span><span class="p">)</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="n">SG_main</span><span class="o">.</span><span class="n">add_rembrandt_data_callback</span><span class="p">(</span><span class="n">on_new_data</span><span class="p">)</span>
+</span></code></pre></div>
+<blockquote>
+<p>⚠️ <strong>Important Note</strong></p>
+<p>Keep what is in the new_data callback as brief as possible (preferably just copying the data). Heavy calculations will drop the 1kHz framerate required for crisp haptic feedback. For more info see <a href="../fps-performance/">Performance</a>.</p>
+</blockquote>
+<h4 id="keep-the-script-running">Keep the script running</h4>
+<p>The data callback will automatically update with new data at &gt;1khz, but only if the file is still running.
+To do this, call:
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>    <span class="n">SG_main</span><span class="o">.</span><span class="n">keep_program_running</span><span class="p">()</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="c1"># after this will not execute. It blocks until stopping the program. </span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="c1"># Ctrl+C or a command closing python stops it.</span>
+</span></code></pre></div></p>
+<p>Alternatively, you can replace SG_main.keep_program_running() with this to run your own while loop with:
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>        <span class="k">while</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_cb</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># This loop does not do anything but keep the program alive. Some sleep is important to not eat all CPU capacity.</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="k">except</span><span class="p">:</span> 
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>        <span class="k">pass</span> <span class="c1"># important errors will still log. This try/except just ignores the keyboard interrupt error on Ctrl+C.</span>
+</span></code></pre></div></p>
+<p>You can call functions such as <code>SG_main.get_fingertips_pos_rot(hand_id)</code> or <code>SG_main.set_force_goals()</code> in your own while loop instead of the <code>on_new_data</code> callback. This will retrieve the latest tracking data available, and when the callback loop ends internally, send the latest data in force goals to the glove. The callback <code>on_new_data</code> is purely a method to only update when new glove data is available.</p>
+<blockquote>
+<p>⚠️ <strong>Important Note</strong></p>
+<p>You must use sleep in the while loop, or your loop can eat up all CPU space which the callback needs to give data at 1kHz, important for good force feedback! For more info, see: <a href="../fps-performance/">Performance</a>.</p>
+</blockquote>
+<h4 id="hover-to-get-docs-in-code">Hover to get Docs in code</h4>
+<p><code>SG_main</code> will contain most of what you need.
+Don't forget that you can always hover on a function to see how to use it (in Vscode at least), or check the <a href="../">API Docs</a>.
+<img alt="Percentage bent: less flexion value" src="../images/hover_on_function_example.png" /> </p>
+<h1 id="examples">Examples</h1>
+<h2 id="main_examplepy">main_example.py</h2>
+<p>Running <code>examples/main_example.py</code> should give you a screen like this, showing the top view of the exoskeleton of the glove in real time (or simulated glove). The blue dots are the fingertip positions, and the linkages of the exoskeleton are white. The axes are drawn at the origin of the glove.</p>
+<p>Press the right mouse button and drag to rotate.</p>
+<p><img alt="GUI" src="../images/gui.png" /> </p>
+<p>Additionally, forces can be turned on that apply to all fingers in gradual sine waves, minimal force, to maximal force, and back to minimal repeatedly.</p>
+<h2 id="record_glovepy-and-play_recordingpy">record_glove.py and play_recording.py</h2>
+<p>Aside from simulation, you play back captured motions, and also record your owns. Currently this only records and plays back the tracking, and not forces.</p>
+<p>You can record from any script using the following:
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recording glove data for 10 seconds...&quot;</span><span class="p">)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">SG_recorder</span><span class="o">.</span><span class="n">record_glove_data</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;myrecording.json&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+You can find this file in the <code>recordings/</code> folder. Recording again will overwrite it.
+You can play that recording back with:
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Playing back recording...&quot;</span><span class="p">)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">SG_recorder</span><span class="o">.</span><span class="n">play_recording</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span> <span class="s2">&quot;myrecording.json&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+This will simulate the glove with these motions, so actually output all data you would expect via the API. There are existing recordings to work with in the recordings folder.</p>
+<h4 id="tracking-and-control">Tracking and Control</h4>
+<p>The types of tracking data are explained in <a href="../tracking/">Tracking</a>. Force feedback is explained in <a href="../control/">Control</a>.</p>
+<h3 id="convenience-tip">Convenience tip:</h3>
+<p>In .vscode / launch.json you can set "program": "${workspaceFolder}/your_file.py", and press F5 to play that script no matter the file you have open.</p>
+<h1 id="troubleshooting">Troubleshooting</h1>
+<h2 id="libusb-initialization-error">Libusb initialization error</h2>
+<p><div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Error: 2025-03-25 13:49:40.316 (   1.394s) [DataRetrievalLoo]    RembrandtDevice.cpp:1016  INFO| Initializing libusb device handle... - { VID: dead, PID: 1606, BN: 2, PN: 2, DA: 14 }
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>2025-03-25 13:49:40.316 (   1.394s) [DataRetrievalLoo]    RembrandtDevice.cpp:1024   ERR| Failed to initialize libusb device handle: Entity not found - { VID: dead, PID: 1606, BN: 2, PN: 2, DA: 14 }
+</span></code></pre></div>
+This happens on Windows when you did not install the driver! See Required Software/Drivers above.</p>
+<h2 id="filenotfounderror-so-or-dll">FileNotFoundError .so or .dll:</h2>
+<div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>FileNotFoundError: Could not find module &#39;C:\Users\&lt;username&gt;\anaconda3\envs\&lt;yourenv&gt;\lib\site-packages\SG_API\CPPlibs\libSG_math.dll&#39; or `libSG_math.so` (or one of its dependencies). Try using the full path with constructor syntax.
+</span></code></pre></div>
+<p>This means that <code>pip install .</code> did not work correctly. Please try that again and make sure you use the correct python to call it. When in doubt, pip install using the python.exe similar to <code>C:/Users/yourUserName/anaconda3/envs/yourEnvironmentName/python.exe -m pip install -e .</code> (In some cases it may be pip3.) Then double check your interpreter in vscode to use the correct one (Ctrl+Shift+P -&gt; Python interpreter). </p>
+<h2 id="type-errors">Type errors</h2>
+<p>You might get yellow bars with errors similar to:</p>
+<p><img alt="Type hint error" src="../images/typehints_error.png" /></p>
+<p>If your arrays have the correct shape, it should work when you actually run it. The warning is there because while numpy arrays can be used interchangeably with python arrays, the typing intellisense does not see they are compatible. You can ignore warnings like these as long as your array shape is correct.</p>
+<p>Sequence[Sequence[int | float]] means it expects either a nested list or numpy array of shape: List[List[int or float]]. You can check SG_types (in the API_reference, or in the actual file) to check what is expected inside.</p>
+<h2 id="running-scripts-is-disabled-on-this-system">running scripts is disabled on this system</h2>
+<p><div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>anaconda3\shell\condabin\conda-hook.ps1 cannot be loaded because running scripts is disabled on this system.
+</span></code></pre></div>
+This occurs sometimes on windows. To fix:
+Open Powershell with admin rights (right click) and run:
+<code>Set-ExecutionPolicy Unrestricted</code></p>
+<h2 id="is-my-glove-connected">Is my glove connected?</h2>
+<h3 id="windows_1">Windows</h3>
+<p>Expected behavior in Windows Device Manager &gt; Universal Serial Bus Devices: 
+Once you plug in the device, you should see 2x Rembrandt showing up per glove (2 channels per glove).</p>
+<p>If this is the case, the code should be able to connect. Make sure on Windows (not required for Linux), you also installed the driver with Zadig (see <a href="#required-softwaredrivers">Required Software/drivers</a>).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "content.code.annotate", "content.code.highlight"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../javascripts/signatures.js"></script>
+      
+        <script src="../javascripts/function-highlighting.js"></script>
+      
+    
+  </body>
+</html>
