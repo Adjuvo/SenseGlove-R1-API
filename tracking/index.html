@@ -748,7 +748,7 @@ When the wrist rotation is 0, 0, 0, the following is true:</p>
 <h3 id="how-percentage-bent-is-calculated">How percentage bent is calculated</h3>
 <p>The percentage bent calculations uses the orientations of the fingertips to determine how bent the fingers are. </p>
 <p><img alt="Percentage bent" src="../images/percentage_bent_calc.png" /></p>
-<p>The orientations of these arrows are used. We look at the rotations of these around the flexion or abduction axis respectively to calculate the percentage_bents. This is then normalized between 0 and 10000 normalized based on a pre-set open and closed finger value. 
+<p>The orientations of these arrows are used. We calculate these by adding up the exoskeleton flexion angles for flexion percentage bent, and use the single abduction sensor for abduction percentage bent. This is then normalized between 0 and 10000 normalized based on a pre-set open and closed finger value. 
 The left hand on the image would give 0, the middle around 7000 and the right one around 4000 in default settings. We use this algorithm because it is independent of different hand sizes.</p>
 <h3 id="adjusting-the-minmax-bent-settings">Adjusting the min/max bent settings:</h3>
 <p><strong><em>flex_angles</em></strong> and <strong>abd_angles</strong> can be obtained from <code>SG_main.get_raw_percentage_bent_angles()</code>.
