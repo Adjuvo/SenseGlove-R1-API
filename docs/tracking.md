@@ -54,7 +54,7 @@ Percentage bent can be retrieved with the function [get_percentage_bents()](api-
 
 ![Percentage bent](images/percentage_bent_calc.png)
 
-The orientations of these arrows are used. We look at the rotations of these around the flexion or abduction axis respectively to calculate the percentage_bents. This is then normalized between 0 and 10000 normalized based on a pre-set open and closed finger value. 
+The orientations of these arrows are used. We calculate these by adding up the exoskeleton flexion angles for flexion percentage bent, and use the single abduction sensor for abduction percentage bent. This is then normalized between 0 and 10000 normalized based on a pre-set open and closed finger value. 
 The left hand on the image would give 0, the middle around 7000 and the right one around 4000 in default settings. We use this algorithm because it is independent of different hand sizes.
 
 
