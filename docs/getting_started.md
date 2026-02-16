@@ -79,7 +79,7 @@ from SG_API import SG_main, SG_types as SG_T
 
 device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE)
 ```
-This will start a steady simulated glove, for which you can set the angles, or make it open/close (see main_example.py). 
+This will start a steady simulated glove, which you can set to continually open/close, or set to steady (see main_example.py). 
 For in depth simulated glove functions see [Simulated Glove](simulated_glove.md)
 
 For using an actual glove, change SIMULATED_GLOVE to REAL_GLOVE_USB :
@@ -112,7 +112,7 @@ The on_new_data callback fires when the glove has updated the data in the API, s
 > Keep what is in the new_data callback as brief as possible (preferably just copying the data). Heavy calculations will drop the 1kHz framerate required for crisp haptic feedback. For more info see [Performance](fps-performance.md).
  
 #### Keep the script running
-The data callback will automatically update with new data at >1khz, but only if the file is still running.
+The data callback will automatically update with new data at 1khz, but only if the file is still running.
 To do this, call:
 ```python
     SG_main.keep_program_running()
@@ -156,7 +156,7 @@ Press the right mouse button and drag to rotate.
 Additionally, forces can be turned on that apply to all fingers in gradual sine waves, minimal force, to maximal force, and back to minimal repeatedly.
 
 ## record_glove.py and play_recording.py
-Aside from simulation, you play back captured motions, and also record your owns. Currently this only records and plays back the tracking, and not forces.
+Aside from simulation, you play back captured motions as if the glove were connected, and also record your own. Currently this only records and plays back the tracking, and not forces.
 
 You can record from any script using the following:
 ```python
