@@ -604,6 +604,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#SG_API.SG_main.get_fingertip_distances" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_fingertip_distances
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#SG_API.SG_main.get_exo_joints_poss_rots" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_exo_joints_poss_rots
@@ -1235,6 +1244,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#SG_API.SG_main.get_fingertip_distances" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_fingertip_distances
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#SG_API.SG_main.get_exo_joints_poss_rots" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_exo_joints_poss_rots
@@ -1677,9 +1695,11 @@
     <div class="doc doc-contents first">
 
         <p>SG_main contains all functions the user needs from the API. See Getting Started docs for a general explanation of how to use it.</p>
-<p>Questions? Written by:
-- Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
+<p>Questions? Written by:</p>
+<ul>
+<li>Amber Elferink</li>
+</ul>
+<p>Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
 Support: https://www.senseglove.com/support/</p>
 
 
@@ -2198,6 +2218,25 @@ Use:
 <p><strong>Example:</strong>
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">thumb_dims</span> <span class="o">=</span> <span class="n">thimble_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">radius</span>  <span class="c1"># thumb thimble radius</span>
 </span></code></pre></div></p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="SG_API.SG_main.get_fingertip_distances" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_fingertip_distances</span>
+
+
+</h4>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_fingertip_distances</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n">float</span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>returns: fingertip distances between thumb and [index, middle, ring, pinky] (float in mm)</p>
 
     </div>
 
@@ -2782,7 +2821,8 @@ The milliNewtons is the tension in the wire pulling the finger back.</p>
         <p>Sets vibration data for the specified device.</p>
 <p>Parameters:
 - device_id: ID of the device
-- vibro_data: List of vibration data per actuator</p>
+- vibro_data: List of vibration data per actuator.</p>
+<p>Still in development. See examples/vibration_example.py for an example of the current format.</p>
 
     </div>
 
@@ -2853,7 +2893,7 @@ device is connected. It simulates finger tracking data with various animation mo
 </span></code></pre></div></p>
 <p>Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api/
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/</p>
 
 
@@ -3471,7 +3511,7 @@ Should be called at ~1kHz for smooth animation.</p>
         <p>Contains all types used throughout the whole API.</p>
 <p>Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api/
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/</p>
 
 
