@@ -2,6 +2,10 @@
 
 ## v0.0
 
+### v0.0.16
+Added Fingertip distances to SG_main.
+Replaced docs links to actual Release docs.
+
 ### v0.0.15
 Minor changes to the documentation. First version actually sent to customers.
 

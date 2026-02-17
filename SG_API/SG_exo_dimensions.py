@@ -1,7 +1,7 @@
 """
     This class holds all functions to convert the raw data from the glove to the exo dimensions, fingertip positions, etc.
 
-    We use the following axes definitions: https://senseglove.gitlab.io/rembrandt/rembrandt-api/tracking/
+    We use the following axes definitions: https://adjuvo.github.io/SenseGlove-R1-API/tracking/
     # right hand coordinate system:
     # - x along stretched fingers
     # - for right hand, y towards thumb. For left hand, y towards outside hand.

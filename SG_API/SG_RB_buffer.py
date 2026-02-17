@@ -7,7 +7,7 @@ From there they can be used to calculate the other SG_rembrandt_data data.
 
 Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api/
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 
 """
