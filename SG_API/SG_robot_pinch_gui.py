@@ -5,7 +5,7 @@ For use see examples/robot_hand_mapper_pbent.py.
 
 Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api/robot_hand_mapper/
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/robot_hand_mapper/
 Support: https://www.senseglove.com/support/
 """
 from PySide6.QtCore import QObject, Signal, QTimer

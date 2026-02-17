@@ -2,7 +2,9 @@
 SG_main contains all functions the user needs from the API. See Getting Started docs for a general explanation of how to use it.
 
 Questions? Written by:
+
 - Amber Elferink
+
 Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
 Support: https://www.senseglove.com/support/
 
@@ -456,6 +458,13 @@ def get_fingertip_thimble_dims(device_id: int) -> List[SG_T.Thimble_dims]:
     """
     return SG_devices.get_rembrandt_device(device_id).get_fingertip_thimble_dims()
 
+
+def get_fingertip_distances(device_id: int) -> Sequence[float]:
+    """
+    returns: fingertip distances between thumb and [index, middle, ring, pinky] (float in mm)
+    """
+    return SG_devices.get_rembrandt_device(device_id).get_fingertip_distances()
+
 # 
 def get_exo_joints_poss_rots(device_id: int) -> Tuple[Sequence[Sequence[SG_T.Vec3_type]], Sequence[Sequence[SG_T.Quat_type]]]:
     """
@@ -773,7 +782,9 @@ def set_raw_vibro_data(device_id: int, vibro_data : Sequence[Sequence[int]]):
     
     Parameters:
     - device_id: ID of the device
-    - vibro_data: List of vibration data per actuator
+    - vibro_data: List of vibration data per actuator.
+
+    Still in development. See examples/vibration_example.py for an example of the current format.
     """
     device = SG_devices.get_rembrandt_device(device_id)
     device.set_vibro_data(vibro_data)

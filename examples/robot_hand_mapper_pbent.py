@@ -6,7 +6,7 @@ See the docs on robot hand mapper for more info.
 Questions? Written by:
 - Akshay Radhamohan M
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api/
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
 

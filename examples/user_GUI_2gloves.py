@@ -4,7 +4,7 @@ It creates two GUI instances in a single window container.
 
 Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api/
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
 
@@ -37,11 +37,11 @@ dual_gui.show()
 try: 
 
     # TO PUT 2 HANDS to REAL Device:
-    device_ids = SG_main.init(2, SG_T.Com_type.REAL_GLOVE_USB) 
+    #device_ids = SG_main.init(2, SG_T.Com_type.REAL_GLOVE_USB) 
 
     # TO PUT 1 (RIGHT) HAND to SIMULATED & 1 (LEFT) to REAL:
-    #device_ids = SG_main.init(1, SG_T.Com_type.REAL_GLOVE_USB) 
-    #SG_main.init_rembrandt_sim(SG_T.Hand.RIGHT, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
+    device_ids = SG_main.init(1, SG_T.Com_type.REAL_GLOVE_USB) 
+    SG_main.init_rembrandt_sim(SG_T.Hand.LEFT, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
     
     # Get hand IDs with inline None checks using walrus operator
     if (left_hand_id := SG_main.get_left_hand_deviceid()) is None:
