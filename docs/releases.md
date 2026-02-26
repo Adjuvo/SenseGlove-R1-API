@@ -1,6 +1,9 @@
 # Releases
 
-## v0.0
+## v0.0.17
+- Added support for Python 3.11.
+- Added troubleshooting instructions for WSL (Windows Subsystem for Linux) installs.
+- Improved Qt import error troubleshooting logs
 
 ### v0.0.16
 Added Fingertip distances to SG_main.

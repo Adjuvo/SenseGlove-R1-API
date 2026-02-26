@@ -18,7 +18,7 @@ In the image you can see the index + thumb are pinching, and only that value (or
 The config must contain the values going out to the robot hand. You can use the button below each finger to save that current number to a config file, using also the Save config button at the bottom. Note that the **robot hand** (so not your glove)
  **should be making the pinches** when pressing the button. In the end, via GUI buttons or not, the saved config file must contain the inputs going into the robot hand that result in a robot hand pinch.
  
- After loading that config, the orange values retreived with `robot_flex, robot_abd = SG_main.get_rhm_percentage_bents(hand_id)` should give you accurate pinches.
+ After loading that config, the orange values retreived with `robot_flex, robot_abd = SG_main.get_rhm_percentage_bents(hand_id)` should give the robot hand accurate pinches when the glove pinches.
  
  Currently we only provide this solution for 1DOF robot finger control via percentage bent.
  To learn how to adjust percentage bents and how they work, see [Tracking](tracking.md).

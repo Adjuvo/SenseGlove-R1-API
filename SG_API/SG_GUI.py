@@ -7,7 +7,7 @@ This uses Pyside6 with Qt3D.
 
 Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
 
@@ -23,6 +23,11 @@ import warnings
 import traceback
 from typing import List, Tuple
 
+import os
+os.environ['QT_LOGGING_RULES'] = 'qt3d.*=true'
+os.environ['QSG_RHI_DEBUG_LAYER'] = '1'
+
+
 # Enable Python development mode for stricter error checking
 import os
 os.environ['PYTHONDEVMODE'] = '1'
@@ -37,6 +42,23 @@ def handle_exception(exc_type, exc_value, exc_traceback):
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
+    
+    # Check for Qt platform plugin errors on Linux
+    error_str = str(exc_value)
+    if 'platform plugin' in error_str.lower() or ('xcb' in error_str.lower() and 'plugin' in error_str.lower()):
+        import platform
+        import subprocess
+        if platform.system() == "Linux":
+            install_cmd = ""
+            if subprocess.run(['which', 'apt-get'], capture_output=True).returncode == 0:
+                install_cmd = "sudo apt-get install libxcb-cursor0"
+            elif subprocess.run(['which', 'dnf'], capture_output=True).returncode == 0:
+                install_cmd = "sudo dnf install libxcb-cursor"
+            elif subprocess.run(['which', 'pacman'], capture_output=True).returncode == 0:
+                install_cmd = "sudo pacman -S libxcb-cursor"
+            
+            if install_cmd:
+                print(f"\nIf you get Qt plugin errors, please install: {install_cmd}\n", file=sys.stderr)
     
     # Import here to avoid circular imports during module initialization
     from SG_API.SG_logger import sg_logger
@@ -65,10 +87,9 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception
 
 
-
 from PySide6.QtCore import QObject, Property, QPropertyAnimation, Signal
 from PySide6.QtGui import QGuiApplication, QColor, QMatrix4x4, QQuaternion, QVector3D
-from PySide6.QtWidgets import QApplication, QWidget, QHBoxLayout
+from PySide6.QtWidgets import QApplication as _QApplication, QWidget, QHBoxLayout
 from PySide6.Qt3DCore import Qt3DCore
 from PySide6.Qt3DExtras import Qt3DExtras
 from PySide6.Qt3DRender import Qt3DRender
@@ -77,6 +98,33 @@ from PySide6.QtCore import QTimer, Qt, QMetaObject, QThread
 from typing import Callable
 from SG_API.SG_logger import sg_logger
 from SG_API import SG_types as SG_T
+
+# Wrap QApplication to check for Qt dependencies before creation
+class QApplication(_QApplication):
+    """Wrapper around QApplication that checks for Qt dependencies on Linux."""
+    def __init__(self, argv=None):
+        import platform
+        import ctypes
+        import subprocess
+        
+        # Check for Qt dependencies on Linux before creating QApplication
+        if platform.system() == "Linux":
+            try:
+                ctypes.CDLL("libxcb-cursor.so.0", mode=ctypes.RTLD_GLOBAL)
+            except OSError:
+                # Library missing - provide install command
+                install_cmd = ""
+                if subprocess.run(['which', 'apt-get'], capture_output=True).returncode == 0:
+                    install_cmd = "sudo apt-get install libxcb-cursor0"
+                elif subprocess.run(['which', 'dnf'], capture_output=True).returncode == 0:
+                    install_cmd = "sudo dnf install libxcb-cursor"
+                elif subprocess.run(['which', 'pacman'], capture_output=True).returncode == 0:
+                    install_cmd = "sudo pacman -S libxcb-cursor"
+                
+                if install_cmd:
+                    print(f"\nIf you get Qt plugin errors, please install: {install_cmd}\n", file=sys.stderr)
+        
+        super().__init__(argv if argv is not None else sys.argv)
 
 def log_gui_exception(operation_name: str, exception: Exception):
     """Helper function to consistently log GUI exceptions with context"""

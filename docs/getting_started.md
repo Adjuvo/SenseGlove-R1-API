@@ -33,6 +33,8 @@ To allow non-root access to the Rembrandt device over USB, you need to add a cus
 
         sudo udevadm control --reload-rules && sudo udevadm trigger
 
+#### WSL
+For Installation on Windows Subsystem for Linux (WSL), so you can run Linux within your Windows OS without dual boot, see Troubleshooting.
 
 ## Setup
 See [Troubleshooting](#troubleshooting) for common errors and issues.
@@ -44,16 +46,29 @@ See [Troubleshooting](#troubleshooting) for common errors and issues.
    You can clone this to a subfolder of your project, or run examples directly from the provided API.
 * **Install python packages**
 * Set your python interpreter to your python environment (VScode: Ctrl+Shift+P > Python interpreter). 
-1. In terminal, navigate to the parent directory of `SG_API` (where the setup.py file is).
-    ```bash
-    cd Rembrandt-API
-    ```
+
 
 
     
-2. Run pip install. Make sure it uses the python version from your anaconda environment.
+2. Run pip install. Make sure it uses the same python environment you are going to run it in!
 
-    Example for Windows anaconda (replace your environment). 
+
+    1. In terminal, navigate to the parent directory of `SG_API` (where the setup.py file is).
+    ```bash
+    cd SenseGlove-R1-API
+    ```
+
+    Activate your python, and run `pip install -e .` (replace yourEnvironment)
+
+    Example Linux:
+
+    ```
+    conda activate yourEnvironment
+    pip install -e .
+    ```
+    
+
+    Example for Windows anaconda. (Windows usually doesn't let you call "conda activate" from anywhere, so this is a workaround:)
     ```
     %USERPROFILE%/anaconda3/envs/yourEnvironment/python.exe -m pip install -e .
     ```
@@ -62,8 +77,6 @@ See [Troubleshooting](#troubleshooting) for common errors and issues.
     ```bash
         pip install -e .
     ```
-
-    Similar for Linux, `conda activate yourenv` before running `pip install -e .`, or alternatively use the python path of your environment with the `your/path/to/python -m pip install -e .`
 
 
 
@@ -204,7 +217,7 @@ You might get yellow bars with errors similar to:
 
 If your arrays have the correct shape, it should work when you actually run it. The warning is there because while numpy arrays can be used interchangeably with python arrays, the typing intellisense does not see they are compatible. You can ignore warnings like these as long as your array shape is correct.
 
-Sequence[Sequence[int | float]] means it expects either a nested list or numpy array of shape: List[List[int or float]]. You can check SG_types (in the API_reference, or in the actual file) to check what is expected inside.
+Sequence[Sequence[int | float]] means it expects either a nested list or numpy array of shape: List[List[int or float]]. 
 
 ## running scripts is disabled on this system
 ```
@@ -214,6 +227,38 @@ This occurs sometimes on windows. To fix:
 Open Powershell with admin rights (right click) and run:
 `Set-ExecutionPolicy Unrestricted`
 
+## Qt platform plugin errors (Linux)
+If you encounter errors like:
+```
+qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+qt.qpa.plugin: From 6.5.0, xcb-cursor0 or libxcb-cursor0 is needed to load the Qt xcb platform plugin.
+This application failed to start because no Qt platform plugin could be initialized.
+```
+
+This means Qt GUI dependencies are missing. To fix:
+
+**Ubuntu/Debian:**
+```bash
+sudo apt-get update
+sudo apt-get install libxcb-cursor0 libgl1-mesa-glx libgl1-mesa-dri
+```
+
+**Fedora/RHEL:**
+```bash
+sudo dnf install libxcb-cursor mesa-libGL mesa-libGLU
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S libxcb-cursor mesa
+```
+
+If you don't need the GUI, you can use the `no_GUI.py` example instead, or set the environment variable before running:
+```bash
+export QT_QPA_PLATFORM=offscreen
+python examples/main_example.py
+```
+
 ## Is my glove connected?
 ### Windows
 Expected behavior in Windows Device Manager > Universal Serial Bus Devices: 
@@ -222,3 +267,54 @@ Once you plug in the device, you should see 2x Rembrandt showing up per glove (2
 
 If this is the case, the code should be able to connect. Make sure on Windows (not required for Linux), you also installed the driver with Zadig (see [Required Software/drivers](#required-softwaredrivers)).
 
+## WSL only: USB forwarding
+Only if you are using WSL (Windows Subsystem for Linux):
+You'll get permission errors in libusb since it can't access the USB by default. To see the real glove moving in WSL:
+```
+usbipd list
+``` 
+see what number x-x is R1. Example: 6-2
+```
+usbipd bind --busid 6-2
+usbipd attach --wsl --busid 6-2
+```
+During this time the glove won't be working anymore on Windows. To reattach to windows and disconnect it from WSL, call:
+```
+usbipd detach --busid 6-2
+```
+
+
+## WSL only: 3D visualization not showing
+
+If the GUI opens and shows percentage bars, but the 3D glove model doesn't render:
+
+**Symptoms:**
+- GUI window opens successfully
+- Percentage bent bars display correctly
+- 3D glove visualization is blank/black
+- May see errors like:
+  - `QEGLPlatformContext: Failed to create context: 3009`
+  - `Qt3D.Renderer.OpenGL.Backend: OpenGL context creation failed`
+  - `Qt3D.Renderer.OpenGL.Backend: makeCurrent failed`Check:
+```
+glxinfo | grep -E "OpenGL renderer|OpenGL version" 
+```
+If this prints something like:
+```
+OpenGL renderer string: D3D12 (NVIDIA GeForce RTX 3050 Laptop GPU)
+OpenGL version string: 3.1 Mesa 21.2.6
+```
+
+**Cause:** This is a **WSL-specific** graphics limitation. Qt3D's RHI backend requires OpenGL 3.3+, but WSL often only provides OpenGL 3.1 via hardware acceleration. **This issue does NOT occur on native Ubuntu/Linux** where proper graphics drivers provide OpenGL 3.3+.
+
+**Solution - Use software rendering (WSL only):**
+
+```bash
+export LIBGL_ALWAYS_SOFTWARE=1
+export QT_QPA_PLATFORM=xcb
+python examples/main_example.py
+```
+
+**Note:** Software rendering is slower than hardware acceleration, and pixelated, but will display the 3D visualization correctly. This is a WSL limitation, not an issue with the API code.
+
+**On native Ubuntu 20.04+:** Hardware-accelerated 3D visualization should work out of the box with proper graphics drivers installed. No workaround needed.

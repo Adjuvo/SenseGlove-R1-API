@@ -41,7 +41,7 @@ try:
         wait_for_x_gloves = nr of gloves it waits on before continuing from this line. 
     """
     wait_for_x_gloves = 1
-    device_ids = SG_main.init(wait_for_x_gloves, SG_T.Com_type.REAL_GLOVE_USB, SG_main.SG_sim.Simulation_Mode.STEADY_MODE) 
+    device_ids = SG_main.init(wait_for_x_gloves, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 
     hand_id = device_ids[0]
 
 
@@ -68,12 +68,14 @@ try:
 
             flexion_perc_bents, abduction_perc_bents = SG_main.get_percentage_bents(hand_id)
             gui.update_percentage_bent(flexion_perc_bents, abduction_perc_bents)
+            
+            fingertips_distances = SG_main.get_fingertip_distances(hand_id)
 
             """
             Forces: switch on or off by commenting/uncommenting
             """
-            #forces = [int(f) for f in simulate_forces()]            # gradual on/off forces
-            forces = [0, 0, 0, 0]                                    # no force. 
+            forces = [int(f) for f in simulate_forces()]            # gradual on/off forces
+            #forces = [0, 0, 0, 0]                                    # no force. 
 
             SG_main.set_force_goals(hand_id, forces)
 
