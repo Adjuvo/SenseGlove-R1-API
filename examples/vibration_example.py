@@ -8,7 +8,7 @@ Turn on forces further below to create force feedback on the fingers, gradually 
 
 Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
 

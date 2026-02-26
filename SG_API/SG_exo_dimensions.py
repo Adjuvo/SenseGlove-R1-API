@@ -9,7 +9,7 @@
 
     Questions? Written by:
     - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
 

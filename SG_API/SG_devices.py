@@ -5,7 +5,7 @@ Thereby it has general functions to manage all devices, such as adding and remov
 Questions? Written by:
 - Amber Elferink
 - Max Lammers: Percentage bent 
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
 
@@ -235,10 +235,18 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
     def get_fingertip_distances(self) -> Sequence[float]:
         """
         returns: fingertip distances between thumb and [index, middle, ring, pinky] (float in mm)
+        Only calculates distances for fingers that are present for tracking.
         """
         np.array(self._data.fingertips_pos)
         
-        return [SG_math.distance(self._data.fingertips_pos[0], self._data.fingertips_pos[1]), SG_math.distance(self._data.fingertips_pos[0], self._data.fingertips_pos[2]), SG_math.distance(self._data.fingertips_pos[0], self._data.fingertips_pos[3]), SG_math.distance(self._data.fingertips_pos[0], self._data.fingertips_pos[4])]
+        nr_fingers = self.nr_of_fingers_tracking()
+        distances = []
+        
+        # Calculate distances from thumb (index 0) to other fingers (indices 1 to nr_fingers-1)
+        for finger_idx in range(1, nr_fingers):
+            distances.append(SG_math.distance(self._data.fingertips_pos[0], self._data.fingertips_pos[finger_idx]))
+        
+        return distances
     
     def get_fingertip_thimble_dims(self):
         """

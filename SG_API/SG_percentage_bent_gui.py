@@ -5,7 +5,7 @@ Simple GUI to display percentage bent values for flexion and abduction.
 
 Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
 from PySide6.QtCore import Qt, QObject, Signal

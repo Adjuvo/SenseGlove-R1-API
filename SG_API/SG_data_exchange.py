@@ -3,7 +3,7 @@ This can switch which endpoint the data is being read from or written to. Either
 
 Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
 

@@ -452,6 +452,29 @@ def test_fingertips_poss_rots(test_case):
     assert np.allclose(fingertips_rots, test_case['fingertips_rots'])
 
 
+@pytest.mark.parametrize("test_case", test_cases, ids=lambda x: x['name'])
+def test_fingertip_distances(test_case):
+    set_and_update_exo_angles(test_case['exo_angles'])
+
+    distances = SG_main.get_fingertip_distances(hand_id)
+    
+    # Calculate expected distances from thumb (index 0) to other fingers
+    fingertips_poss = test_case['fingertips_poss']
+    thumb_pos = fingertips_poss[0]
+    expected_distances = []
+    
+    # Calculate distances from thumb to each finger (indices 1 to nr_fingers-1)
+    nr_fingers = len(fingertips_poss)
+    for finger_idx in range(1, nr_fingers):
+        finger_pos = fingertips_poss[finger_idx]
+        expected_dist = SG_math.distance(thumb_pos, finger_pos)
+        expected_distances.append(expected_dist)
+    
+    assert len(distances) == len(expected_distances), f"Expected {len(expected_distances)} distances, got {len(distances)}"
+    assert np.allclose(distances, expected_distances, atol=1e-10), \
+        f"Fingertip distances mismatch. Expected: {expected_distances}, Got: {distances}"
+
+
 
 
 

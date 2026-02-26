@@ -5,7 +5,7 @@ These subscribers such as the SG_devices.py then populates the SG_data_exchange.
 
 Questions? Written by:
 - Amber Elferink
-Docs:    https://senseglove.gitlab.io/rembrandt/rembrandt-api
+Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
 
