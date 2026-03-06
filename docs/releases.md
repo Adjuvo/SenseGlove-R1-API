@@ -1,5 +1,10 @@
 # Releases
 
+## v0.0.18
+2026-03-06
+
+Fixed readme's Gitlab instead of Github link, and mentioned 3.11 python support in it.
+
 ## v0.0.17
 - Added support for Python 3.11.
 - Added troubleshooting instructions for WSL (Windows Subsystem for Linux) installs.
