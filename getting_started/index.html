@@ -851,6 +851,7 @@
 <h2 id="supported-python-versions-currently">Supported python versions (currently)</h2>
 <ul>
 <li>python 3.8</li>
+<li>python 3.11</li>
 <li>python 3.12</li>
 </ul>
 <p>We recommend anaconda to install these to manage multiple versions (now or in the future) easily.</p>
@@ -878,19 +879,19 @@
 </li>
 </ol>
 <h4 id="wsl">WSL</h4>
-<p>For Installation on Windows Subsystem for Linux (WSL), so you can run Linux within your Windows OS without dual boot, see Troubleshooting.</p>
+<p>For Installation on Windows Subsystem for Linux (WSL), so you can run Linux within your Windows OS without dual boot, that's possible with minor caveats, see Troubleshooting.</p>
 <h2 id="setup">Setup</h2>
 <p>See <a href="#troubleshooting">Troubleshooting</a> for common errors and issues.
-* Install <strong>python 3.8.x</strong> or <strong>python 3.12</strong>. Use <a href="https://www.python.org/downloads/">Python</a> or <a href="https://www.anaconda.com/download/success">Anaconda</a> (virtual env manager for python, allowing multiple python versions on one pc). 
+* Install one of the supported python versions. Use <a href="https://www.python.org/downloads/">Python</a> or <a href="https://www.anaconda.com/download/success">Anaconda</a> (virtual env manager for python, allowing multiple python versions on one pc). 
 *  <strong>Clone the Repository</strong>
-   <div class="language-bash highlight"><span class="filename">Bash</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://gitlab.com/senseglove/rembrandt-api/
+   <div class="language-bash highlight"><span class="filename">Bash</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Adjuvo/SenseGlove-R1-API
 </span></code></pre></div>
    You can clone this to a subfolder of your project, or run examples directly from the provided API.
 * <strong>Install python packages</strong>
 * Set your python interpreter to your python environment (VScode: Ctrl+Shift+P &gt; Python interpreter). </p>
 <ol>
 <li>
-<p>Run pip install. Make sure it uses the same python environment you are going to run it in!</p>
+<p>pip install, with examples below. Make sure it uses the same python environment you are going to run it in!</p>
 <ol>
 <li>In terminal, navigate to the parent directory of <code>SG_API</code> (where the setup.py file is).
 <div class="language-bash highlight"><span class="filename">Bash</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>SenseGlove-R1-API
