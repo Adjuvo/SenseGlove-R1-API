@@ -6,6 +6,7 @@
 ## Supported python versions (currently)
 
 - python 3.8
+- python 3.11
 - python 3.12
 
 We recommend anaconda to install these to manage multiple versions (now or in the future) easily.
@@ -34,14 +35,14 @@ To allow non-root access to the Rembrandt device over USB, you need to add a cus
         sudo udevadm control --reload-rules && sudo udevadm trigger
 
 #### WSL
-For Installation on Windows Subsystem for Linux (WSL), so you can run Linux within your Windows OS without dual boot, see Troubleshooting.
+For Installation on Windows Subsystem for Linux (WSL), so you can run Linux within your Windows OS without dual boot, that's possible with minor caveats, see Troubleshooting.
 
 ## Setup
 See [Troubleshooting](#troubleshooting) for common errors and issues.
-* Install **python 3.8.x** or **python 3.12**. Use [Python](https://www.python.org/downloads/) or [Anaconda](https://www.anaconda.com/download/success) (virtual env manager for python, allowing multiple python versions on one pc). 
+* Install one of the supported python versions. Use [Python](https://www.python.org/downloads/) or [Anaconda](https://www.anaconda.com/download/success) (virtual env manager for python, allowing multiple python versions on one pc). 
 *  **Clone the Repository**
    ```bash
-   git clone https://gitlab.com/senseglove/rembrandt-api/
+   git clone https://github.com/Adjuvo/SenseGlove-R1-API
    ```
    You can clone this to a subfolder of your project, or run examples directly from the provided API.
 * **Install python packages**
@@ -50,7 +51,7 @@ See [Troubleshooting](#troubleshooting) for common errors and issues.
 
 
     
-2. Run pip install. Make sure it uses the same python environment you are going to run it in!
+2. pip install, with examples below. Make sure it uses the same python environment you are going to run it in!
 
 
     1. In terminal, navigate to the parent directory of `SG_API` (where the setup.py file is).

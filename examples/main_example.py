@@ -36,7 +36,8 @@ gui.show()
 
 try: 
     """
-        Develop without a physical glove? Switch SG_T.Com_type.REAL_GLOVE_USB to SG_T.Com_type.SIMULATED_GLOVE. Or use play_recording.py for actual glove recordings. 
+        Develop without/with a physical glove? Switch SG_T.Com_type.REAL_GLOVE_USB to SG_T.Com_type.SIMULATED_GLOVE or vice versa. 
+        Or use play_recording.py for an example playing actual glove recordings. 
         Simulation_Mode = ignored for the real glove, but can set movement for the simulated glove.
         wait_for_x_gloves = nr of gloves it waits on before continuing from this line. 
     """
