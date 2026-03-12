@@ -39,6 +39,7 @@ For Installation on Windows Subsystem for Linux (WSL), so you can run Linux with
 
 ## Setup
 See [Troubleshooting](#troubleshooting) for common errors and issues.
+
 * Install one of the supported python versions. Use [Python](https://www.python.org/downloads/) or [Anaconda](https://www.anaconda.com/download/success) (virtual env manager for python, allowing multiple python versions on one pc). 
 *  **Clone the Repository**
    ```bash

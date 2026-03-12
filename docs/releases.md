@@ -1,5 +1,15 @@
 # Releases
 
+## v0.0.20
+2026-03-12
+
+Fixed serial number >= 60 having connection issues.
+
+## v0.0.19
+2026-03-06
+
+Small readme alignment update
+
 ## v0.0.18
 2026-03-06
 
