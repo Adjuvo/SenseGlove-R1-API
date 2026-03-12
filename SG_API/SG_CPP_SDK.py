@@ -356,7 +356,7 @@ def get_exo_type_from_device_connect(device_id : int):
         return SG_T.Exo_linkage_type.REMBRANDT_PROTO_03
     elif device_id >= 40 and device_id < 50:
         return SG_T.Exo_linkage_type.REMBRANDT_PROTO_04
-    elif device_id >= 50 and device_id < 60:
+    elif device_id >= 50:
         return SG_T.Exo_linkage_type.REMBRANDT_PROTO_05
     else:
         raise RuntimeError("Device ID not in the range defining exoskeletons")
