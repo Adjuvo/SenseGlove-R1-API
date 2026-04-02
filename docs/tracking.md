@@ -95,3 +95,33 @@ The following image defines the angles in a common configuration.
 
 ![exo_angles](images/exo_angles.png) 
 
+
+# Tracking specs
+40 (5 fingers x 8 sensors) rotary hall effect sensors enable robust tracking of all five fingers, providing millimeter level precision at the fingertips and along each phalanx. Data can be retrieved from software in the following formats: fingertip position/rotations, exoskeleton rotations/positions, and percentage bents.
+
+![alt text](images/tracking_options.png)
+     
+For further tracking possibilities and tracking definitions [see the docs](./tracking.md).
+
+| **Tracking error**                        | **Error**    |
+| ----------------------------------------- | ------------ |
+| **Average absolute deviation per joint:** | 0,42 degrees |
+| **Max deviation measured in a joint:**    | 3,0 degrees  |
+| **Exo fingertip open finger:**            | up to 3 mm   |
+| **Exo fingertip near closed hand**        | up to 7 mm   |
+
+
+Notes:
+
+-	When using our robot hand mapper algorithm, this compensates for the tracking error resulting in pinch perfect accuracy.
+-	Above values are for aligned exoskeleton linkages in a jig. The exoskeleton can bend sideways which allows for ergonomics of, for example, the ring finger and pinky. This can cause additional deviations in position. 
+-	These values are for a 0.4 prototype. Tolerances improved for 0.5 (version since January 2026), which may result in more accurate tracking.
+
+For further tracking possibilities, measurement conditions and tracking definitions [see the docs](./tracking.md).
+
+## Appendix: Spec measurement conditions 
+The R1 hub, normally strapped around the hand, was screwed to a jig. Four fingers of the exoskeleton were fixed on the jig with the attachments that normally connect them to the glove. This placed all links in the exoskeleton in fixed angles.
+![alt text](images/tracking_measurements.png)
+ This was done at 4 increasingly steep angles (155 degrees, 129 degrees respectively, 100 degrees, and 62 degrees). The experiment was repeated 2 times. The more collapsed the exoskeleton, the lower the error was, due to at what rotation the encoders are calibrated. The errors listed in the table for semi open hand are flexion joint angles: 155 degrees and 129 degrees respectively, and near closed hand flexion joint angles: 100 degrees and 62 degrees respectively.
+ 
+A single 0.4 prototype was used for evaluation. The 0.5 prototype (current version) has better tolerances and may have improved tracking.

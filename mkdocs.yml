@@ -31,8 +31,9 @@ extra_javascript:
 nav:
   - Home: index.md
   - Getting started: getting_started.md
+  - Python getting started: python_getting_started.md
   - Tracking data: tracking.md
-  - Control: control.md
+  - Forces: forces.md
   - Robot hand mapper: robot_hand_mapper.md
   - Simulated glove: simulated_glove.md
   - API Reference: api-reference.md
