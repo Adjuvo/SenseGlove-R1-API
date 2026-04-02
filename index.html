@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#what-is-this" class="md-skip">
+        <a href="#thank-you-for-being-an-early-adopter" class="md-skip">
           Skip to content
         </a>
       
@@ -243,24 +243,6 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -277,47 +259,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#ros-vs-ros2-support" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ROS vs ROS2 support
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-sections" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        📚 Documentation Sections
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -338,6 +279,33 @@
     
   
     Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="python_getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python getting started
   
 
     
@@ -384,14 +352,14 @@
   
   
     <li class="md-nav__item">
-      <a href="control/" class="md-nav__link">
+      <a href="forces/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Control
+    Forces
   
 
     
@@ -505,36 +473,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#ros-vs-ros2-support" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ROS vs ROS2 support
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-sections" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        📚 Documentation Sections
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -550,18 +488,77 @@
 
 
 
-<h1 id="what-is-this">What is this?</h1>
-<p>This is the python API to interface with Rembrandt, an active force feedback glove with precise position tracking made for telerobotics by SenseGlove. With this API you can retrieve tracking data in many formats, and control the active force feedback pulling on the fingers in the glove. </p>
-<blockquote>
-<p>⚠️ <strong>In Development - Please give your feedback!</strong></p>
-<p>Both the product and the API are still under development and are subject to change. If you require certain functionality from the API, we would be happy to receive your feedback!</p>
-</blockquote>
-<h4 id="ros-vs-ros2-support">ROS vs ROS2 support</h4>
-<p>ROS2 is supported. Please let us know if your project requires ROS1. Our current API also supports ROS1, requiring <strong>python 3.8.x</strong>.</p>
+<h1 id="thank-you-for-being-an-early-adopter">Thank You for Being an Early Adopter!</h1>
+<p>Congratulations on being among the first to work with the R1 prototype! We sincerely appreciate your support and initiative in exploring the R1 at this stage. Any suggestions you have are invaluable in refining the system.</p>
+<h1 id="what-can-the-r1-do">What can the R1 do?</h1>
+<h2 id="robot-hand-mapping">Robot hand mapping</h2>
+<p>Quick implementable mapping to:
+- Robot hands with 1DOF per finger: currently supported.
+- Robot hands with 4DOF per finger: planned in May. </p>
+<p>These algorithms remap glove tracking to robot hand values while maintaining accurate robot hand pinches.  </p>
+<p>See <a href="robot_hand_mapper/">Robot hand mapper</a> for more information.</p>
+<h2 id="glove-tracking-data">Glove tracking data</h2>
+<p>40 (5 fingers x 8 sensors) rotary hall effect sensors enable robust tracking of all five fingers, providing millimeter level precision at the fingertips and along each phalanx. Data can be retrieved from software in the following formats: fingertip position/rotations, exoskeleton rotations/positions, and percentage bents.</p>
+<p><img alt="alt text" src="images/tracking_options.png" /></p>
+<table>
+<thead>
+<tr>
+<th><strong>Tracking specs</strong></th>
+<th><strong>Error</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Average absolute deviation per joint:</strong></td>
+<td>0,42 degrees</td>
+</tr>
+<tr>
+<td><strong>Max deviation measured in a joint:</strong></td>
+<td>3,0 degrees</td>
+</tr>
+<tr>
+<td><strong>Exo fingertip open finger:</strong></td>
+<td>up to 3 mm</td>
+</tr>
+<tr>
+<td><strong>Exo fingertip near closed hand</strong></td>
+<td>up to 7 mm</td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
+<ul>
+<li>When using our robot hand mapper algorithm, this compensates for the tracking error resulting in pinch perfect accuracy.</li>
+<li>Above values are for aligned exoskeleton linkages in a jig. The exoskeleton can bend sideways which allows for ergonomics of, for example, the ring finger and pinky. This can cause additional deviations in position. </li>
+<li>These values are for a 0.4 prototype. Tolerances improved for 0.5 (version since January 2026), which may result in more accurate tracking.</li>
+</ul>
+<p>For further tracking possibilities, measurement conditions and tracking definitions <a href="tracking/">see the tracking docs</a>.</p>
+<h2 id="force-feedback">Force feedback</h2>
+<p>The thumb, index, middle and ring finger (excluding pinky) feature Active Force Feedback (AFFB). The AFFB module can provide resistance on the operator’s fingers, simulating the presence of a rigid object in the robot’s grasp – as well as actively pulling force on the fingers, simulating for example an elastic object compressed by the robot hand. The active force feedback can simulate the resistance of a firm grip.</p>
+<p><a href="forces/">See the force docs </a>for more information.</p>
+<h1 id="fps-and-latency">FPS and latency</h1>
+<table>
+<thead>
+<tr>
+<th>FPS<br>(frames per second)</th>
+<th>Up to 1kHz* for single glove, 0.5kHz for two gloves. <br> *depending on CPU specifications</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Latency</strong></td>
+<td>R1-PC one way latency: ~10ms. This is an estimate.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="known-issues">Known issues</h1>
+<h2 id="thumb-tracking-jitter">Thumb tracking jitter</h2>
+<p>Some early prototype gloves (up to May 2026) have occasional tracking glitches, most often noticeable on the thumb. This problem lies in electronics and is solved in future prototypes.
+For these prototype versions, a small median filter is turned on by default. To filter out the remainder, this is best filtered using an additional median filter just before it goes into the robot hand.</p>
 <h4 id="documentation-sections">📚 Documentation Sections</h4>
-<p>🚀 <strong><a href="getting_started/">Getting Started</a></strong> - Installation and basic examples. Read this first!<br />
+<p>🚀 <strong><a href="getting_started/">Getting Started</a></strong> - Supported software, and basic examples. Read this first!<br />
 🎯 <strong><a href="tracking/">Tracking Data</a></strong> - Finger tracking and position data<br />
-⚡ <strong><a href="control/">Control</a></strong> - Force feedback<br />
+⚡ <strong><a href="forces/">Forces</a></strong> - Force feedback and sensors<br />
 🤖 <strong><a href="robot_hand_mapper/">Robot hand mapper</a></strong> - Robot hand mapper, easily map to robot hands.<br />
 📖 <strong><a href="api-reference/">API Reference</a></strong> - Available functions and their docs.</p>
 <p>📦 <strong><a href="releases/">Releases</a></strong> - Changelog of new releases</p>

@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../control/">
+        <link rel="prev" href="../forces/">
       
       
         <link rel="next" href="../simulated_glove/">
@@ -290,6 +290,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../python_getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../tracking/" class="md-nav__link">
         
   
@@ -317,14 +344,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../control/" class="md-nav__link">
+      <a href="../forces/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Control
+    Forces
   
 
     
@@ -464,20 +491,25 @@
 
 
 <h1 id="robot-hand-percentage-bent-mapper">Robot hand percentage bent mapper</h1>
+<p>The robot hand percentage bent (pbent) mapper internally takes the R1 pbent values, and also outputs pbent values. However, it adjusts them to make the robot hand pinch when the user pinches. To do that, there is a one time config calibration to note down the pbent values at which the robot hand pinches.</p>
 <p><code>examples/Robot_hand_mapper_pbent.py</code> is an example where you can map percentage bents to accurate pinches on the robot hand when the glove pinches. </p>
+<p>In this GUI, the green bars are the original R1 percentage bent values.
+The orange bars are the output of the robot pbent algorithm.</p>
 <ul>
-<li>When not pinching it will use the default percentage bent values of the glove.</li>
+<li>When not pinching it will use the default percentage bent values of the glove (green).</li>
 <li>When approaching a pinch, the percentage bent values from the glove (green) will be gradually mapped to the saved robot hand values when the glove detects pinching for a specific finger.</li>
 </ul>
-<p>Create a config similar to the seed hand config with values the robot hand takes for each pinch. </p>
 <p>The robot_hand_mapper_pbent.py has a GUI that shows the updated mapping considering pinches as orange bars.</p>
 <p><img alt="alt text" src="../images/robot_hand_mapper.png" /></p>
 <p>In the image you can see the index + thumb are pinching, and only that value (orange) is adjusted to map to a robot hand pinch.</p>
-<p>The config must contain the values going out to the robot hand. You can use the button below each finger to save that current number to a config file, using also the Save config button at the bottom. Note that the <strong>robot hand</strong> (so not your glove)
- <strong>should be making the pinches</strong> when pressing the button. In the end, via GUI buttons or not, the saved config file must contain the inputs going into the robot hand that result in a robot hand pinch.</p>
-<p>After loading that config, the orange values retreived with <code>robot_flex, robot_abd = SG_main.get_rhm_percentage_bents(hand_id)</code> should give the robot hand accurate pinches when the glove pinches.</p>
+<h1 id="calibrate-your-own-robot-hand">Calibrate your own robot hand</h1>
+<p>Create a config similar to the seed hand config with values the robot hand takes for each pinch.  The config file for this example can be found in <code>SG_API/configs/robot_hand_mapper/</code>. </p>
+<p>The config must contain the values going out to the robot hand. The easiest way to record the pbent values of the robot hand, is to use the glove to control the robot hand to go to a pinch, then note down the values. </p>
+<p>To make this easier, you can use the button below each finger to save that current number to a config file, using also the Save config button at the bottom. Note that the <strong>robot hand</strong> (so not your glove) <strong>should be making the pinches</strong> when pressing the button. In the end, via GUI buttons or not, the saved config file must contain the inputs going into the robot hand that result in a robot hand pinch.</p>
+<p>After loading that config, the orange values retrieved with <code>robot_flex, robot_abd = SG_main.get_rhm_percentage_bents(hand_id)</code> should give the robot hand accurate pinches when the glove pinches.</p>
+<p>Therefore at a pinch, the values in the orange bars should be equal to the percentage bent values filled in the config file.</p>
 <p>Currently we only provide this solution for 1DOF robot finger control via percentage bent.
- To learn how to adjust percentage bents and how they work, see <a href="../tracking/">Tracking</a>.</p>
+To learn how to adjust percentage bents and how they work, see <a href="../tracking/">Tracking</a>.</p>
 
 
 

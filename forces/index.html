@@ -9,6 +9,10 @@
       
       
       
+        <link rel="prev" href="../tracking/">
+      
+      
+        <link rel="next" href="../robot_hand_mapper/">
       
       
         
@@ -19,7 +23,7 @@
     
     
       
-        <title>Why is my glove force jittering? Tips to improve it - SenseGlove Rembrandt API docs</title>
+        <title>Forces - SenseGlove Rembrandt API docs</title>
       
     
     
@@ -74,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#why-is-my-glove-force-jittering-tips-to-improve-it" class="md-skip">
+        <a href="#forces" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Why is my glove force jittering? Tips to improve it
+              Forces
             
           </span>
         </div>
@@ -337,10 +341,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../forces/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Forces
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -356,6 +387,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#active-force-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Active force control
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-force-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing force control
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#force-sensor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Force sensor
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -461,6 +545,47 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#active-force-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Active force control
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-force-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing force control
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#force-sensor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Force sensor
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -476,61 +601,131 @@
 
 
 
-<h1 id="why-is-my-glove-force-jittering-tips-to-improve-it">Why is my glove force jittering? Tips to improve it</h1>
-<p>Active haptic feedback (motorized feedback) of the glove works by getting the tracking data, then sending a force back to the glove based on that tracking data. Now there will always be a tiny bit of delay between those. If that delay becomes larger than a few ms, you get the problem where the force isn't engaged fast enough to respond to the movements, and that <strong>will result in instability (jittering), usually on/near contact</strong>.</p>
-<p>You can fix this in a couple of ways.</p>
-<ol>
-<li>First, make sure your commanded forces look smooth over time. You can use Teleplot (VScode extension) to quickly plot this. </li>
-</ol>
-<p>If not, be careful with filtering for latency. Plot the filtered in one plot with the original signal so you can see the caused latency. Latency can also cause instability, so keep it to a minimum.</p>
-<p>If the input smooth, some further options:</p>
+<h1 id="forces">Forces</h1>
+<h2 id="active-force-control">Active force control</h2>
+<p>The thumb, index, middle and ring finger feature Active Force Feedback (AFFB). The AFFB module can provide resistance on the operator’s fingers, simulating a rigid object in the robot’s grasp – as well as actively pulling force on the fingers, simulating for example an elastic object compressed by the robot hand. The active force feedback can simulate the resistance of a firm grip.</p>
+<table>
+<thead>
+<tr>
+<th><strong>Limits</strong></th>
+<th><strong>Weight equivalents</strong></th>
+<th><strong>Force (N)</strong></th>
+<th><strong>Context</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Min force  (default wire tension)</strong></td>
+<td>~20 gram force</td>
+<td>0.2 N</td>
+<td>Force goal set in firmware to keep tension</td>
+</tr>
+<tr>
+<td><strong>Max force resisting the finger<br></strong>(higher should not break the glove, but it pulls through the motor.)</td>
+<td>~2.5 kg force</td>
+<td>25 N</td>
+<td>Pulling on the wire with max motor force enabled, with a PCE-DFG N 200 Force gauge.</td>
+</tr>
+<tr>
+<td><strong>Max force actively pulling finger (until stall):</strong></td>
+<td>~350 gram force</td>
+<td>3.5 N</td>
+<td>R1 force module ramping motor (0 to 100 PWM over 30 seconds) pulling on a stationary calibrated 5kg loadcell.</td>
+</tr>
+<tr>
+<td><strong>Software minimum force goal recommendation:</strong></td>
+<td>20 gram force</td>
+<td>200 mN</td>
+<td>If set lower, it is clamped internally</td>
+</tr>
+<tr>
+<td><strong>Software maximum force goal recommendation:</strong></td>
+<td>2.0 kg force</td>
+<td>20000 mN</td>
+<td>Scale this to achieve the desired feedback (so its stiff for stiff objects, squishy for squishy objects, while it’s stable). Please see the documentation for tips. Setting it higher will not break the glove.</td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
 <ul>
-<li>Increasing the FPS (frames/second) of the data and reducing the latency between the glove's position update given and force received. </li>
-<li>Lower the forces</li>
-<li>Reduce how quickly the force responds (for example with a low pass filter, dampening, or a controller on top). This will smooth the signal and cause a more gradual buildup/reduction of force.</li>
+<li>With prolonged high forces (full force 15 minutes), internal temperature sensors may activate overheat protection, disabling force feedback for a finger temporarily to cool down.</li>
+<li>The forces listed are tension forces in the wire pulling the finger back, not the force on fingertips. For fingertip forces in a stretched hand, the force on the fingertips is approximately 1/2 the wire tension force, depending on hand size. For bent fingers, it becomes less. This conversion will be available in software later this year.</li>
+<li>Due to control settings to ensure stability, and hysteresis in sensing, deviations may occur between the set goal and final force on the wire.
+To counter these limitations, we encourage scaling up the force goals experimentally until the desired sensation is achieved.</li>
 </ul>
-<p>Fixing this with the third option might cause:
-- A solid surface to feel more squishy instead of solid. (Due to less sudden force changes.)
-- Less transparency on no forces (meaning how much you feel the force when there should be no force at all).</p>
-<h1 id="how-to-measure-data-rates">How to measure data rates</h1>
-<h2 id="fps-frames-per-second">FPS (frames per second)</h2>
-<p>Our API logs the update rate to the log files. So you can check those in <code>Rembrandt_API/logs/</code>. Or alternatively, use the SG_FPS script to quickly log your FPS at a certain point in your code.
-<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">SG_API</span><span class="w"> </span><span class="kn">import</span> <span class="n">SG_FPS</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">fps_my_function</span> <span class="o">=</span> <span class="n">SG_FPS</span><span class="o">.</span><span class="n">FPSCounter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;my_function&quot;</span><span class="p">)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">():</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">global</span> <span class="n">fps_my_function</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">fps_my_function</span><span class="o">.</span><span class="n">update</span><span class="p">()</span> <span class="c1">#updates, and every 1.0 seconds prints my_function FPS</span>
+<h2 id="implementing-force-control">Implementing force control</h2>
+<p>In the <code>main_example.py</code>, this how to set a force:
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="sd">            Forces: switch on or off by commenting/uncommenting</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="sd">            &quot;&quot;&quot;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>            <span class="n">forces</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]</span>   <span class="c1"># means you set all fingers to 1000mN</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>            <span class="n">SG_main</span><span class="o">.</span><span class="n">set_force_goals</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span> <span class="n">forces</span><span class="p">)</span>
 </span></code></pre></div></p>
-<h1 id="what-works-to-keep-glove-data-1khz">What works to keep glove data &gt;1kHz.</h1>
-<h2 id="our-data-uses-1khz-callbacks-but-your-code-can-slow-it-down">Our data uses &gt;1kHz callbacks, but your code can slow it down!</h2>
-<p>Data in our API comes in through callbacks when new data is received. These are fast, but only if your program doesn't steal their processing time!</p>
-<h2 id="dont-use-busy-while-loops">Don't use busy while loops</h2>
-<p><div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">while</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="c1">#do something, or nothing</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">pass</span>
-</span></code></pre></div>
-This is a busy while loop. While it looks like it shouldn't do anything, this eats up all CPU power of the program, meaning the callbacks of the data will no longer be called at 1kHz. It can get as bad as only receiving data at 50 Hz.</p>
-<p><div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">while</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="c1">#do something, or nothing</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># sleep 1 second</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="k">pass</span>
-</span></code></pre></div>
-This is a non-busy while loop. During this sleep time other parts of the program are allowed to execute, such as the data callbacks needed at 1kHz.
-Don't reduce this sleep time too much or it will become a more and more busy while loop.</p>
-<p>We recommend instead of using a while loop yourself, to use <code>SG_main.keep_program_running()</code>. This internally uses this while loop system to keep the program alive, but also allows closing down smoothly with Ctrl+C, and still allow high data callbacks.</p>
-<h2 id="making-things-faster-in-python">Making things faster in python</h2>
-<p>We recommend VTune by Intel to profile your code to find the parts taking the longest. </p>
-<h3 id="threading-vs-multiprocessing-should-you-use-it">Threading vs multiprocessing, should you use it?</h3>
-<p>Threading in python works very different from in other programs. Even with threading, only one block of python can run at a time, so it is not parallel. However, I/O or C++ calls can run simultaneously with a python thread. So good for C++/file writing, but for pure python nothing will actually run in parallel, only sequential, AND it add an overhead, so is often slower.</p>
-<p>Multiprocessing in python is true parallelism, but harder to implement, and a lot of overhead on making the actual threads.</p>
-<h2 id="dont-put-too-much-processing-in-the-new_data_callback">Don't put too much processing in the new_data_callback</h2>
-<p>If you do, that obviously causes it to be slower, and the callback not to be called often enough. So improve your code performance by profiling if that's an issue. What helped for us it to move computationally heavy things to CPP and call them from python.</p>
-<h2 id="print-can-reduce-fps">print() can reduce fps</h2>
-<p>Don't call them continuously in the main update loop, only print every few seconds.</p>
+<p><a href="../api-reference/#SG_API.SG_main.set_force_goals">set_force_goals()</a> accepts a list with one force goal per finger (in milliNewtons) and is sent to the glove, which will from then on be the new force goal in a control loop on the glove itself rotating the motor. The force is measured where the wire is retracted by the motor as the tension on the wire. When the force is set to 0, it keeps a minimal tension of ~80 grams (=800 mN) on the wire to prevent it from getting slack, allowing the finger to move as free as possible.</p>
+<p>The forces will be sent, together with any vibrations, at the end of the new_data_callback. This means the latest forces set at that moment will then be transferred to the glove.</p>
+<p>Notes: </p>
+<ul>
+<li>The final force on the wire might differ from the force goal requested to allow stable control. Scale up the forces if necessary.</li>
+<li>The milliNewtons are the tension in the wire pulling the finger back.</li>
+<li>The pinky does not have a force feedback motor, so is not controllable.</li>
+</ul>
+<h2 id="force-sensor">Force sensor</h2>
+<p>Each AFFB module (thumb to ringfinger) is equipped with a force sensor, allowing for robot operation and imitation learning leveraging not only precise finger motion data, but also grasp force data. It is measured in the force module, where the wire is retracted in the hub of the hand. For optimal results, combine R1 gloves with robot hands featuring force sensing – either through current measurements or dedicated force sensors.</p>
+<table>
+<thead>
+<tr>
+<th><strong>Limits</strong></th>
+<th><strong>Weight equivalents</strong></th>
+<th><strong>Forces (in N, or % of applied load)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Max force measurable:</strong></td>
+<td>~2 kg</td>
+<td>20 N</td>
+</tr>
+<tr>
+<td><strong>Mean absolute error</strong></td>
+<td>91 grams</td>
+<td>0.9 N</td>
+</tr>
+<tr>
+<td><strong>Max error (95% CI)</strong></td>
+<td>265 grams</td>
+<td>2.6 N</td>
+</tr>
+<tr>
+<td><strong>Repeatability</strong></td>
+<td></td>
+<td>4.4%      (typical: median) +-13.3% (max error 95% interval)</td>
+</tr>
+<tr>
+<td><strong>Frame-by-frame noise</strong></td>
+<td></td>
+<td>1.38%     (typical: median)+-4.1% (max error: 95% interval)</td>
+</tr>
+<tr>
+<td><strong>Resolution sensor<br></strong>(smallest detectible change)</td>
+<td>~ 1 gram</td>
+<td>0.01 N</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="alt text" src="../images/force_error2.png" /></p>
+<p>This average and max error is mostly due to hysteresis. This means that error is only noticeable as difference between increasing pressure and releasing pressure. When increasing pressure with the same force repeatedly, this is usually repeatable within 4.4%, and frame-by-frame noise is normally &lt;2% of applied load.</p>
+<h1 id="appendix-measurement-conditions">Appendix: Measurement conditions</h1>
+<p>20 R1 force feedback modules without exoskeleton were mounted on a loadcell one by one. The wire was pulled manually, multiple times with a smooth motion, and multiple times with irregular jittery motion, until a force over 20N was obtained before releasing it with similar motion back to 0.</p>
+<p>Example calibration for a single force module.
+<img alt="force_calibration_hysteresis_curve" src="../images/force_calibration_curve.png" /></p>
+<p>This shows an example calibration of a module as used internally. Hysteresis is present, shown with the blue and red lines. Sensor values between 50 and 4000 are used to fit the curve. The measured raw sensor values are mapped to newtons using the resulting green curve. The resulting values are used in control and that can be read from the software.
+For calculating errors, we measured in the range of values that would be used: no raw sensor data limits, but any data above 20N was discarded.</p>
+<h2 id="calculating-the-overall-error">Calculating the overall error</h2>
+<p>The measured sensor values, converted to Newtons with green line, were compared to the loadcells ground truth values. The absolute averages of these errors, and 95% confidence intervals (CI) were calculated over data from all modules. From this the main plot was plotted.</p>
+<h2 id="repeatability-and-frame-by-frame-variation">Repeatability and frame-by-frame variation</h2>
+<p>These were measured from one force feedback module, hanging 5 different weights (28g, 413g, 816g, 1618g, 1908g) on the wire. These were hanged manually: a few times gently, and a few times suddenly dropped, see the raw measurements below. The stable areas were isolated automatically by looking at percentages around the desired weight and skipping the first 200ms of the weight being reached. To calculate repeatability, the mean values between different hangs were compared to calculate the 95% CI. To calculate the frame-by-frame variation, the |previous - current| force was measured for all frames within a hang. 95% range was then taken over those values from all hangs.</p>
+<p><img alt="force_repeatability_measurements" src="../images/force_repeatablity_measurements.png" /></p>
+<p>To display these the main figure these CI’s were then plotted around the median value.</p>
 
 
 

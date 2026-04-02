@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../getting_started/">
+        <link rel="prev" href="../python_getting_started/">
       
       
-        <link rel="next" href="../control/">
+        <link rel="next" href="../forces/">
       
       
         
@@ -287,6 +287,33 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../python_getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -497,14 +524,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../control/" class="md-nav__link">
+      <a href="../forces/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Control
+    Forces
   
 
     
@@ -859,6 +886,48 @@ The image shows the position locations, and the orientation when multiplying the
 </ul>
 <p>The following image defines the angles in a common configuration.</p>
 <p><img alt="exo_angles" src="../images/exo_angles.png" /> </p>
+<h1 id="tracking-specs">Tracking specs</h1>
+<p>40 (5 fingers x 8 sensors) rotary hall effect sensors enable robust tracking of all five fingers, providing millimeter level precision at the fingertips and along each phalanx. Data can be retrieved from software in the following formats: fingertip position/rotations, exoskeleton rotations/positions, and percentage bents.</p>
+<p><img alt="alt text" src="../images/tracking_options.png" /></p>
+<p>For further tracking possibilities and tracking definitions <a href="./">see the docs</a>.</p>
+<table>
+<thead>
+<tr>
+<th><strong>Tracking error</strong></th>
+<th><strong>Error</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Average absolute deviation per joint:</strong></td>
+<td>0,42 degrees</td>
+</tr>
+<tr>
+<td><strong>Max deviation measured in a joint:</strong></td>
+<td>3,0 degrees</td>
+</tr>
+<tr>
+<td><strong>Exo fingertip open finger:</strong></td>
+<td>up to 3 mm</td>
+</tr>
+<tr>
+<td><strong>Exo fingertip near closed hand</strong></td>
+<td>up to 7 mm</td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
+<ul>
+<li>When using our robot hand mapper algorithm, this compensates for the tracking error resulting in pinch perfect accuracy.</li>
+<li>Above values are for aligned exoskeleton linkages in a jig. The exoskeleton can bend sideways which allows for ergonomics of, for example, the ring finger and pinky. This can cause additional deviations in position. </li>
+<li>These values are for a 0.4 prototype. Tolerances improved for 0.5 (version since January 2026), which may result in more accurate tracking.</li>
+</ul>
+<p>For further tracking possibilities, measurement conditions and tracking definitions <a href="./">see the docs</a>.</p>
+<h2 id="appendix-spec-measurement-conditions">Appendix: Spec measurement conditions</h2>
+<p>The R1 hub, normally strapped around the hand, was screwed to a jig. Four fingers of the exoskeleton were fixed on the jig with the attachments that normally connect them to the glove. This placed all links in the exoskeleton in fixed angles.
+<img alt="alt text" src="../images/tracking_measurements.png" />
+ This was done at 4 increasingly steep angles (155 degrees, 129 degrees respectively, 100 degrees, and 62 degrees). The experiment was repeated 2 times. The more collapsed the exoskeleton, the lower the error was, due to at what rotation the encoders are calibrated. The errors listed in the table for semi open hand are flexion joint angles: 155 degrees and 129 degrees respectively, and near closed hand flexion joint angles: 100 degrees and 62 degrees respectively.</p>
+<p>A single 0.4 prototype was used for evaluation. The 0.5 prototype (current version) has better tolerances and may have improved tracking.</p>
 
 
 
