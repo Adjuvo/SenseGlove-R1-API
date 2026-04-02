@@ -1,5 +1,12 @@
 # Releases
 
+## v0.0.21
+2026-04-02
+
+- Improved docs: Getting started, force control, and added spec sheet information.
+- Turned on tracking median filter by default.
+
+
 ## v0.0.20
 2026-03-12
 

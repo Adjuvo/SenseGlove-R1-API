@@ -6,6 +6,7 @@ Questions? Written by:
 - Amber Elferink
 
 Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
+
 Support: https://www.senseglove.com/support/
 
 """

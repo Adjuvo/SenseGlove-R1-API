@@ -149,7 +149,7 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         if self.communication_type == SG_T.Com_type.SIMULATED_GLOVE:
             self._data.exo_angles_rad_filtered = raw_exo_angles
         elif self.communication_type == SG_T.Com_type.REAL_GLOVE_USB:
-            self._data.exo_angles_rad_filtered = raw_exo_angles#self.exo_angles_median_filter.update(raw_exo_angles)
+            self._data.exo_angles_rad_filtered = self.exo_angles_median_filter.update(raw_exo_angles)
         
        # print("exo_angles_rad " + sg_logger.nested_array_to_str(self._data.exo_angles_rad))
         self._data.exo_joints_poss, self._data.exo_joint_rots = SG_exo_dimensions.get_exo_joints_poss_rots(self.get_exo_type(), self.handedness, self._data.exo_angles_rad_filtered)
