@@ -259,7 +259,7 @@ class Class_SGLogger_use_singleton:
         else:
             console_msg = console_log_msg
         if level >= self.console_level:
-            print("SG_API: " + console_msg)
+            print("SG_API: " + console_msg, flush=True)
         if self.log_to_file:
             # Remove colors for file output
             level_name_plain = self.LEVEL_NAMES.get(level, str(level)).upper().ljust(17)
@@ -354,7 +354,7 @@ class Class_SGLogger_use_singleton:
             
             # Print directly
             if level >= self.console_level:
-                print("SG_API: " + colored_bundled_log)
+                print("SG_API: " + colored_bundled_log, flush=True)
             if self.log_to_file:
                 # Write to file without colors
                 level_name_plain = self.LEVEL_NAMES.get(level, str(level)).upper().ljust(17)

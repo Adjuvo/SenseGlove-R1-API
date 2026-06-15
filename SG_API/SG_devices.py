@@ -22,9 +22,10 @@ from . import SG_RB_buffer
 from . import SG_simulator as SG_sim
 from . import SG_callback_manager as SG_cb
 from . import SG_FPS
+#from . import SG_recorder
 
 from . import SG_data_exchange as SG_data
-from . import SG_median_filter
+from . import SG_filter
 
 import math
 import numpy as np
@@ -50,6 +51,7 @@ class SG_IDevice_Internal:
         self.firmware_version = firmware_version
         self.communication_type = communication_type
         self.buffers = buffer
+
 
         
 
@@ -97,6 +99,9 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         self.callback_fps_updated_data = SG_FPS.FPSCounter(1.0, "update_data_device_" + str(device_info.device_id) + " FPS", sg_logger.USER_INFO)
         self._device_id = device_info.device_id
         self._device_info = device_info
+        #self.raw_recorder = SG_recorder.GloveCsvRecorder(self._device_info)
+        self.writing_recording = False
+        #self.filtered_recorder = SG_recorder.GloveCsvRecorder(self._device_info)
 
         # Create buffers first
         self.buffer = SG_RB_buffer.create_buffer(device_info)
@@ -113,13 +118,14 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
                                      communication_type=self._data.device_info.communication_type, 
                                      buffer=self.buffer)
         
-        #TODO: also for rotations, preferably from the same function
-        self._data.exo_joints_poss = SG_exo_dimensions.get_default_exo_poss(device_info)
+        self._data.exo_joints_poss, self._data.exo_joint_rots = (
+            SG_exo_dimensions.get_default_exo_poss_rots(device_info)
+        )
         
         self.set_percentage_bent_vars()
-        # Initialize median filter for exo_angles with default window size of 5
-        self.exo_angles_median_filter = SG_median_filter.ExoAnglesMedianFilter(window_size=5)
-
+        # ExoAnglesMedianFilter applies MedianFilter per joint across the full glove structure
+        #self.exo_angles_filter = SG_filter.ExoAnglesMedianFilter(window_size=5)
+        self.exo_angles_filter = SG_filter.ExoAnglesFilterSuspicion(window_size=5)
         self.flex_angles = []
         self.abd_angles = []
 
@@ -142,14 +148,16 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
     def update_data(self):
         # Get raw exo angles data
         raw_exo_angles = SG_data.get_exo_angles_rad(self._device_info)
-
+        
+        
         #print("SG_device-raw_exo_angles: " + sg_logger.nested_array_to_str(raw_exo_angles))
+        
 
         # # Apply median filter to reduce noise
-        if self.communication_type == SG_T.Com_type.SIMULATED_GLOVE:
-            self._data.exo_angles_rad_filtered = raw_exo_angles
-        elif self.communication_type == SG_T.Com_type.REAL_GLOVE_USB:
-            self._data.exo_angles_rad_filtered = self.exo_angles_median_filter.update(raw_exo_angles)
+
+        self._data.exo_angles_rad_filtered = self.exo_angles_filter.update(raw_exo_angles)
+
+        #self.raw_recorder.update_manually(raw_exo_angles, self._data.exo_angles_rad_filtered)
         
        # print("exo_angles_rad " + sg_logger.nested_array_to_str(self._data.exo_angles_rad))
         self._data.exo_joints_poss, self._data.exo_joint_rots = SG_exo_dimensions.get_exo_joints_poss_rots(self.get_exo_type(), self.handedness, self._data.exo_angles_rad_filtered)
@@ -163,40 +171,27 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         SG_cb.on_new_rembrandt_data.call_all(self._device_id)
         #self.callback_fps_updated_data.update()
 
+          
         if not _shutdown_in_progress:
             SG_data.send_haptic_data(self._device_info) # bundle latest vibro + force data and send to glove
 
 
-    def get_exo_angles_rad(self) -> SG_T.Sequence[Sequence[Union[int, float]]]:
+    def get_exo_angles_rad_filtered(self) -> SG_T.Sequence[Sequence[Union[int, float]]]:
         """
         returns: [[]]. outer array: 5 fingers, thumb to pinky. #inner array: 8 angles of the exoskeleton in radians (note the first one is perpendicular, for finger splay), proximal to distal
         """
-        return self._data.exo_angles_rad
+        return self._data.exo_angles_rad_filtered
+
+    def get_exo_angles_rad_raw(self) -> SG_T.Sequence[Sequence[Union[int, float]]]:
+        return self._data.exo_angles_rad_raw
     
     def get_exo_angles_deg(self) -> SG_T.Sequence[Sequence[Union[int, float]]]:
-        rads = self.get_exo_angles_rad()
+        rads = self.get_exo_angles_rad_filtered()
         angles_deg = SG_math.to_clamped_degrees(rads)
         return angles_deg.tolist()
     
     
-    def debug_median_filter(self, finger_idx: int = 0, angle_indices=None, verbose: bool = False):
-        """
-        Print debugging information for the median filter.
-        
-        Args:
-            finger_idx (int): Index of finger to debug (0=thumb, 1=index, etc.)
-            angle_indices (list, optional): Specific angle indices to print. If None, prints all.
-            verbose (bool): If True, prints detailed info. If False, prints compact single-line format.
-        
-        Example usage:
-            device.debug_median_filter(0, [4])  # Debug angle 4 for thumb (compact)
-            device.debug_median_filter(0, [4], verbose=True)  # Debug angle 4 for thumb (detailed)
-        """
-        if verbose:
-            self.exo_angles_median_filter.print_debug_info_verbose(finger_idx, angle_indices)
-        else:
-            self.exo_angles_median_filter.print_debug_info(finger_idx, angle_indices)
-    
+
     # outer array: 5 fingers, thumb to pinky. Each 
     def get_forces_sensed(self) -> SG_T.Sequence[Union[int, float]]: 
         """
@@ -378,11 +373,11 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
             # - Abduction: direct from exo angles
             # - Flexion: direct from exo angles, summed.
             # Extract flexion angles by 'summing' all of the angles.
-            nr_fingers = len(self._data.exo_angles_rad)
+            nr_fingers = len(self._data.exo_angles_rad_filtered)
             
             flex_angles_from_fingertips = []
             for finger_idx in range(nr_fingers):
-                finger_angles = np.array(self._data.exo_angles_rad[finger_idx], dtype=float)
+                finger_angles = np.array(self._data.exo_angles_rad_filtered[finger_idx], dtype=float)
                 flexion_sum = 0
                 for i in range(1, len(finger_angles)):
                     # flexion_sum += wrap_to_pi(finger_angles[i])
@@ -404,7 +399,7 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
             # Extract abduction angles directly from exo joint angles (this works correctly)
             abd_angles_direct = []
             for finger_idx in range(nr_fingers):
-                finger_angles = np.array(self._data.exo_angles_rad[finger_idx], dtype=float)
+                finger_angles = np.array(self._data.exo_angles_rad_filtered[finger_idx], dtype=float)
                 if self.handedness == SG_T.Hand.LEFT:
                     finger_angles[0] = finger_angles[0] * -1
                     # finger_angles[0] = finger_angles[0] * -1
@@ -425,7 +420,7 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
             # Extract abduction angles directly from exo joint angles (this works correctly)
             abd_angles_direct = []
             for finger_idx in range(nr_fingers):
-                finger_angles = np.array(self._data.exo_angles_rad[finger_idx], dtype=float)
+                finger_angles = np.array(self._data.exo_angles_rad_filtered[finger_idx], dtype=float)
                 if self.handedness == SG_T.Hand.LEFT:
                     finger_angles[0] = finger_angles[0] * -1
                     # finger_angles[0] = finger_angles[0] * -1
@@ -497,6 +492,12 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         """
         return self.flex_angles, self.abd_angles
 
+    # def save_recording(self, filename: str):
+    #     self.writing_recording = True
+    #     self.raw_recorder.save_recording(filename)
+    #     print("raw_recording saved at: " + filename)
+    #     pass
+
 
 
 
@@ -546,9 +547,7 @@ def _remove_device(device_id : int):
     if device_id in _active_deviceIds:
         # disable connection TODO
 
-        # Buffers will be cleaned up by Python garbage collection
-
-        
+        SG_RB_buffer.remove_buffer(device_id)
 
         # remove from both lists
         if get_device(device_id) is not None:
@@ -633,7 +632,7 @@ def close_devices():
     # Stop all data update callbacks to prevent overwriting our zero values
     SG_cb.on_data_source_updated.clear()
     
-    for id in _active_deviceIds:
+    for id in list(_active_deviceIds):
         rb_device = get_rembrandt_device(id)
         if rb_device is not None:
             # Set all forces to zero
@@ -641,10 +640,15 @@ def close_devices():
             
             # Set all vibration actuators to off (correct format: 8 actuators, each with [0, 0, 0])
             rb_device.set_vibro_data([[0, 0, 0]] * 8)
+
+            #rb_device.save_recording("test_recording.csv")
             
             # Send the zero values immediately (bypass shutdown flag for this final send)
             SG_data.send_haptic_data(rb_device.get_device_info())
             sg_logger.log("Closing, set force goals to 0 for device " + str(id), level=sg_logger.USER_INFO)
+
+    for id in list(_active_deviceIds):
+        _remove_device(id)
 
 
 

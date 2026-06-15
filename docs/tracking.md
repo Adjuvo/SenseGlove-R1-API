@@ -114,7 +114,7 @@ For further tracking possibilities and tracking definitions [see the docs](./tra
 Notes:
 
 -	When using our robot hand mapper algorithm, this compensates for the tracking error resulting in pinch perfect accuracy.
--	Above values are for aligned exoskeleton linkages in a jig. The exoskeleton can bend sideways which allows for ergonomics of, for example, the ring finger and pinky. This can cause additional deviations in position. 
+-	Above values are for aligned exoskeleton linkages in a jig. The exoskeleton can bend sideways which allows for ergonomics of, for example, the ring finger and pinky. This is not measured, and can cause additional deviations in position. 
 -	These values are for a 0.4 prototype. Tolerances improved for 0.5 (version since January 2026), which may result in more accurate tracking.
 
 For further tracking possibilities, measurement conditions and tracking definitions [see the docs](./tracking.md).

@@ -92,6 +92,7 @@ class Simulation_Mode(Enum):
     SINE_MODE = "sine"
     FINGERS_OPEN_CLOSE = "fingers_open_close"
     CUSTOM_FUNCTION = "custom_function"
+    PLAYBACK_MODE = "playback_mode"
 
 def smoothstep(t):
     """
@@ -154,7 +155,7 @@ class Glove_Simulator:
 
         _angles_deg_single_finger = np.array([0, -15, 45, -90, 120, -100, 90, 90]) 
         angles_rad_single_finger = np.radians(_angles_deg_single_finger)
-        self.starting_angles_rad_hand = np.tile(angles_rad_single_finger, (5, 1))
+        self.starting_angles_rad_hand = np.tile(angles_rad_single_finger, (device_info.nr_fingers_tracking, 1))
         self.set_exo_rad_hand(self.starting_angles_rad_hand.copy())  # Initialize current angles
 
         self.i = 0
@@ -242,6 +243,10 @@ class Glove_Simulator:
         if self.mode == Simulation_Mode.STEADY_MODE:
             # don't change the data, do call the callback update
             SG_cb.on_data_source_updated.call_all(self.device_id, SG_T.Data_Origin.LIVE_TEST_SIM)
+            pass
+
+        if self.mode == Simulation_Mode.PLAYBACK_MODE:
+            #expects an external function to be called to update the angles and callback
             pass
 
         if self.mode == Simulation_Mode.CUSTOM_FUNCTION:
@@ -513,6 +518,8 @@ def _create_glove_sim(device_info : SG_T.Device_Info, mode : Simulation_Mode) ->
         sg_logger.log(f"Created new glove simulator with device_id {device_info.device_id } in mode {mode.value}", level=sg_logger.INFO)
     else:
         glove_sim = _dict_device_id_Live_Test[device_info.device_id ]
+        glove_sim.device_info = device_info
+        glove_sim.device_id = device_info.device_id
         glove_sim.mode = mode
         glove_sim.restart()
         sg_logger.log(f"Restarted existing glove simulator {device_info.device_id } with new mode {mode.value}", level=sg_logger.INFO)
@@ -568,8 +575,9 @@ def stop_all_glove_sims():
     SG_sim.stop_all_glove_sims()
     ```
     """
-    for device_id in _dict_device_id_Live_Test:
+    for device_id in list(_dict_device_id_Live_Test):
         _dict_device_id_Live_Test[device_id].stop()
+    _dict_device_id_Live_Test.clear()
 
 def get_sim(device_id : int):
     """

@@ -116,7 +116,7 @@ Gets called once the data in the internal_devices rembrandt is updated. Data can
 
 
 
-_high_freq_timer_id = SG_timer.create_timer(frequency_hz=2000)
+_high_freq_timer_id = SG_timer.create_timer(frequency_hz=1000)
 
 # Define timer callback - this replaces all the platform-specific code!
 def _on_high_freq_timer(timer_id, missed_events):

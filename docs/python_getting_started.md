@@ -71,24 +71,24 @@ See [Troubleshooting](#troubleshooting) for common errors and issues.
     cd SenseGlove-R1-API
     ```
 
-    Activate your python, and run `pip install -e .` (replace yourEnvironment)
+    Activate your python, and run `pip install .` (replace yourEnvironment)
 
     Example Linux:
 
     ```
     conda activate yourEnvironment
-    pip install -e .
+    pip install .
     ```
     
 
     Example for Windows anaconda. (Windows usually doesn't let you call "conda activate" from anywhere, so this is a workaround:)
     ```
-    %USERPROFILE%/anaconda3/envs/yourEnvironment/python.exe -m pip install -e .
+    %USERPROFILE%/anaconda3/envs/yourEnvironment/python.exe -m pip install .
     ```
 
     If normal python (no anaconda):
     ```bash
-        pip install -e .
+        pip install .
     ```
 
 

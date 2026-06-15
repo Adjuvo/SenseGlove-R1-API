@@ -1,5 +1,19 @@
 # Releases
 
+
+
+## v0.0.22
+2026-06-15
+
+Summary: Improved jitter filter, frames per seconds (FPS) improvements, and a breaking change for simulated gloves.
+
+- New jitter filter that severely reduces jitter. It has less latency than the previous median 5 filter and better performance. Succesfully filters more values and FPS increased significantly.
+- FPS increase for Windows PC's, more than doubling the fps on some pc's.
+- Breaking change for simulated gloves: Simulation_Mode.PLAYBACK_MODE now exists. This should replace STEADY_MODE in situations where you would update the simulation exo_angles yourself, or play a recording. This is so the new_data function doesn't go off twice per sample, reducing the FPS. Make sure you replace it if you have custom scripts updating sim angles where necessary.
+- Better recording implementation, now also supports recording and playback of csv's, and at higher framerates.
+- By default now creates 0.5 prototype exoskeleton instead of a 0.4 for simulated glove, preventing position based mismatches .
+
+
 ## v0.0.21
 2026-04-02
 

@@ -17,3 +17,6 @@ Rembrandt_CPP_SDK/
 # Token files (never commit!)
 tokens/
 *.tok
+
+# VTune profiling results (local only)
+**/vtune_results/

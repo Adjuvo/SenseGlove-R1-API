@@ -26,7 +26,20 @@ from abc import ABC, abstractmethod
 from . import SG_math
 from . import SG_types as SG_T
 
-from typing import Dict, Sequence, Union
+from typing import Dict, List, Sequence, Union
+
+
+# Default exoskeleton joint angles (degrees) per finger: splay + 7 flexion joints.
+DEFAULT_START_ANGLES_DEG = [0, -15, 45, -90, 120, -100, 90, 90]
+
+
+def default_start_angles_rad_single_finger() -> List[float]:
+    return [math.radians(d) for d in DEFAULT_START_ANGLES_DEG]
+
+
+def default_start_angles_rad(nr_fingers: int) -> SG_T.Sequence[Sequence[float]]:
+    single = default_start_angles_rad_single_finger()
+    return [single[:] for _ in range(nr_fingers)]
 
 
 ###################### BASE CLASSES ###########################################################################################################################
@@ -218,13 +231,8 @@ class Exo_finger_dimensions_Base(Exo_dimensions):
     
     
     def get_starting_exo_poss(self) -> SG_T.Sequence[Sequence[SG_T.Vec3_type]]:
-        linkage_lengths = self.get_linkage_lengths()
-        start_pos = np.array(self._FINGER_TO_WRIST_OFFSET)
-        finger_exo_poss = [start_pos]
-        for length in linkage_lengths:
-            next_pos = finger_exo_poss[-1] + np.array([0, length, 0])
-            finger_exo_poss.append(next_pos)
-        return finger_exo_poss # [pos.tolist() for pos in finger_exo_poss] #type: ignore
+        pos_array, _ = self.get_exo_joints_poss_rots(default_start_angles_rad_single_finger())
+        return pos_array
 
 
 
@@ -758,13 +766,28 @@ def get_linkage_lengths(device_info : SG_T.Device_Info) -> SG_T.Sequence[Sequenc
     
 
 
-#TODO: currently returns all links in completely straight line. Make it a different starting orientation.
-def get_default_exo_poss(device_info : SG_T.Device_Info) -> SG_T.Sequence[Sequence[SG_T.Vec3_type]]:
-    exo_dimensions_each_finger = get_exo_obj(device_info.exo_linkage_type, device_info.hand)
-    exo_poss_default = []
-    for finger in range(device_info.nr_fingers_tracking):
-        exo_poss_default.append(exo_dimensions_each_finger[int(finger)].get_starting_exo_poss())
-    return exo_poss_default
+def get_default_exo_poss_rots(
+    device_info: SG_T.Device_Info,
+) -> Tuple[SG_T.Sequence[Sequence[SG_T.Vec3_type]], SG_T.Sequence[Sequence[SG_T.Quat_type]]]:
+    return get_exo_joints_poss_rots(
+        device_info.exo_linkage_type,
+        device_info.hand,
+        default_start_angles_rad(device_info.nr_fingers_tracking),
+    )
+
+
+def get_default_exo_poss_for_hand(
+    hand: SG_T.Hand,
+    nr_fingers: int,
+    exo_linkage_type: SG_T.Exo_linkage_type,
+) -> SG_T.Sequence[Sequence[SG_T.Vec3_type]]:
+    poss, _ = get_exo_joints_poss_rots(exo_linkage_type, hand, default_start_angles_rad(nr_fingers))
+    return poss
+
+
+def get_default_exo_poss(device_info: SG_T.Device_Info) -> SG_T.Sequence[Sequence[SG_T.Vec3_type]]:
+    poss, _ = get_default_exo_poss_rots(device_info)
+    return poss
 
 
 

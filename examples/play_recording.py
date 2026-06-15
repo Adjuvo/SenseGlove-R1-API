@@ -35,6 +35,7 @@ import SG_API.SG_GUI as GUI
 app = GUI.QApplication(sys.argv)
 gui = GUI.UI_Exo_Display_With_PercentageBent()
 gui.show()
+app.processEvents()
 
 
 
@@ -47,27 +48,29 @@ gui.show()
 
 
 try:
-    # Initialize the API
-    SG_main.init(0, SG_T.Com_type.SIMULATED_GLOVE)
-    
     """
-        The recording file should be in the "recordings" folder.
+        The recording file should be in "recordings/" or "internal/recordings/".
     """
-    recording_filename = "percentage_bent_test.json"
+    recording_filename = "finger_close_open.csv"
 
     recording_device_info = SG_recorder.get_device_info(recording_filename)
-    simulator = SG_main.init_rembrandt_sim(recording_device_info.hand, SG_main.SG_sim.Simulation_Mode.STEADY_MODE)
-    
+    if recording_device_info is None:
+        raise ValueError(
+            f"Recording '{recording_filename}' has no metadata. "
+            "Use a JSON recording from record_glove.py, or a CSV (raw_/filtered_ columns)."
+        )
+
+    SG_main.init(0, SG_T.Com_type.SIMULATED_GLOVE)
+
+    recording_device_info.device_id = (9999 if recording_device_info.hand == SG_T.Hand.RIGHT else 9998    )
+    simulator = SG_main.SG_sim.create_glove_sim_device(recording_device_info, SG_main.SG_sim.Simulation_Mode.PLAYBACK_MODE)
     hand_id = simulator.device_id
-    
-
-    exo_poss, rots = SG_main.get_exo_joints_poss_rots(hand_id)
-    gui.create_hand_exo(exo_poss)
-
 
     SG_recorder.play_recording(simulator.device_info, recording_filename, loop=True)
 
 
+    exo_poss, rots = SG_main.get_exo_joints_poss_rots(hand_id)
+    gui.create_hand_exo(exo_poss)
 
     def on_new_data(from_device_id):
         if from_device_id == hand_id:
@@ -83,41 +86,10 @@ try:
             flexion_perc_bents, abduction_perc_bents = SG_main.get_percentage_bents(hand_id)
             gui.update_percentage_bent(flexion_perc_bents, abduction_perc_bents)
 
-            flex_angles, abd_angles = SG_main.get_raw_percentage_bent_angles(hand_id)
-
-            #print(flex_angles, flexion_perc_bents, abd_angles, abduction_perc_bents)
-
-            forces = simulate_forces()
-            #print("forces", forces)
-            #SG_main.set_force_goals(hand_id, forces)
-
     SG_main.subscr_r1_data_callback(on_new_data)
+    SG_recorder.restart_playback()
+    on_new_data(hand_id)
 
-    #---------------------- Generate test forces ----------------------
-    t = 0
-
-    def smoothstep(t):
-        return t * t * (3 - 2 * t)  # Custom easing function
-
-    def simulate_forces():
-        global t
-        dt = 1
-
-        MIN_FORCE_GOAL = 0
-        MAX_FORCE_GOAL = 800
-
-        t += dt * 0.0008  # Keep time increasing normally
-
-        t_normalized = 0.5 * (1 - math.cos(2 * math.pi * t))  
-
-        # Scale the angle to fit between MIN and MAX
-        force = MIN_FORCE_GOAL + smoothstep(t_normalized) * (MAX_FORCE_GOAL - MIN_FORCE_GOAL)
-
-        forces = [force] * SG_main.nr_of_fingers_force(hand_id)
-        return forces
-        
-
-    
     app.exec()
     
     sys.exit()
@@ -129,5 +101,6 @@ except Exception as X:
     print("Exception")
     print(traceback.print_exc())
     quit()
+
 
 

@@ -8,8 +8,12 @@ Questions? Written by:
 Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
-from PySide6.QtCore import Qt, QObject, Signal
+import threading
+
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
+
+from typing import List, Optional, Tuple
 
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QProgressBar,
@@ -17,21 +21,16 @@ from PySide6.QtWidgets import (
 )
 
 
-class DataUpdateSignaler(QObject):
-    """Signal helper for thread-safe GUI updates"""
-    update_display = Signal(list, list)  # flexion, abduction
-
-
 class PercentageBentGUI(QWidget):
     """Simple GUI showing only percentage bent values (no robot mapping)"""
     
     def __init__(self):
         super().__init__()
-        
-        # Create signaler for thread-safe updates
-        self.data_signaler = DataUpdateSignaler()
-        self.data_signaler.update_display.connect(self._update_values)
-        
+
+        # Store updates from the data callback; applied on the exo display timer (main thread).
+        self._update_lock = threading.Lock()
+        self._pending_update: Optional[Tuple[List, List]] = None
+
         self.setWindowTitle("Percentage Bent Display")
         
         main = QVBoxLayout()
@@ -184,11 +183,18 @@ class PercentageBentGUI(QWidget):
             flexion: List of flexion percentage bent values (5 fingers)
             abduction: List of abduction percentage bent values (5 fingers)
         """
-        # Emit signal for thread-safe update
+        with self._update_lock:
+            self._pending_update = (list(flexion), list(abduction))
+
+    def _apply_pending_update(self):
+        with self._update_lock:
+            pending = self._pending_update
+        if pending is None:
+            return
         try:
-            self.data_signaler.update_display.emit(list(flexion), list(abduction))
-        except Exception as e:
-            pass # shutting down gives an error due to C++ object already has been deleted from QT. ignore it.
+            self._update_values(pending[0], pending[1])
+        except Exception:
+            pass  # shutting down gives an error due to C++ object already deleted from QT
     
     def _update_values(self, flexion, abduction):
         """Internal method that actually updates the GUI (runs in main thread)"""
