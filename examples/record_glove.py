@@ -38,7 +38,7 @@ from typing import List, Tuple
 sys.path.append(os.path.abspath('.')) # so it recognizes the SG_API folder
 
 from SG_API import SG_main, SG_types as SG_T 
-from SG_API import SG_recorder
+from SG_API import SG_recorder, SG_sim
 
 # ------------ GUI init ------------------
 import SG_API.SG_GUI as GUI
@@ -64,40 +64,51 @@ try:
     exo_poss, rots = SG_main.get_exo_joints_poss_rots(hand_id)
     gui.create_hand_exo(exo_poss)
 
-    filename = "myfilename.json"
+    replay_device_id = None
+
+    def on_new_data(from_device_id):
+        if replay_device_id is not None:
+            if from_device_id != replay_device_id:
+                return
+        elif from_device_id != hand_id:
+            return
+
+        exo_poss, exo_rots = SG_main.get_exo_joints_poss_rots(from_device_id)
+        gui.update_hand_exo(exo_poss)
+
+        fingertips_poss, fingertips_rots = SG_main.get_fingertips_pos_rot(from_device_id)
+        gui.set_fingertip_points(fingertips_poss, fingertips_rots)
+
+        thimble_dims = SG_main.get_fingertip_thimble_dims(from_device_id)
+        gui.set_fingertip_thimbles(thimble_dims)
+
+        flexion_perc_bents, abduction_perc_bents = SG_main.get_percentage_bents(from_device_id)
+        gui.update_percentage_bent(flexion_perc_bents, abduction_perc_bents)
+
+    SG_main.subscr_r1_data_callback(on_new_data)
+
+    filename = "laying_still_03.csv"
     duration = 10.0
     print("Recording glove data to recordings/" + filename + " for " + str(duration) + " seconds... (Screen is white during recording)")
-    SG_recorder.record_glove_data(hand_id, duration, filename)
+    SG_recorder.record_glove_data(hand_id, duration, filename, pump_events=app.processEvents)
 
     print("device_info: ", SG_main.get_device_info(hand_id))
 
-    simulator = SG_main.init_rembrandt_sim(SG_main.get_handedness(hand_id), SG_main.SG_sim.Simulation_Mode.STEADY_MODE)
+    recording_device_info = SG_recorder.get_device_info(filename)
+    if recording_device_info is None:
+        raise ValueError(f"Recording '{filename}' has no metadata.")
+    recording_device_info.device_id = (
+        9999 if recording_device_info.hand == SG_T.Hand.RIGHT else 9998
+    )
+    simulator = SG_sim.create_glove_sim_device(
+        recording_device_info,
+        SG_sim.Simulation_Mode.PLAYBACK_MODE,
+    )
 
-
-
+    replay_device_id = simulator.device_id
     SG_recorder.play_recording(simulator.device_info, filename, loop=True)
-
-
-
-
-    def on_new_data(from_device_id):
-        if from_device_id == hand_id:
-            exo_poss, exo_rots = SG_main.get_exo_joints_poss_rots(simulator.device_id)
-            gui.update_hand_exo(exo_poss)
-
-            fingertips_poss, fingertips_rots = SG_main.get_fingertips_pos_rot(simulator.device_id)
-            gui.set_fingertip_points(fingertips_poss, fingertips_rots)
-
-            thimble_dims = SG_main.get_fingertip_thimble_dims(simulator.device_id)
-            gui.set_fingertip_thimbles(thimble_dims)
-
-            flexion_perc_bents, abduction_perc_bents = SG_main.get_percentage_bents(simulator.device_id)
-            gui.update_percentage_bent(flexion_perc_bents, abduction_perc_bents)
-            
-            forces = simulate_forces()
-            #SG_main.set_force_goals(hand_id, forces, current_percentage_bent_flexion= (np.array(flexion_perc_bents) * 6.5534).tolist())
-
-    SG_main.subscr_r1_data_callback(on_new_data)
+    SG_recorder.restart_playback()
+    on_new_data(replay_device_id)
 
 
     #---------------------- Generate test forces ----------------------
@@ -139,5 +150,4 @@ except Exception as X:
     print("Exception")
     print(traceback.print_exc())
     quit()
-
 

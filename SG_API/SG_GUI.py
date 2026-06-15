@@ -17,11 +17,13 @@ Support: https://www.senseglove.com/support/
 from __future__ import annotations
 
 import sys
+import signal
 import math
 import numpy as np
 import warnings
 import traceback
-from typing import List, Tuple
+import threading
+from typing import List, Tuple, Optional, Any
 
 import os
 os.environ['QT_LOGGING_RULES'] = 'qt3d.*=true'
@@ -93,11 +95,12 @@ from PySide6.QtWidgets import QApplication as _QApplication, QWidget, QHBoxLayou
 from PySide6.Qt3DCore import Qt3DCore
 from PySide6.Qt3DExtras import Qt3DExtras
 from PySide6.Qt3DRender import Qt3DRender
-from PySide6.QtCore import QTimer, Qt, QMetaObject, QThread
+from PySide6.QtCore import QTimer, Qt, QMetaObject, QThread, QElapsedTimer
 
 from typing import Callable
 from SG_API.SG_logger import sg_logger
 from SG_API import SG_types as SG_T
+from SG_API import SG_exo_dimensions
 
 # Wrap QApplication to check for Qt dependencies before creation
 class QApplication(_QApplication):
@@ -125,6 +128,22 @@ class QApplication(_QApplication):
                     print(f"\nIf you get Qt plugin errors, please install: {install_cmd}\n", file=sys.stderr)
         
         super().__init__(argv if argv is not None else sys.argv)
+
+        # Qt blocks Python signal handling during exec(); timer + SIGINT -> quit()
+        self._ctrl_c_timer = QTimer()
+        self._ctrl_c_timer.timeout.connect(lambda: None)
+        self._ctrl_c_timer.start(200)
+        signal.signal(signal.SIGINT, self._quit_on_ctrl_c)
+
+    def _quit_on_ctrl_c(self, signum, frame):
+        self.quit()
+
+    def exec(self):
+        try:
+            return super().exec()
+        except KeyboardInterrupt:
+            self.quit()
+            return 0
 
 def log_gui_exception(operation_name: str, exception: Exception):
     """Helper function to consistently log GUI exceptions with context"""
@@ -488,7 +507,12 @@ def print_list_entities(entity: Qt3DCore.QEntity, depth=0):
 
 
 class UI_Exo_Display(Qt3DExtras.Qt3DWindow):
-    def __init__(self):
+    def __init__(
+        self,
+        placeholder_hand: SG_T.Hand = SG_T.Hand.RIGHT,
+        placeholder_nr_fingers: int = 5,
+        create_steady_placeholder: bool = True,
+    ):
         super().__init__()
 
         self.lines = []  # store this as a member variable
@@ -519,6 +543,71 @@ class UI_Exo_Display(Qt3DExtras.Qt3DWindow):
         self.exo_poss = None
         self.fingertip_point_poss = None
         self.thimble_dims = None
+        self._embedded_in_widget = True
+        # Data callback may run off the Qt main thread; apply on _gui_update_timer.
+        self._update_lock = threading.Lock()
+        self._pending_exo_poss: Optional[Any] = None
+        self._pending_fingertip_poss: Optional[Any] = None
+        self._pending_fingertip_rots: Optional[Any] = None
+        self._pending_thimble_dims: Optional[Any] = None
+
+        if create_steady_placeholder:
+            self.create_steady_mode_placeholder(placeholder_hand, placeholder_nr_fingers)
+
+    def _destroy_entity(self, entity: Qt3DCore.QEntity):
+        entity.setParent(None)
+        entity.deleteLater()
+
+    def _clear_hand_exo(self):
+        for linkage_sys in self.linkages:
+            for link in linkage_sys.linkages:
+                self._destroy_entity(link.entity)
+        for point in self.fingertip_points:
+            self._destroy_entity(point.entity)
+        if hasattr(self, "fingertip_thimbles"):
+            for thimble in self.fingertip_thimbles:
+                self._destroy_entity(thimble.sphere_entity)
+                self._destroy_entity(thimble.cylinder_entity)
+        self.linkages = []
+        self.fingertip_points = []
+        if hasattr(self, "fingertip_thimbles"):
+            self.fingertip_thimbles = []
+        self.exo_poss = None
+
+    def create_steady_mode_placeholder(
+        self,
+        hand: SG_T.Hand = SG_T.Hand.RIGHT,
+        nr_fingers: int = 5,
+        exo_linkage_type: SG_T.Exo_linkage_type = SG_T.Exo_linkage_type.REMBRANDT_PROTO_05,
+    ):
+        """Show default start pose until create_hand_exo() is called with live data."""
+        self.create_hand_exo(
+            SG_exo_dimensions.get_default_exo_poss_for_hand(hand, nr_fingers, exo_linkage_type)
+        )
+
+    def _request_embedded_repaint(self):
+        if not self._embedded_in_widget:
+            return
+        self.requestUpdate()
+        container = getattr(self, '_window_container', None)
+        if container is not None:
+            container.update()
+
+    def _flush_embedded_render(self, timeout_ms=250):
+        """Let embedded Qt3D finish its first paint before high-frequency data updates."""
+        if not self._embedded_in_widget:
+            return
+        app = QApplication.instance()
+        if app is None:
+            return
+        frame_ms = max(1, 1000 // self.refresh_rate)
+        t = QElapsedTimer()
+        t.start()
+        while t.elapsed() < timeout_ms:
+            self._update_display()
+            self._request_embedded_repaint()
+            app.processEvents()
+            QThread.msleep(frame_ms)
 
     def create_loop_cb(self, ms_between_frames, cb : Callable[[], None]):
         """
@@ -590,7 +679,25 @@ class UI_Exo_Display(Qt3DExtras.Qt3DWindow):
     def nr_fingers(self):
         return len(self.linkages)
 
+    def _can_update_hand_exo(self, initial_exo_poss) -> bool:
+        if self.nr_fingers() != len(initial_exo_poss) or self.nr_fingers() == 0:
+            return False
+        expected_links = len(initial_exo_poss[0]) - 1
+        return len(self.linkages[0].linkages) == expected_links
+
     def create_hand_exo(self, initial_exo_poss, draw_thimbles = False):
+        if self._can_update_hand_exo(initial_exo_poss) and not draw_thimbles:
+            self.exo_poss = initial_exo_poss
+            self._update_exo_display(initial_exo_poss)
+            last_positions = [pos[-1] for pos in initial_exo_poss]
+            for i, pos in enumerate(last_positions):
+                if i < len(self.fingertip_points):
+                    self.fingertip_points[i].set_position(pos)
+            self._request_embedded_repaint()
+            return
+
+        if self.nr_fingers() > 0:
+            self._clear_hand_exo()
         for finger in initial_exo_poss:
             self.create_linkages(finger, 5)
         # Get the last position from each finger's position array
@@ -599,29 +706,46 @@ class UI_Exo_Display(Qt3DExtras.Qt3DWindow):
         if draw_thimbles:
             self.create_fingertips(last_positions, [QQuaternion.fromAxisAndAngle(QVector3D(1, 0, 0), 0)] * len(last_positions), 11)
         self.create_fingertip_points(last_positions, 3)
+        self.exo_poss = initial_exo_poss
+        self._request_embedded_repaint()
+        self._flush_embedded_render()
 
-    
     def update_hand_exo(self, exo_poss):
-        self.exo_poss = exo_poss
+        with self._update_lock:
+            self._pending_exo_poss = exo_poss
 
     def set_fingertip_points(self, fingertip_poss, fingertip_rots):
-        self.fingertip_point_poss = fingertip_poss
-        self.fingertip_point_rots = fingertip_rots
+        with self._update_lock:
+            self._pending_fingertip_poss = fingertip_poss
+            self._pending_fingertip_rots = fingertip_rots
 
     
     
     def set_fingertip_thimbles(self, thimble_dims : List[SG_T.Thimble_dims] ):
         if self.draw_thimbles:
-           self.thimble_dims = thimble_dims
+            with self._update_lock:
+                self._pending_thimble_dims = thimble_dims
+
+    def _apply_pending_gui_updates(self):
+        with self._update_lock:
+            if self._pending_exo_poss is not None:
+                self.exo_poss = self._pending_exo_poss
+            if self._pending_fingertip_poss is not None:
+                self.fingertip_point_poss = self._pending_fingertip_poss
+                self.fingertip_point_rots = self._pending_fingertip_rots
+            if self._pending_thimble_dims is not None:
+                self.thimble_dims = self._pending_thimble_dims
 
     def _update_display(self):
         try:
+            self._apply_pending_gui_updates()
             if self.exo_poss:
                 self._update_exo_display(self.exo_poss)
             if self.fingertip_point_poss:
                 self._update_fingertips(self.fingertip_point_poss)
             if self.thimble_dims and self.draw_thimbles:
                 self._update_fingertip_thimbles(self.thimble_dims)
+            self._request_embedded_repaint()
         except Exception as e:
             log_gui_exception("_update_display", e)
 
@@ -812,21 +936,40 @@ class UI_Exo_Display_With_PercentageBent(QWidget):
         
         # Create 3D exoskeleton display
         self.exo_display = UI_Exo_Display()
-        exo_container = QWidget.createWindowContainer(self.exo_display)
-        main_layout.addWidget(exo_container, 5)  # 3D view gets 75% of space
+        self.exo_container = QWidget.createWindowContainer(self.exo_display, self)
+        self.exo_display._window_container = self.exo_container
+        self.exo_container.setMinimumSize(640, 480)
+        main_layout.addWidget(self.exo_container, 5)  # 3D view gets 75% of space
         
         # Create percentage bent display
         self.perc_bent_gui = PercentageBentGUI()
         self.perc_bent_gui.setMaximumWidth(500)
         main_layout.addWidget(self.perc_bent_gui, 1)  # Percentage bent gets 25%
-        
+        self.exo_display._gui_update_timer.timeout.connect(self.perc_bent_gui._apply_pending_update)
+
         self.setLayout(main_layout)
         self.setGeometry(100, 100, window_width, window_height)
-    
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        if self.exo_display.nr_fingers() > 0:
+            self.exo_display._flush_embedded_render()
+
+    def ensure_exo_rendered(self, timeout_ms=500):
+        """Let embedded Qt3D paint after setup (e.g. after create_hand_exo post-init)."""
+        self.exo_container.hide()
+        self.exo_container.show()
+        self.exo_display._flush_embedded_render(timeout_ms)
+
     # Forward common methods to the 3D display for convenience
     def create_hand_exo(self, exo_poss):
-        return self.exo_display.create_hand_exo(exo_poss)
-    
+        self.exo_display.create_hand_exo(exo_poss)
+        self.ensure_exo_rendered()
+
+    def create_hand_exo_from_device_info(self, device_info: SG_T.Device_Info):
+        """Build the 3D exo in the default start pose for this device (no SG_main.init required)."""
+        return self.create_hand_exo(SG_exo_dimensions.get_default_exo_poss(device_info))
+
     def update_hand_exo(self, exo_poss):
         return self.exo_display.update_hand_exo(exo_poss)
     
@@ -865,27 +1008,37 @@ class DualHandGUI(QWidget):
         
         # ===== LEFT HAND SECTION =====
         # Create 3D display for left hand
-        self.left_gui = UI_Exo_Display()
-        self.left_container = QWidget.createWindowContainer(self.left_gui)
+        self.left_gui = UI_Exo_Display(placeholder_hand=SG_T.Hand.LEFT)
+        self.left_container = QWidget.createWindowContainer(self.left_gui, self)
+        self.left_gui._window_container = self.left_container
         layout.addWidget(self.left_container, 2)
         
         # Create percentage bent display for left hand
         self.left_perc_bent = PercentageBentGUI()
         self.left_perc_bent.setMaximumWidth(400)
+        self.left_gui._gui_update_timer.timeout.connect(self.left_perc_bent._apply_pending_update)
         layout.addWidget(self.left_perc_bent, 1)
         
         # ===== RIGHT HAND SECTION =====
         # Create 3D display for right hand
-        self.right_gui = UI_Exo_Display()
-        self.right_container = QWidget.createWindowContainer(self.right_gui)
+        self.right_gui = UI_Exo_Display(placeholder_hand=SG_T.Hand.RIGHT)
+        self.right_container = QWidget.createWindowContainer(self.right_gui, self)
+        self.right_gui._window_container = self.right_container
         layout.addWidget(self.right_container, 2)
         
         # Create percentage bent display for right hand
         self.right_perc_bent = PercentageBentGUI()
         self.right_perc_bent.setMaximumWidth(400)
+        self.right_gui._gui_update_timer.timeout.connect(self.right_perc_bent._apply_pending_update)
         layout.addWidget(self.right_perc_bent, 1)
         
         self.setLayout(layout)
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        for exo_display in (self.left_gui, self.right_gui):
+            if exo_display.nr_fingers() > 0:
+                exo_display._flush_embedded_render()
 
 
 if __name__ == '__main__':

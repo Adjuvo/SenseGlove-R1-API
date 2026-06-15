@@ -357,8 +357,10 @@ def init():
 ## this is executed for each test. The "yield" means the test is executed in the middle of that.
 @pytest.fixture(autouse=True, scope="function")
 def clean_state_before_test():
+    SG_timer.stop_timer(SG_cb._high_freq_timer_id)
     init()
     yield
+    SG_timer.stop_timer(SG_cb._high_freq_timer_id)
     SG_main.exit()
 
 
@@ -372,6 +374,8 @@ def set_and_update_exo_angles(exo_angles_rad):
     # Trigger simulator update and device update to ensure data is synchronized
     SG_sim.update_all_glove_sims()
     device = SG_devices.get_rembrandt_device(hand_id)
+    # Kinematics golden values are defined for raw joint angles, not filtered output.
+    device.exo_angles_filter.update = lambda angles: [[float(a) for a in finger] for finger in angles]
     device.update_data()
 
 

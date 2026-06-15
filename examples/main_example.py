@@ -42,7 +42,7 @@ try:
         wait_for_x_gloves = nr of gloves it waits on before continuing from this line. 
     """
     wait_for_x_gloves = 1
-    device_ids = SG_main.init(wait_for_x_gloves, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 
+    device_ids = SG_main.init(wait_for_x_gloves, SG_T.Com_type.REAL_GLOVE_USB, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 
     hand_id = device_ids[0]
 
 
@@ -75,9 +75,9 @@ try:
             """
             Forces: switch on or off by commenting/uncommenting
             """
-            forces = [int(f) for f in simulate_forces()]            # gradual on/off forces
+            #forces = [int(f) for f in simulate_forces()]            # gradual on/off forces
             #forces = [1000, 1000, 1000, 1000]                      # means you set all fingers to 1000mN
-            #forces = [0, 0, 0, 0]                                    # no force. 
+            forces = [0, 0, 0, 0]                                    # no force. 
 
             SG_main.set_force_goals(hand_id, forces)
 

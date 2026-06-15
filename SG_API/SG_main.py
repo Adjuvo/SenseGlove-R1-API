@@ -64,22 +64,32 @@ def init(wait_for_x_gloves : int, com_type : SG_T.Com_type, SIMULATION_MODE : SG
     If you choose to set it to 0, you can use the `add_on_connected_callback()` function to capture the device_id on connection, or retrieve the device_ids with `get_device_ids()`, `get_right_hand_deviceid()`, `get_left_hand_deviceid()` after a connection.
     """
     SG_cb.running = True
+    SG_devices._shutdown_in_progress = False
 
     #Logging
     sg_logger.enable_file_logging(datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "-SG_API.log")
     sg_logger.set_console_level(sg_logger.WARNING)
 
     def log_uncaught_exceptions(exctype, value, tb):
+        if issubclass(exctype, KeyboardInterrupt):
+            try:
+                from PySide6.QtWidgets import QApplication
+                app = QApplication.instance()
+                if app is not None:
+                    app.quit()
+            except Exception:
+                pass
+            raise SystemExit(0)
         tb_str = ''.join(traceback.format_exception(exctype, value, tb))
         sg_logger.log("Uncaught exception:\n", tb_str, level=sg_logger.CRITICAL)
-        
+
     sys.excepthook = log_uncaught_exceptions
 
 
     sg_logger.log("Waiting for glove to connect...", level=sg_logger.USER_INFO)
 
     SG_devices.initiate_add_device_on_connection(com_type)
-    if com_type == SG_T.Com_type.SIMULATED_GLOVE:
+    if com_type == SG_T.Com_type.SIMULATED_GLOVE and wait_for_x_gloves > 0:
         init_rembrandt_sim(SG_T.Hand.RIGHT, SIMULATION_MODE)
     if com_type == SG_T.Com_type.SIMULATED_GLOVE and wait_for_x_gloves > 1:
         init_rembrandt_sim(SG_T.Hand.LEFT,  SIMULATION_MODE)
@@ -100,7 +110,7 @@ def init(wait_for_x_gloves : int, com_type : SG_T.Com_type, SIMULATION_MODE : SG
     
     device_ids = get_device_ids()
     sg_logger.info("Initiated Device ids: " + str(device_ids))
-    if len(device_ids) == 0:
+    if len(device_ids) == 0 and wait_for_x_gloves > 0:
         sg_logger.warn("No glove device initialized! Call SG_main.init(1) to make sure it always has 1 glove before here.")
     return device_ids
 
@@ -130,7 +140,7 @@ def init_rembrandt_sim(handedness : SG_T.Hand, simulation_mode: SG_sim.Simulatio
         firmware_version="0.0.0-sim",
         device_type=SG_T.DeviceType.REMBRANDT,
         communication_type=SG_T.Com_type.SIMULATED_GLOVE,
-        exo_linkage_type=SG_T.Exo_linkage_type.REMBRANDT_PROTO_04,
+        exo_linkage_type=SG_T.Exo_linkage_type.REMBRANDT_PROTO_05,
         encoding_type=SG_T.Encoding_type.REMBRANDT_v01,
         data_origin=SG_T.Data_Origin.LIVE_TEST_SIM
     )
@@ -175,8 +185,8 @@ def _update():
     
     """
     if SG_cb.running:
-        SG_sim.update_all_glove_sims()
         SG_recorder.update() 
+        SG_sim.update_all_glove_sims()
 
 
 
@@ -383,7 +393,7 @@ def get_exo_angles_rad(device_id: int) -> Sequence[Sequence[float]]:
     ```
     """
     rb_device = SG_devices.get_rembrandt_device(device_id)
-    return rb_device.get_exo_angles_rad()
+    return rb_device.get_exo_angles_rad_filtered()
 
 def get_device_info(device_id: int) -> SG_T.Device_Info:
     """
@@ -465,6 +475,14 @@ def get_fingertip_distances(device_id: int) -> Sequence[float]:
     returns: fingertip distances between thumb and [index, middle, ring, pinky] (float in mm)
     """
     return SG_devices.get_rembrandt_device(device_id).get_fingertip_distances()
+
+def get_default_exo_poss(device_info: SG_T.Device_Info) -> Sequence[Sequence[SG_T.Vec3_type]]:
+    """
+    Default exoskeleton joint positions for a device configuration (no glove connection required).
+    Use to build the GUI before SG_main.init().
+    """
+    return SG_exo.get_default_exo_poss(device_info)
+
 
 # 
 def get_exo_joints_poss_rots(device_id: int) -> Tuple[Sequence[Sequence[SG_T.Vec3_type]], Sequence[Sequence[SG_T.Quat_type]]]:
@@ -802,6 +820,7 @@ def exit():
     SG_main.exit()
     ```
     """
+    SG_timer.stop_timer(SG_cb._high_freq_timer_id)
     SG_sim.stop_all_glove_sims()
     #TODO: stop_glove_data_exchanges, with in there stop_glove_sim, but also set force back to free mode, and no longer wanting to receive cb bool
     SG_devices.close_devices() # first this to send final zero value haptic data

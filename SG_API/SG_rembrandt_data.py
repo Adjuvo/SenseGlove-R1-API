@@ -38,7 +38,7 @@ class Rembrandt_v1_data:
     #currently init with factory, but I also call init_data_values after in Rembrandt_Device which should do a similar thing in C++
 
     # outer array: fingers thumb to pinky, inner array proximal to distal angles in radians
-    exo_angles_rad : SG_T.Sequence[Sequence[Union[int, float]]]  = field(default_factory=lambda:    [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]] )
+    exo_angles_rad_raw : SG_T.Sequence[Sequence[Union[int, float]]]  = field(default_factory=lambda:    [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]] )
     exo_angles_rad_filtered : SG_T.Sequence[Sequence[Union[int, float]]]  = field(default_factory=lambda:    [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]] )
     exo_joints_poss : SG_T.Sequence[Sequence[SG_T.Vec3_type]] =   field(default_factory=lambda:    [[(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0)], 
                                                                                     [(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0)],
@@ -92,13 +92,16 @@ class Rembrandt_v1_data:
 
 # in C++ instead of factory, use this. This is called in the init of rembrandt_internal_device to be sure.
 def init_data_values(rb_v1_data : Rembrandt_v1_data):
+    nr = rb_v1_data.device_info.nr_fingers_tracking
+    zero_finger = [0, 0, 0, 0, 0, 0, 0, 0]
     # outer array: fingers thumb to pinky, inner array proximal to distal angles in radians
-    rb_v1_data.exo_angles_rad = [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]] 
-    rb_v1_data.forces_sensed  = [0,0,0,0,0]   # fingers thumb to pinky containing the measured force for each finger
-    rb_v1_data.force_goals = [0,0,0,0,0]   # fingers thumb to pinky containing force goals set on the glove in the controller
-    rb_v1_data.control_modes = [int(SG_T.Control_Mode.FORCE_GOAL_DEFAULT)] * 5
-    rb_v1_data.perc_bents_flexion = [0,0,0,0,0]
-    rb_v1_data.abd_perc_bents = [0,0,0,0,0]
+    rb_v1_data.exo_angles_rad_raw = [zero_finger.copy() for _ in range(nr)]
+    rb_v1_data.exo_angles_rad_filtered = [zero_finger.copy() for _ in range(nr)]
+    rb_v1_data.forces_sensed = [0] * nr   # fingers thumb to pinky containing the measured force for each finger
+    rb_v1_data.force_goals = [0] * nr   # fingers thumb to pinky containing force goals set on the glove in the controller
+    rb_v1_data.control_modes = [int(SG_T.Control_Mode.FORCE_GOAL_DEFAULT)] * nr
+    rb_v1_data.perc_bents_flexion = [0] * nr
+    rb_v1_data.abd_perc_bents = [0] * nr
 
     # Prepare vibration data: per vibration actuator (each finger + 3 palm)
     # Format: [command | Amplitude | total waveforms | waveform1_index, waveform1_phase, waveform1_amplitude | waveform2_index, waveform2_phase, waveform2_amplitude]
@@ -114,5 +117,5 @@ def init_data_values(rb_v1_data : Rembrandt_v1_data):
                 [0, 0, 0]                               # Palm actuator 3 - inactive
             ]
 
-    rb_v1_data.fingertips_pos = [(0,0,0),(0,0,0),(0,0,0),(0,0,0),(0,0,0)]
+    rb_v1_data.fingertips_pos = [(0, 0, 0)] * nr
 

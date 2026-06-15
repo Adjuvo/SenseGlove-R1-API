@@ -28,11 +28,14 @@ After creation, more specialized simulated glove functions can be accessed by ge
 Are adjustable with the parameter init or the  `SG_main.SG_sim.set_mode()` function.
 
 Creates a non moving exoskeleton.
+
+
+Creates a simulation that can be used to call sim.update_angles(desired_exo_angles) yourself or via a playback recording script.
 ```python
-    device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.STEADY_MODE) 
+    device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.PLAYBACK_MODE) 
 ```
 
-Creates fingers that gradually open and close.
+Creates fingers that gradually open and close (no real data but a sine, and not the full range of motion). If needed a full range of motion, play back a recording instead via that script.
 ```python
     device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 
 ```
@@ -41,6 +44,11 @@ Creates fingers where the angles are set by a pure sine.
 ```python
     device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.SINE_MODE) 
 ```
+
+```python
+    device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.STEADY_MODE) 
+```
+
 or, after the init for any simulator:
 ```python
     SG_main.SG_sim.set_mode(hand_id, SG_main.SG_sim.Simulation_Mode.CUSTOM_FUNCTION)

@@ -11,8 +11,12 @@ Support: https://www.senseglove.com/support/
 """
 
 import sys, traceback
+import os
 from pathlib import Path
 from PySide6.QtWidgets import QApplication, QWidget, QHBoxLayout
+
+#------------ Necessary for SG_API include ------------------------
+sys.path.append(os.path.abspath('.'))  # so it recognizes the SG_API folder
 
 from SG_API import SG_main, SG_types as SG_T
 from SG_API import SG_GUI as GUI

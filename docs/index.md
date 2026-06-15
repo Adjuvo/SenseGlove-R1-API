@@ -48,10 +48,10 @@ The thumb, index, middle and ring finger (excluding pinky) feature Active Force 
 | **Latency**                    | R1-PC one way latency: ~10ms. This is an estimate.                                               |
 
 # Known issues
-## Thumb tracking jitter
-Some early prototype gloves (up to May 2026) have occasional tracking glitches, most often noticeable on the thumb. This problem lies in electronics and is solved in future prototypes.
-For these prototype versions, a small median filter is turned on by default. To filter out the remainder, this is best filtered using an additional median filter just before it goes into the robot hand.
+## Tracking jitter
+Some early prototype gloves (up to May 2026) have occasional tracking glitches. This problem lies in electronics and is solved in future prototypes.
 
+For these prototype versions, since python API Release v0.0.22 (2026-06-15) a custom filter is turned on by default. This filters out near all jitter. This filter does not add any latency when there is no jitter. Only once it detects jitter it repeats the value before the jitter started.
 
 #### 📚 Documentation Sections
 

@@ -43,10 +43,10 @@ class RB_buffer:
         self.data.forces_sensed = new_raw_data[:, 8].tolist()
 
     def update_incoming_exo_angles_rad(self, new_exo_angles_rad):
-        self.data.exo_angles_rad = new_exo_angles_rad
+        self.data.exo_angles_rad_raw = new_exo_angles_rad
 
     def get_exo_angles_rad(self):
-        return self.data.exo_angles_rad
+        return self.data.exo_angles_rad_raw
     
     def get_forces_sensed(self):
         return self.data.forces_sensed
@@ -63,6 +63,10 @@ class RB_buffer:
 
 
 _dict_device_id_raw_devices : Dict[int, RB_buffer] = { }
+
+def remove_buffer(device_id: int):
+    _dict_device_id_raw_devices.pop(device_id, None)
+
 
 def create_buffer(device_info : SG_T.Device_Info):
     
