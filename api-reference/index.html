@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -719,6 +719,17 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_fingertip_distances
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#SG_API.SG_main.get_default_exo_poss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_default_exo_poss
       
     </span>
   </a>
@@ -1494,6 +1505,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#SG_API.SG_main.get_default_exo_poss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_default_exo_poss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#SG_API.SG_main.get_exo_joints_poss_rots" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2030,15 +2052,7 @@
 
 
 
-
-
-
-
-
-
-
   <div class="doc doc-children">
-
 
 
 
@@ -2056,11 +2070,7 @@
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">init</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">wait_for_x_gloves</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">com_type</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Com_type">Com_type</span></span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">SIMULATION_MODE</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Simulation_Mode (SG_API.SG_simulator.Simulation_Mode)" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span> <span class="o">=</span> <span class="n"><span title="SG_API.SG_simulator.Simulation_Mode.FINGERS_OPEN_CLOSE">FINGERS_OPEN_CLOSE</span></span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">init</span><span class="p">(</span><span class="n">wait_for_x_gloves</span><span class="p">:</span> <span class="n">int</span><span class="p">,</span> <span class="n">com_type</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Com_type">Com_type</span></span><span class="p">,</span> <span class="n">SIMULATION_MODE</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_simulator.Simulation_Mode" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span> <span class="o">=</span> <span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">FINGERS_OPEN_CLOSE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n">int</span><span class="p">]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2076,7 +2086,6 @@
 </span></code></pre></div>
 If you choose to set it to 0, you can use the <code>add_on_connected_callback()</code> function to capture the device_id on connection, or retrieve the device_ids with <code>get_device_ids()</code>, <code>get_right_hand_deviceid()</code>, <code>get_left_hand_deviceid()</code> after a connection.</p>
 
-
     </div>
 
 </div>
@@ -2089,20 +2098,7 @@ If you choose to set it to 0, you can use the <code>add_on_connected_callback()<
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">init_rembrandt_sim</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">handedness</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Hand">Hand</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">simulation_mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Simulation_Mode (SG_API.SG_simulator.Simulation_Mode)" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">starting_angles</span><span class="o">=</span><span class="p">[</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="mf">0.0</span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="o">-</span><span class="mf">0.2617993877991494</span><span class="p">,</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="mf">0.7853981633974483</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="o">-</span><span class="mf">1.5707963267948966</span><span class="p">,</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="mf">2.0943951023931953</span><span class="p">,</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="o">-</span><span class="mf">1.7453292519943295</span><span class="p">,</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="mf">1.5707963267948966</span><span class="p">,</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="mf">0.7</span><span class="p">,</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="p">],</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="            Glove_Simulator (SG_API.SG_simulator.Glove_Simulator)" href="#SG_API.SG_simulator.Glove_Simulator">Glove_Simulator</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">init_rembrandt_sim</span><span class="p">(</span><span class="n">handedness</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Hand">Hand</span></span><span class="p">,</span> <span class="n">simulation_mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_simulator.Simulation_Mode" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span><span class="p">,</span> <span class="n">starting_angles</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2617993877991494</span><span class="p">,</span> <span class="mf">0.7853981633974483</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5707963267948966</span><span class="p">,</span> <span class="mf">2.0943951023931953</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.7453292519943295</span><span class="p">,</span> <span class="mf">1.5707963267948966</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_simulator.Glove_Simulator" href="#SG_API.SG_simulator.Glove_Simulator">Glove_Simulator</a></span><span class="p">]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2112,7 +2108,6 @@ If you choose to set it to 0, you can use the <code>add_on_connected_callback()<
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">right_sim</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init_rembrandt_sim</span><span class="p">(</span><span class="n">SG_T</span><span class="o">.</span><span class="n">Hand</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">,</span> <span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">FINGERS_OPEN_CLOSE</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">left_sim</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init_rembrandt_sim</span><span class="p">(</span><span class="n">SG_T</span><span class="o">.</span><span class="n">Hand</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span> <span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">STATIC</span><span class="p">)</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2126,7 +2121,7 @@ If you choose to set it to 0, you can use the <code>add_on_connected_callback()<
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_COM_type</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_types.Com_type">Com_type</span></span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_COM_type</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_types.Com_type">Com_type</span></span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2138,7 +2133,6 @@ Use:
 <p>Examples:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">com_type</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_COM_type</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>  <span class="c1"># SG_T.Com_type.REAL_GLOVE_USB or SG_T.Com_type.SIMULATED_GLOVE</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2182,7 +2176,6 @@ Exits cleanly on Ctrl+C, window close, or stop_program_running()</p>
 <p>If you use your own while loop instead (without the sleep), that may steal all CPU capacity, and the data callback will not be called often, which can result in only 70fps glove data update rate in bad cases.</p>
 <p>So if you use your own while loop, make sure to add the sleep, and preferably the shutdown check for clean exit.</p>
 
-
     </div>
 
 </div>
@@ -2195,7 +2188,7 @@ Exits cleanly on Ctrl+C, window close, or stop_program_running()</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_device_active</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="bool">bool</span></span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_device_active</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">bool</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2204,7 +2197,6 @@ Exits cleanly on Ctrl+C, window close, or stop_program_running()</p>
 Use:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_active</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">is_device_active</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2218,7 +2210,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_device_ids</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_device_ids</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n">int</span><span class="p">]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2227,7 +2219,6 @@ Use:
 <p>Examples:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_device_ids</span><span class="p">()</span>  <span class="c1"># [123, 678] - two gloves connected</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2241,7 +2232,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_right_hand_deviceid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_right_hand_deviceid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n">int</span><span class="p">]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2250,7 +2241,6 @@ Use:
 Use:
 <div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>right_id = SG_main.get_right_hand_deviceid() #returns device_id, or None if no right hand
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2264,7 +2254,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_left_hand_deviceid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_left_hand_deviceid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n">int</span><span class="p">]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2273,7 +2263,6 @@ Use:
 <p>Examples:</p>
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">left_id</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_left_hand_deviceid</span><span class="p">()</span>  <span class="c1"># returns device_id or None if no left hand</span>
 </span></code></pre></div>
-
 
     </div>
 
@@ -2287,7 +2276,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_left_hand</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_left_hand</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2295,7 +2284,6 @@ Use:
         <p>Checks if a device is left handed. Returns True for left hand, False for right hand.</p>
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_left</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">is_left_hand</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
 </span></code></pre></div>
-
 
     </div>
 
@@ -2309,7 +2297,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_handedness</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_types.Hand">Hand</span></span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_handedness</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_types.Hand">Hand</span></span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2317,7 +2305,6 @@ Use:
         <p>Returns the handedness (left or right) of the specified device.</p>
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">handedness</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_handedness</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>   <span class="c1"># SG_T.Hand.LEFT or SG_T.Hand.RIGHT</span>
 </span></code></pre></div>
-
 
     </div>
 
@@ -2331,7 +2318,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">nr_of_fingers_tracking</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">nr_of_fingers_tracking</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2340,7 +2327,6 @@ Use:
 Use:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">finger_count</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">nr_of_fingers_tracking</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2354,7 +2340,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">nr_of_fingers_force</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">nr_of_fingers_force</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2363,7 +2349,6 @@ Use:
 Use:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">finger_count</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">nr_of_fingers_force</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2377,7 +2362,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">subscr_r1_data_callback</span><span class="p">(</span><span class="n">cb</span><span class="p">:</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[</span><span class="n"><span title="int">int</span></span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">subscr_r1_data_callback</span><span class="p">(</span><span class="n">cb</span><span class="p">:</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[</span><span class="n">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2396,7 +2381,6 @@ Within your function, call other API functions to retrieve specific data.</p>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">SG_main</span><span class="o">.</span><span class="n">add_r1_data_callback</span><span class="p">(</span><span class="n">on_new_data</span><span class="p">)</span>  <span class="c1"># subscribes on_new_data to be called</span>
 </span></code></pre></div>
 
-
     </div>
 
 </div>
@@ -2409,9 +2393,7 @@ Within your function, call other API functions to retrieve specific data.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">subscr_on_connected_callback</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">cb</span><span class="p">:</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[</span><span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">subscr_on_connected_callback</span><span class="p">(</span><span class="n">cb</span><span class="p">:</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[</span><span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2425,7 +2407,6 @@ Within your function, call other API functions to retrieve specific data.</p>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">SG_main</span><span class="o">.</span><span class="n">add_on_connected_callback</span><span class="p">(</span><span class="n">on_new_device</span><span class="p">)</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -2438,9 +2419,7 @@ Within your function, call other API functions to retrieve specific data.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_exo_angles_rad</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_exo_angles_rad</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n">float</span><span class="p">]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2464,7 +2443,6 @@ Within your function, call other API functions to retrieve specific data.</p>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">index_flex1_angle</span> <span class="o">=</span> <span class="n">exo_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># index finger 1st flexion in radians</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -2477,7 +2455,7 @@ Within your function, call other API functions to retrieve specific data.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_device_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_device_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2486,7 +2464,6 @@ Within your function, call other API functions to retrieve specific data.</p>
 Use:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">device_info</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_device_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2500,9 +2477,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_exo_angles_deg</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_exo_angles_deg</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n">float</span><span class="p">]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2516,7 +2491,6 @@ Use:
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">index_flex1_angle</span> <span class="o">=</span> <span class="n">exo_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># index finger 1st flexion in degrees</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -2529,9 +2503,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_exo_linkage_lengths</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_exo_linkage_lengths</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2540,7 +2512,6 @@ Use:
 Use:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">linkage_lengths</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_exo_linkage_lengths</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span> <span class="c1"># [11.62, 35, 35, 35, 35, 35, 35, 10] # in mm</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2554,19 +2525,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_fingertips_pos_rot</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="            Vec3_type
-
-
-  
-      module-attribute
-   (SG_API.SG_types.Vec3_type)" href="#SG_API.SG_types.Vec3_type">Vec3_type</a></span><span class="p">],</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="            Quat_type
-
-
-  
-      module-attribute
-   (SG_API.SG_types.Quat_type)" href="#SG_API.SG_types.Quat_type">Quat_type</a></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_fingertips_pos_rot</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_types.Vec3_type" href="#SG_API.SG_types.Vec3_type">Vec3_type</a></span><span class="p">],</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_types.Quat_type" href="#SG_API.SG_types.Quat_type">Quat_type</a></span><span class="p">]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2584,7 +2543,6 @@ Use:
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">index_rot_w</span> <span class="o">=</span> <span class="n">fingertips_rot</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># index finger quaternion w</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -2597,14 +2555,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_fingertip_thimble_dims</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="            Thimble_dims
-
-
-  
-      dataclass
-   (SG_API.SG_types.Thimble_dims)" href="#SG_API.SG_types.Thimble_dims">Thimble_dims</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_fingertip_thimble_dims</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_types.Thimble_dims" href="#SG_API.SG_types.Thimble_dims">Thimble_dims</a></span><span class="p">]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2615,7 +2566,6 @@ Use:
 <p><strong>Example:</strong>
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">thumb_dims</span> <span class="o">=</span> <span class="n">thimble_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">radius</span>  <span class="c1"># thumb thimble radius</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -2629,13 +2579,32 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_fingertip_distances</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_fingertip_distances</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n">float</span><span class="p">]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>returns: fingertip distances between thumb and [index, middle, ring, pinky] (float in mm)</p>
 
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="SG_API.SG_main.get_default_exo_poss" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_default_exo_poss</span>
+
+
+</h4>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_default_exo_poss</span><span class="p">(</span><span class="n">device_info</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_types.Vec3_type" href="#SG_API.SG_types.Vec3_type">Vec3_type</a></span><span class="p">]]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Default exoskeleton joint positions for a device configuration (no glove connection required).
+Use to build the GUI before SG_main.init().</p>
 
     </div>
 
@@ -2649,22 +2618,7 @@ Use:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_exo_joints_poss_rots</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="            Vec3_type
-
-
-  
-      module-attribute
-   (SG_API.SG_types.Vec3_type)" href="#SG_API.SG_types.Vec3_type">Vec3_type</a></span><span class="p">]],</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="            Quat_type
-
-
-  
-      module-attribute
-   (SG_API.SG_types.Quat_type)" href="#SG_API.SG_types.Quat_type">Quat_type</a></span><span class="p">]],</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_exo_joints_poss_rots</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_types.Vec3_type" href="#SG_API.SG_types.Vec3_type">Vec3_type</a></span><span class="p">]],</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_types.Quat_type" href="#SG_API.SG_types.Quat_type">Quat_type</a></span><span class="p">]]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2681,7 +2635,6 @@ Can be indexed like:
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">middlefinger_splay_y</span><span class="p">:</span> <span class="n">exo_poss</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># middle finger splay joint y</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -2694,9 +2647,7 @@ Can be indexed like:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_percentage_bents</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span><span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">],</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_percentage_bents</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span><span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n">int</span><span class="p">],</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n">int</span><span class="p">]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2741,7 +2692,6 @@ Can be indexed like:
 <li>Use set_perc_bent_vars() to change the max perc bent values to control and how 0 and 10000 are mapped to the raw values (from raw_percentage_bent_angles())</li>
 </ul>
 
-
     </div>
 
 </div>
@@ -2754,9 +2704,7 @@ Can be indexed like:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_raw_percentage_bent_angles</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span><span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">],</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_raw_percentage_bent_angles</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span><span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n">float</span><span class="p">],</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n">float</span><span class="p">]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2775,7 +2723,6 @@ Can be indexed like:
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">index_abd</span> <span class="o">=</span> <span class="n">abd_angles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>   <span class="c1"># index abduction angle in radians</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -2788,22 +2735,7 @@ Can be indexed like:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_percentage_bent_vars</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">min_thetas_flexion</span><span class="p">:</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="numpy.float64">float64</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="numpy.array">array</span></span><span class="p">(</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.524</span><span class="p">,</span> <span class="mf">0.345</span><span class="p">,</span> <span class="mf">0.414</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="p">),</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">max_thetas_flexion</span><span class="p">:</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="numpy.float64">float64</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="numpy.array">array</span></span><span class="p">(</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="p">[</span><span class="mf">1.8</span><span class="p">,</span> <span class="mf">3.265</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.75</span><span class="p">]</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="p">),</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">min_thetas_abduction</span><span class="p">:</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="numpy.float64">float64</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="numpy.array">array</span></span><span class="p">(</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">]</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="p">),</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">max_thetas_abduction</span><span class="p">:</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="numpy.float64">float64</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="numpy.array">array</span></span><span class="p">(</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="p">),</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">out_max_perc_bent</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_percentage_bent_vars</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">,</span> <span class="n">min_thetas_flexion</span><span class="p">:</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="numpy.float64">float64</span></span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.524</span><span class="p">,</span> <span class="mf">0.345</span><span class="p">,</span> <span class="mf">0.414</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]),</span> <span class="n">max_thetas_flexion</span><span class="p">:</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="numpy.float64">float64</span></span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.8</span><span class="p">,</span> <span class="mf">3.265</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.75</span><span class="p">]),</span> <span class="n">min_thetas_abduction</span><span class="p">:</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="numpy.float64">float64</span></span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">]),</span> <span class="n">max_thetas_abduction</span><span class="p">:</span> <span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="numpy.float64">float64</span></span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]),</span> <span class="n">out_max_perc_bent</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2828,7 +2760,6 @@ With this you can override when a finger is considered bent or open:</p>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># using SG_main.get_percentage_bents(device_id) you can now see the adjusted percentage bent values for each finger.</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -2841,9 +2772,7 @@ With this you can override when a finger is considered bent or open:</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_robot_hand_mapper</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="SG_API.SG_robot_hand_mapper.PinchConfig">PinchConfig</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_robot_hand_mapper.RobotHandMapper">RobotHandMapper</span></span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_robot_hand_mapper</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="SG_API.SG_robot_hand_mapper.PinchConfig">PinchConfig</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_robot_hand_mapper.RobotHandMapper">RobotHandMapper</span></span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2864,11 +2793,9 @@ If no config is provided, the default pinch mapping config is used.</p>
       </thead>
       <tbody>
           <tr class="doc-section-item">
+            <td><code>device_id</code></td>
             <td>
-                <code>device_id</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
+                  <code>int</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2880,9 +2807,7 @@ If no config is provided, the default pinch mapping config is used.</p>
             </td>
           </tr>
           <tr class="doc-section-item">
-            <td>
-                <code>config</code>
-            </td>
+            <td><code>config</code></td>
             <td>
                   <code><span title="typing.Optional">Optional</span>[<span title="SG_API.SG_robot_hand_mapper.PinchConfig">PinchConfig</span>]</code>
             </td>
@@ -2921,7 +2846,6 @@ If no config is provided, the default pinch mapping config is used.</p>
       </tbody>
     </table>
 
-
     </div>
 
 </div>
@@ -2934,7 +2858,7 @@ If no config is provided, the default pinch mapping config is used.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_robot_hand_mapper</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_robot_hand_mapper.RobotHandMapper">RobotHandMapper</span></span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_robot_hand_mapper</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_robot_hand_mapper.RobotHandMapper">RobotHandMapper</span></span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2955,11 +2879,9 @@ If no config is provided, the default pinch mapping config is used.</p>
       </thead>
       <tbody>
           <tr class="doc-section-item">
+            <td><code>device_id</code></td>
             <td>
-                <code>device_id</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
+                  <code>int</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2996,7 +2918,6 @@ If no config is provided, the default pinch mapping config is used.</p>
       </tbody>
     </table>
 
-
     </div>
 
 </div>
@@ -3009,13 +2930,12 @@ If no config is provided, the default pinch mapping config is used.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_rhm_pinch_gui</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_rhm_pinch_gui</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Create and register a PinchMapperGUI for the given device_id.</p>
-
 
     </div>
 
@@ -3029,7 +2949,7 @@ If no config is provided, the default pinch mapping config is used.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_pinch_debug_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_pinch_debug_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3050,11 +2970,9 @@ Returns pinch diagnostics as dictionary.</p>
       </thead>
       <tbody>
           <tr class="doc-section-item">
+            <td><code>device_id</code></td>
             <td>
-                <code>device_id</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
+                  <code>int</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -3068,7 +2986,6 @@ Returns pinch diagnostics as dictionary.</p>
       </tbody>
     </table>
 
-
     </div>
 
 </div>
@@ -3081,11 +2998,7 @@ Returns pinch diagnostics as dictionary.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_rhm_percentage_bents</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]],</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_rhm_percentage_bents</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span><span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]],</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3105,11 +3018,9 @@ Returns pinch diagnostics as dictionary.</p>
       </thead>
       <tbody>
           <tr class="doc-section-item">
+            <td><code>device_id</code></td>
             <td>
-                <code>device_id</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
+                  <code>int</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -3135,7 +3046,7 @@ Returns pinch diagnostics as dictionary.</p>
       <tbody>
           <tr class="doc-section-item">
 <td><code>tuple</code></td>            <td>
-                  <code><span title="typing.Tuple">Tuple</span>[<span title="SG_API.SG_types.Sequence">Sequence</span>[<span title="typing.Union">Union</span>[<span title="int">int</span>, <span title="float">float</span>]], <span title="SG_API.SG_types.Sequence">Sequence</span>[<span title="typing.Union">Union</span>[<span title="int">int</span>, <span title="float">float</span>]]]</code>
+                  <code><span title="typing.Tuple">Tuple</span>[<span title="SG_API.SG_types.Sequence">Sequence</span>[<span title="typing.Union">Union</span>[int, float]], <span title="SG_API.SG_types.Sequence">Sequence</span>[<span title="typing.Union">Union</span>[int, float]]]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -3145,7 +3056,6 @@ Returns pinch diagnostics as dictionary.</p>
           </tr>
       </tbody>
     </table>
-
 
     </div>
 
@@ -3159,7 +3069,7 @@ Returns pinch diagnostics as dictionary.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">update_robot_hand_mapper_gui</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">update_robot_hand_mapper_gui</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3179,11 +3089,9 @@ Returns pinch diagnostics as dictionary.</p>
       </thead>
       <tbody>
           <tr class="doc-section-item">
+            <td><code>device_id</code></td>
             <td>
-                <code>device_id</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
+                  <code>int</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -3197,7 +3105,6 @@ Returns pinch diagnostics as dictionary.</p>
       </tbody>
     </table>
 
-
     </div>
 
 </div>
@@ -3210,9 +3117,7 @@ Returns pinch diagnostics as dictionary.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_forces_sensed</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_forces_sensed</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3228,7 +3133,6 @@ Can be indexed like:
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">index_force</span> <span class="o">=</span> <span class="n">forces</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># index finger sensed force</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -3241,9 +3145,7 @@ Can be indexed like:
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_force_goals</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">force_goals</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_force_goals</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">,</span> <span class="n">force_goals</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3267,7 +3169,6 @@ The milliNewtons is the tension in the wire pulling the finger back.</p>
 - Check sudden force goal changes you command, improve data FPS, reduce K or in another way transition force goals more gradually. 
 - Note that filtering/averaging your data too much can cause delays, which can cause instable feedback loops as result!</p>
 
-
     </div>
 
 </div>
@@ -3280,9 +3181,7 @@ The milliNewtons is the tension in the wire pulling the finger back.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_raw_vibro_data</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">vibro_data</span><span class="p">:</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]]</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_raw_vibro_data</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">,</span> <span class="n">vibro_data</span><span class="p">:</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n">int</span><span class="p">]])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3292,7 +3191,6 @@ The milliNewtons is the tension in the wire pulling the finger back.</p>
 - device_id: ID of the device
 - vibro_data: List of vibration data per actuator.</p>
 <p>Still in development. See examples/vibration_example.py for an example of the current format.</p>
-
 
     </div>
 
@@ -3314,7 +3212,6 @@ The milliNewtons is the tension in the wire pulling the finger back.</p>
         <p>Closes all connections and cleans up resources. This is AUTOMATICALLY CALLED by the atexit module. (no need to manually call this)</p>
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SG_main</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
 </span></code></pre></div>
-
 
     </div>
 
@@ -3369,15 +3266,7 @@ Support: https://www.senseglove.com/support/</p>
 
 
 
-
-
-
-
-
-
-
   <div class="doc doc-children">
-
 
 
 
@@ -3402,7 +3291,6 @@ Support: https://www.senseglove.com/support/</p>
               Bases: <code><span title="enum.Enum">Enum</span></code></p>
 
 
-
         <p>Enumeration of available simulation modes for the glove simulator.</p>
 <p><strong>Modes:</strong>
 - <strong>STEADY_MODE</strong>: Static finger pose, no animation
@@ -3417,15 +3305,7 @@ Support: https://www.senseglove.com/support/</p>
 
 
 
-
-
-
-
-
-
-
   <div class="doc doc-children">
-
 
 
 
@@ -3458,7 +3338,6 @@ Support: https://www.senseglove.com/support/</p>
     <div class="doc doc-contents ">
 
 
-
         <p>Simulates a SenseGlove Rembrandt device for testing and development.</p>
 <p>Provides realistic finger tracking data without requiring physical hardware.
 Supports multiple animation modes and allows manual control of finger positions.</p>
@@ -3487,15 +3366,7 @@ Supports multiple animation modes and allows manual control of finger positions.
 
 
 
-
-
-
-
-
-
-
   <div class="doc doc-children">
-
 
 
 
@@ -3524,7 +3395,6 @@ Supports multiple animation modes and allows manual control of finger positions.
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sim</span><span class="o">.</span><span class="n">restart</span><span class="p">()</span>  <span class="c1"># Reset animation to beginning</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -3548,7 +3418,6 @@ Supports multiple animation modes and allows manual control of finger positions.
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sim</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>  <span class="c1"># Stop animation</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -3561,9 +3430,7 @@ Supports multiple animation modes and allows manual control of finger positions.
 
 
 </h5>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">update_exo_hand_angles_rad</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">exo_angles_rad</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]]</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">update_exo_hand_angles_rad</span><span class="p">(</span><span class="n">exo_angles_rad</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3572,7 +3439,6 @@ Supports multiple animation modes and allows manual control of finger positions.
 So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 <p><strong>Args:</strong>
     exo_angles_rad (SG_T.Sequence[Sequence[Union[int, float]]]): Joint angles in radians</p>
-
 
     </div>
 
@@ -3597,7 +3463,6 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 - FINGERS_OPEN_CLOSE: Smooth finger opening/closing cycles
 - STEADY_MODE: Maintains static finger positions</p>
 
-
     </div>
 
 </div>
@@ -3610,7 +3475,7 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 
 
 </h5>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_simulation_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Simulation_Mode (SG_API.SG_simulator.Simulation_Mode)" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_simulation_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_simulator.Simulation_Mode" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3622,7 +3487,6 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sim</span><span class="o">.</span><span class="n">set_simulation_mode</span><span class="p">(</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">SINE_MODE</span><span class="p">)</span>     <span class="c1"># Switch to sine waves</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">sim</span><span class="o">.</span><span class="n">set_simulation_mode</span><span class="p">(</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">STEADY_MODE</span><span class="p">)</span>   <span class="c1"># Switch to static pose</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -3636,11 +3500,7 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 
 
 </h5>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_exo_rad_hand</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">exo_rad_hand_angles</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="p">]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_exo_rad_hand</span><span class="p">(</span><span class="n">exo_rad_hand_angles</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3663,7 +3523,6 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">sim</span><span class="o">.</span><span class="n">set_exo_rad_hand</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -3676,11 +3535,7 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 
 
 </h5>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_exo_deg_hand</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">exo_deg_hand_angles</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="p">]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_exo_deg_hand</span><span class="p">(</span><span class="n">exo_deg_hand_angles</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3700,7 +3555,6 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">sim</span><span class="o">.</span><span class="n">set_exo_deg_hand</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -3735,7 +3589,6 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
     float: Smoothed output value between 0 and 1</p>
 <p>Uses the smoothstep formula: t² × (3 - 2t) for smooth acceleration/deceleration.</p>
 
-
     </div>
 
 </div>
@@ -3748,12 +3601,7 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_angles_rad</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_info</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">exo_angles_rad_hand</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="p">],</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_angles_rad</span><span class="p">(</span><span class="n">device_info</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span><span class="p">,</span> <span class="n">exo_angles_rad_hand</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3774,7 +3622,6 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">SG_sim</span><span class="o">.</span><span class="n">set_angles_rad</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -3787,12 +3634,7 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_angles_deg</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_info</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">exo_angles_deg_hand</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="p">],</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_angles_deg</span><span class="p">(</span><span class="n">device_info</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span><span class="p">,</span> <span class="n">exo_angles_deg_hand</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3814,7 +3656,6 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">SG_sim</span><span class="o">.</span><span class="n">set_angles_deg</span><span class="p">(</span><span class="n">device_info</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -3827,9 +3668,7 @@ So this is for calls from the update, and set_exo_rad_hand is for the user.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_glove_sim_device</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_info</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Simulation_Mode (SG_API.SG_simulator.Simulation_Mode)" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            Glove_Simulator (SG_API.SG_simulator.Glove_Simulator)" href="#SG_API.SG_simulator.Glove_Simulator">Glove_Simulator</a></span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_glove_sim_device</span><span class="p">(</span><span class="n">device_info</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Device_Info">Device_Info</span></span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_simulator.Simulation_Mode" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_simulator.Glove_Simulator" href="#SG_API.SG_simulator.Glove_Simulator">Glove_Simulator</a></span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3850,7 +3689,6 @@ system so it appears as a connected device to the main API.</p>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Now you can use normal API functions</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">angles</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_exo_angles_rad</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -3877,7 +3715,6 @@ Useful for clean shutdown of all simulations.</p>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">SG_sim</span><span class="o">.</span><span class="n">stop_all_glove_sims</span><span class="p">()</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -3890,7 +3727,7 @@ Useful for clean shutdown of all simulations.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_sim</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_sim</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3904,7 +3741,6 @@ Useful for clean shutdown of all simulations.</p>
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sim</span> <span class="o">=</span> <span class="n">SG_sim</span><span class="o">.</span><span class="n">get_sim</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">sim</span><span class="o">.</span><span class="n">set_simulation_mode</span><span class="p">(</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">STEADY_MODE</span><span class="p">)</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -3933,7 +3769,6 @@ Should be called at ~1kHz for smooth animation.</p>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>  <span class="c1"># ~1kHz</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -3946,7 +3781,7 @@ Should be called at ~1kHz for smooth animation.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_mode</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Simulation_Mode (SG_API.SG_simulator.Simulation_Mode)" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_mode</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_simulator.Simulation_Mode" href="#SG_API.SG_simulator.Simulation_Mode">Simulation_Mode</a></span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3961,7 +3796,6 @@ Should be called at ~1kHz for smooth animation.</p>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">SG_sim</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">FINGERS_OPEN_CLOSE</span><span class="p">)</span>
 </span></code></pre></div></p>
 
-
     </div>
 
 </div>
@@ -3974,13 +3808,12 @@ Should be called at ~1kHz for smooth animation.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_exo_angles_type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="bool">bool</span></span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_exo_angles_type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">bool</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Check if an object is of type Sequence[Sequence[Union[int, float]]] AKA Union[List[List[float]], List[List[int]], List[np_array_type]]</p>
-
 
     </div>
 
@@ -3994,12 +3827,7 @@ Should be called at ~1kHz for smooth animation.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_simulation_fn</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">device_id</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">update_fn</span><span class="p">:</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">],</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="p">],</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_simulation_fn</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">,</span> <span class="n">update_fn</span><span class="p">:</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[</span><span class="n">float</span><span class="p">],</span> <span class="n"><span title="SG_API.SG_types.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]]])</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4023,7 +3851,6 @@ Should be called at ~1kHz for smooth animation.</p>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">set_simulation_fn</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span> <span class="n">test_custom_fn</span><span class="p">)</span>
 </span></code></pre></div></p>
-
 
     </div>
 
@@ -4057,13 +3884,6 @@ Support: https://www.senseglove.com/support/</p>
 
 
 
-
-
-
-
-
-
-
   <div class="doc doc-children">
 
 
@@ -4085,13 +3905,12 @@ Support: https://www.senseglove.com/support/</p>
   </span>
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Vec3_type</span> <span class="o">=</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Vec3_type</span> <span class="o">=</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>List, tuple, or np array of 3 numbers: x, y, z</p>
-
     </div>
 
 </div>
@@ -4109,17 +3928,15 @@ Support: https://www.senseglove.com/support/</p>
   </span>
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Quat_type</span> <span class="o">=</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Quat_type</span> <span class="o">=</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n">int</span><span class="p">,</span> <span class="n">float</span><span class="p">]]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>List, tuple, or np array of 4 numbers: w, x, y, z</p>
-
     </div>
 
 </div>
-
 
 
 <div class="doc doc-object doc-class">
@@ -4136,14 +3953,6 @@ Support: https://www.senseglove.com/support/</p>
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
               Bases: <code><span title="enum.IntEnum">IntEnum</span></code></p>
-
-
-
-
-
-
-
-
 
 
 
@@ -4177,7 +3986,6 @@ Support: https://www.senseglove.com/support/</p>
     <div class="doc doc-contents ">
 
         <p>This is the default mode. The motors will try to reach the force goal set. Set the force goal to 0 to move freely.</p>
-
     </div>
 
 </div>
@@ -4202,7 +4010,6 @@ Support: https://www.senseglove.com/support/</p>
     <div class="doc doc-contents ">
 
         <p>Motors will fully turn off, so also not move with your finger</p>
-
     </div>
 
 </div>
@@ -4227,11 +4034,9 @@ Support: https://www.senseglove.com/support/</p>
     <div class="doc doc-contents ">
 
         <p>DON'T EVER SEND THIS TO THE GLOVE, it will reset tracking offset angles. It will ruin it the glove for good and requires customer support to fix it.</p>
-
     </div>
 
 </div>
-
 
 
 
@@ -4256,32 +4061,10 @@ Support: https://www.senseglove.com/support/</p>
   </span>
 
 </h4>
-<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Thimble_dims</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">sphere_center_pos</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Vec3_type
-
-
-  
-      module-attribute
-   (SG_API.SG_types.Vec3_type)" href="#SG_API.SG_types.Vec3_type">Vec3_type</a></span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">rot</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Quat_type
-
-
-  
-      module-attribute
-   (SG_API.SG_types.Quat_type)" href="#SG_API.SG_types.Quat_type">Quat_type</a></span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">radius</span><span class="p">:</span> <span class="n"><span title="float">float</span></span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">cylinder_center_pos</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Vec3_type
-
-
-  
-      module-attribute
-   (SG_API.SG_types.Vec3_type)" href="#SG_API.SG_types.Vec3_type">Vec3_type</a></span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">cylinder_length</span><span class="p">:</span> <span class="n"><span title="float">float</span></span><span class="p">,</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Thimble_dims</span><span class="p">(</span><span class="n">sphere_center_pos</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_types.Vec3_type" href="#SG_API.SG_types.Vec3_type">Vec3_type</a></span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_types.Quat_type" href="#SG_API.SG_types.Quat_type">Quat_type</a></span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="n">float</span><span class="p">,</span> <span class="n">cylinder_center_pos</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="SG_API.SG_types.Vec3_type" href="#SG_API.SG_types.Vec3_type">Vec3_type</a></span><span class="p">,</span> <span class="n">cylinder_length</span><span class="p">:</span> <span class="n">float</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
-
 
 
         <p>To draw the users fingertip thimble, we use a sphere and a cilinder. These are the dimensions of the sphere and cilinder.</p>
@@ -4289,15 +4072,7 @@ Support: https://www.senseglove.com/support/</p>
 
 
 
-
-
-
-
-
-
-
   <div class="doc doc-children">
-
 
 
 
@@ -4378,10 +4153,10 @@ Support: https://www.senseglove.com/support/</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "content.code.annotate", "content.code.highlight"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "content.code.annotate", "content.code.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../javascripts/signatures.js"></script>
       
