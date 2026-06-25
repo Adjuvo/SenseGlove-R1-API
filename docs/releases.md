@@ -1,5 +1,8 @@
 # Releases
 
+## v0.0.23
+- Fix for left gloves thumb abduction.
+- Improved the jitter filter even further.
 
 
 ## v0.0.22
