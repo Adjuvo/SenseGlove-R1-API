@@ -87,8 +87,8 @@ try:
 
     SG_main.subscr_r1_data_callback(on_new_data)
 
-    filename = "laying_still_03.csv"
-    duration = 10.0
+    filename = "0076_right_abduction_min_max.csv"
+    duration = 20.0
     print("Recording glove data to recordings/" + filename + " for " + str(duration) + " seconds... (Screen is white during recording)")
     SG_recorder.record_glove_data(hand_id, duration, filename, pump_events=app.processEvents)
 

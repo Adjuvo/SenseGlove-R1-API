@@ -45,7 +45,7 @@ def _median_small(values: Sequence[float]) -> float:
 class SuspicionChecks:
     """Toggle individual suspicion signals in FilterSuspicion."""
     prediction: bool = True
-    slow_filter_check: bool = False
+    slow_filter_check: bool = True
     sibling_joints: bool = True
     finger_range: bool = True
     acceleration: bool = True
@@ -56,7 +56,7 @@ class SuspicionChecks:
 class FilterSuspicionConfig:
     """Tunable thresholds and buffer sizes for FilterSuspicion."""
     suspicion_threshold: int = 1
-    slow_change_threshold: float = 0.435
+    slow_change_threshold: float = 0.4
     prediction_threshold: float = 0.32
     prediction_velocity_frames: int = 3
     min_velocity_samples: int = 3
@@ -65,13 +65,13 @@ class FilterSuspicionConfig:
     sibling_stable_threshold: float = 0.06
     min_stable_siblings: int = 6
     finger_range_margin_rad: float = 0.05
-    suspicion_hold_minimal_change_threshold: float = 0.030
+    suspicion_hold_minimal_change_threshold: float = 0.2
     suspicion_hold_min_entry_level: int = 3
     suspicion_hold_sibling_entry_level: int = 2
     suspicion_hold_max_frames: int = 21
     memory_size: int = 76
-    slow_filter_normal_alpha: float = 0.15
-    slow_filter_suspicion_alpha: float = 0.05
+    slow_filter_normal_alpha: float = 0.2
+    slow_filter_suspicion_alpha: float = 0.2
     fast_filter_window_size: int = 5
 
     @property
@@ -575,6 +575,11 @@ class FilterSuspicion:
         if slow is not None and abs(slow - value) > self.slow_change_threshold:
             self.suspicion_level += 1
             self.suspicious_level_slow_filter += 1
+        # Keep the EWMA tracking the signal during suspicion so a sustained value
+        # is eventually trusted again (recovery from a wrongly-held joint). Skip
+        # physically impossible values so out-of-range jitter never corrupts it.
+        if not self._is_out_of_exo_range(value):
+            self.slow_filter.update(value)
 
     def _warmup_update(self, value: float) -> float:
         self.fast_filter.update(value)
@@ -747,10 +752,8 @@ class FilterSuspicion:
                 stable_siblings += 1
         return stable_siblings >= self.min_stable_siblings
 
-    def _evaluate_finger_range_suspicion(self, value: float) -> bool:
-        """Raw angle outside calibrated joint min/max (with margin)."""
-        if not self.checks.finger_range:
-            return False
+    def _is_out_of_exo_range(self, value: float) -> bool:
+        """True if the raw angle is physically impossible for the exo (outside calibrated min/max + margin)."""
         if self.angle_min_limit is None or self.angle_max_limit is None:
             return False
         margin = self.finger_range_margin_rad
@@ -758,6 +761,12 @@ class FilterSuspicion:
             value < self.angle_min_limit - margin
             or value > self.angle_max_limit + margin
         )
+
+    def _evaluate_finger_range_suspicion(self, value: float) -> bool:
+        """Raw angle outside calibrated joint min/max (with margin)."""
+        if not self.checks.finger_range:
+            return False
+        return self._is_out_of_exo_range(value)
 
     def _should_skip_wrongly_suspected_reset(self, value: Optional[float] = None) -> bool:
         """Finger-range violations are not false holds — never merge them back as trusted."""
@@ -927,9 +936,10 @@ class ExoAnglesFilterSuspicion:
     Applies FilterSuspicion to each joint, passing sibling joint context on the same finger.
     """
 
-    def __init__(self, window_size: int = 5, checks: Optional[SuspicionChecks] = None):
+    def __init__(self, hand: SG_T.Hand, window_size: int = 5, checks: Optional[SuspicionChecks] = None):
         self.window_size = window_size
         self.checks = checks if checks is not None else SuspicionChecks()
+        self.hand = hand
         self.filters: List[List[FilterSuspicion]] = []
         self.initialized = False
         self._prev_finger_raw: Optional[List[List[float]]] = None
@@ -948,7 +958,7 @@ class ExoAnglesFilterSuspicion:
                 for joint_idx in range(n_joints)
             ]
             for joint_idx, joint_filter in enumerate(finger_filters):
-                min_lim, max_lim = lookup_joint_range_limits(len(self.filters), joint_idx)
+                min_lim, max_lim = lookup_joint_range_limits(len(self.filters), joint_idx, self.hand)
                 joint_filter.angle_min_limit = min_lim
                 joint_filter.angle_max_limit = max_lim
             self.filters.append(finger_filters)

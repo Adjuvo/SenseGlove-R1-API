@@ -13,6 +13,8 @@ import csv
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
+from . import SG_types as SG_T
+
 FingerJointKey = Tuple[int, int]
 
 FINGER_NAMES = ("thumb", "index", "middle", "ring", "pinky")
@@ -73,10 +75,16 @@ def load_finger_joint_range_limits(
 def lookup_joint_range_limits(
     finger_idx: int,
     joint_idx: int,
+    hand : SG_T.Hand,
     table: Optional[Dict[FingerJointKey, Tuple[float, float]]] = None,
 ) -> Tuple[Optional[float], Optional[float]]:
     limits = table if table is not None else load_finger_joint_range_limits()
     entry = limits.get((finger_idx, joint_idx))
     if entry is None:
         return None, None
-    return entry[0], entry[1]
+    min_lim, max_lim = entry
+    # Limits are calibrated for a right hand. The left hand mirrors the j0
+    # (abduction/splay) axis, so negate and swap min/max for that joint only.
+    if hand == SG_T.Hand.LEFT and joint_idx == 0:
+        return -max_lim, -min_lim
+    return min_lim, max_lim

@@ -125,7 +125,7 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         self.set_percentage_bent_vars()
         # ExoAnglesMedianFilter applies MedianFilter per joint across the full glove structure
         #self.exo_angles_filter = SG_filter.ExoAnglesMedianFilter(window_size=5)
-        self.exo_angles_filter = SG_filter.ExoAnglesFilterSuspicion(window_size=5)
+        self.exo_angles_filter = SG_filter.ExoAnglesFilterSuspicion(window_size=5, hand=self.get_handedness())
         self.flex_angles = []
         self.abd_angles = []
 
