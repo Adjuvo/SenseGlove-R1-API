@@ -19,7 +19,7 @@
     
     
       
-        <title>Why is my glove force jittering? Tips to improve it - SenseGlove Rembrandt API docs</title>
+        <title>Why is my force feedback jittering? Tips to improve it - SenseGlove Rembrandt API docs</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#why-is-my-glove-force-jittering-tips-to-improve-it" class="md-skip">
+        <a href="#why-is-my-force-feedback-jittering-tips-to-improve-it" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Why is my glove force jittering? Tips to improve it
+              Why is my force feedback jittering? Tips to improve it
             
           </span>
         </div>
@@ -476,54 +476,74 @@
 
 
 
-<h1 id="why-is-my-glove-force-jittering-tips-to-improve-it">Why is my glove force jittering? Tips to improve it</h1>
+<h1 id="why-is-my-force-feedback-jittering-tips-to-improve-it">Why is my force feedback jittering? Tips to improve it</h1>
 <p>Active haptic feedback (motorized feedback) of the glove works by getting the tracking data, then sending a force back to the glove based on that tracking data. Now there will always be a tiny bit of delay between those. If that delay becomes larger than a few ms, you get the problem where the force isn't engaged fast enough to respond to the movements, and that <strong>will result in instability (jittering), usually on/near contact</strong>.</p>
-<p>You can fix this in a couple of ways.</p>
+<p><div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a> user closes fingers -&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a> robot hand touches object and detects force -&gt; 
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a> force on glove pulls users finger back -&gt; 
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a> robot finger opens -&gt; 
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a> robot hand doesn&#39;t detect force anymore -&gt; 
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a> users finger is no longer stopped -&gt; 
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a> user closes fingers -&gt; 
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a> and the whole loop restarts
+</span></code></pre></div>
+This can happen fast, causing the jittering at touching surfaces. You can fix this in a couple of ways.</p>
 <ol>
 <li>First, make sure your commanded forces look smooth over time. You can use Teleplot (VScode extension) to quickly plot this. </li>
 </ol>
-<p>If not, be careful with filtering for latency. Plot the filtered in one plot with the original signal so you can see the caused latency. Latency can also cause instability, so keep it to a minimum.</p>
+<p>If not, be careful with using filtering, since this can cause latency. Plot the filtered values in one plot with the original signal so you can see the caused latency. Latency can also cause instability, so keep it to a minimum.</p>
 <p>If the input smooth, some further options:</p>
 <ul>
-<li>Increasing the FPS (frames/second) of the data and reducing the latency between the glove's position update given and force received. </li>
-<li>Lower the forces</li>
+<li>Increasing the FPS (frames/second) of the data and reducing the latency between the glove's position update given and force received. The faster this runs, the less delay between touch and detection is, and smoother the changes in force will be. That prevents jitter. This is the best but often most difficult option. </li>
+<li>Lower the forces (causes a more gradual change in force, so the finger is not harshly janked back on the object touch).</li>
 <li>Reduce how quickly the force responds (for example with a low pass filter, dampening, or a controller on top). This will smooth the signal and cause a more gradual buildup/reduction of force.</li>
 </ul>
 <p>Fixing this with the third option might cause:
 - A solid surface to feel more squishy instead of solid. (Due to less sudden force changes.)
 - Less transparency on no forces (meaning how much you feel the force when there should be no force at all).</p>
+<h1 id="delay-latency-related-issues">Delay / Latency related issues</h1>
+<p>Aside from FPS, latency can cause the force feedback to respond too late to the users actions. 
+<div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>User moves glove -&gt; tracking sent to robot hand -&gt; robot hand moves -&gt; force sensor robot hand touches -&gt; detected force sent to R1 glove -&gt; R1 pulls users finger back.
+</span></code></pre></div>
+If any step in this process is delayed, the users finger is pulled back too late, and the users hand (and therefore also the robot hand) will close further than it should before fingers are stopped. </p>
+<p>If this is at a specific frequency, it can also cause a feedback loop of instability, similar to the one for FPS, but slower.</p>
+<p>The R1 has low latency, however, for prototypes with jitter we have added an optional smoothing filter on the tracking that might cause some slight delay as well. This is enabled by default. This might be visible as a tiny delay on the virtual glove moving compared to your real hand. You can disable this by calling the following just after SG_main.init.
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">SG_main</span><span class="o">.</span><span class="n">set_filter</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span>  <span class="n">SG_T</span><span class="o">.</span><span class="n">Filter_type</span><span class="o">.</span><span class="n">SUSPICION</span><span class="p">,</span>  <span class="mi">0</span><span class="p">)</span>
+</span></code></pre></div>
+With the smoothing disabled (0) there should be no additional delay aside from when it actually detects jitter in the SUSPICION filter, so you can keep that SUSPICION filter on. If you fully want to use raw data without any jitter detection, change to <code>SG_T.Filter_type.OFF</code>.</p>
+<p>However, in our experience, the culprit of the noticable force feedback delays is often the force sensor on the robot hand taking too long before it detected something, and for noticable movement delay, the robot hand reacting slow to a command.</p>
 <h1 id="how-to-measure-data-rates">How to measure data rates</h1>
 <h2 id="fps-frames-per-second">FPS (frames per second)</h2>
 <p>Our API logs the update rate to the log files. So you can check those in <code>Rembrandt_API/logs/</code>. Or alternatively, use the SG_FPS script to quickly log your FPS at a certain point in your code.
-<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">SG_API</span><span class="w"> </span><span class="kn">import</span> <span class="n">SG_FPS</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">fps_my_function</span> <span class="o">=</span> <span class="n">SG_FPS</span><span class="o">.</span><span class="n">FPSCounter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;my_function&quot;</span><span class="p">)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">():</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">global</span> <span class="n">fps_my_function</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">fps_my_function</span><span class="o">.</span><span class="n">update</span><span class="p">()</span> <span class="c1">#updates, and every 1.0 seconds prints my_function FPS</span>
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">SG_API</span><span class="w"> </span><span class="kn">import</span> <span class="n">SG_FPS</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">fps_my_function</span> <span class="o">=</span> <span class="n">SG_FPS</span><span class="o">.</span><span class="n">FPSCounter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;my_function&quot;</span><span class="p">)</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">():</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="k">global</span> <span class="n">fps_my_function</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">fps_my_function</span><span class="o">.</span><span class="n">update</span><span class="p">()</span> <span class="c1">#updates, and every 1.0 seconds prints my_function FPS</span>
 </span></code></pre></div></p>
 <h1 id="what-works-to-keep-glove-data-1khz">What works to keep glove data &gt;1kHz.</h1>
 <h2 id="our-data-uses-1khz-callbacks-but-your-code-can-slow-it-down">Our data uses &gt;1kHz callbacks, but your code can slow it down!</h2>
 <p>Data in our API comes in through callbacks when new data is received. These are fast, but only if your program doesn't steal their processing time!</p>
 <h2 id="dont-use-busy-while-loops">Don't use busy while loops</h2>
-<p><div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">while</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="c1">#do something, or nothing</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">pass</span>
+<p><div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">while</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="c1">#do something, or nothing</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="k">pass</span>
 </span></code></pre></div>
 This is a busy while loop. While it looks like it shouldn't do anything, this eats up all CPU power of the program, meaning the callbacks of the data will no longer be called at 1kHz. It can get as bad as only receiving data at 50 Hz.</p>
-<p><div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">while</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="c1">#do something, or nothing</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># sleep 1 second</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="k">pass</span>
+<p><div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">while</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="c1">#do something, or nothing</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># sleep 1 second</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="k">pass</span>
 </span></code></pre></div>
 This is a non-busy while loop. During this sleep time other parts of the program are allowed to execute, such as the data callbacks needed at 1kHz.
 Don't reduce this sleep time too much or it will become a more and more busy while loop.</p>
 <p>We recommend instead of using a while loop yourself, to use <code>SG_main.keep_program_running()</code>. This internally uses this while loop system to keep the program alive, but also allows closing down smoothly with Ctrl+C, and still allow high data callbacks.</p>
 <h2 id="making-things-faster-in-python">Making things faster in python</h2>
-<p>We recommend VTune by Intel to profile your code to find the parts taking the longest. </p>
+<p>We recommend <a href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html">VTune by Intel</a> to profile your code to find the parts taking the longest. Profile your code with Hot Spots setting, and use the Bottom-up tab to find your bottleneck.</p>
 <h3 id="threading-vs-multiprocessing-should-you-use-it">Threading vs multiprocessing, should you use it?</h3>
 <p>Threading in python works very different from in other programs. Even with threading, only one block of python can run at a time, so it is not parallel. However, I/O or C++ calls can run simultaneously with a python thread. So good for C++/file writing, but for pure python nothing will actually run in parallel, only sequential, AND it add an overhead, so is often slower.</p>
 <p>Multiprocessing in python is true parallelism, but harder to implement, and a lot of overhead on making the actual threads.</p>

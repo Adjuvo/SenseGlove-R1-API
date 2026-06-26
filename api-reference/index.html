@@ -528,6 +528,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#SG_API.SG_main.set_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;set_filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#SG_API.SG_main.keep_program_running" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1307,6 +1318,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#SG_API.SG_main.set_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;set_filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#SG_API.SG_main.keep_program_running" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2078,6 +2100,8 @@
         <p>Initializes the API and connection searching. </p>
 <p>If wait_for_x_gloves is not 0, the program will not move on until it finds at least x gloves. Returns list of device_ids connected after init.</p>
 <p>If setting Com_type to SIMULATED_GLOVE it will generate a single right hand simulator. The movement can be set with the SIMULATION_MODE parameter (which is not used when the REAL glove mod is on).</p>
+<p>smoothing_EWMA: If 0, no final smoothing is applied, resulting in no delay (except for moments when there is jitter actively being surpressed). If &gt; 0, the final smoothing is applied using the EWMA filter. 
+The higher the number (0 to 1), the more responsive. The closer to 0, the more smooth and more delayed.</p>
 <p><strong>Examples:</strong>
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">REAL_GLOVE_USB</span><span class="p">)</span>  <span class="c1"># Block program until 1 glove connects</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">REAL_GLOVE_USB</span><span class="p">)</span>  <span class="c1"># Block program until 2 gloves connect</span>
@@ -2132,6 +2156,37 @@ Use:
 </span></code></pre></div></p>
 <p>Examples:
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">com_type</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_COM_type</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>  <span class="c1"># SG_T.Com_type.REAL_GLOVE_USB or SG_T.Com_type.SIMULATED_GLOVE</span>
+</span></code></pre></div></p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="SG_API.SG_main.set_filter" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">set_filter</span>
+
+
+</h4>
+<div class="language-python doc-signature highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_filter</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="n">int</span><span class="p">,</span> <span class="n">filter_type</span><span class="p">:</span> <span class="n"><span title="SG_API.SG_types.Filter_type">Filter_type</span></span><span class="p">,</span> <span class="n">smoothing_EWMA</span><span class="p">:</span> <span class="n">float</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Is enabled by default even when not called with SG_T.Filter_type.SUSPICION, smoothing 0.25. The SUSPICION should not cause delay, but smoothing &gt; 0 will cause a slight delay.
+Sets the tracking filter type to prevent jitter for prototypes that have issues with that. Call only once per hand on startup.</p>
+<ul>
+<li><strong>filter_type</strong>: The filter type to use. Currently only SUSPICION is supported, which filters out most jitter without any delay (it will repeat data for moments when there is jitter actively being surpressed).</li>
+<li><strong>smoothing_EWMA</strong>: EWMA = Exponentially Weighted Moving Average filter, which smooths out the sudden jumps. If 0, no final smoothing is applied, and no latency is introduced.
+    If &gt; 0, the final smoothing is applied using the EWMA filter. 
+   The higher the number (0 to 1), the more responsive. The closer to 0, the more smooth and more delayed.</li>
+</ul>
+<p>Use:
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SG_main</span><span class="o">.</span><span class="n">set_filter</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Filter_type</span><span class="o">.</span><span class="n">SUSPICION</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span> <span class="c1"># on with regular settings, causes some delay but no sudden jumps when it catches up after jitter.</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">SG_main</span><span class="o">.</span><span class="n">set_filter</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Filter_type</span><span class="o">.</span><span class="n">SUSPICION</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># on with no smoothing, filters out most jitter without delay on correct data, but has sudden jumps when it catches up after jitter, and may still show smaller or prolonged jitter.</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">SG_main</span><span class="o">.</span><span class="n">set_filter</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Filter_type</span><span class="o">.</span><span class="n">OFF</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># raw data is used, jitter is not filtered out. No smoothing.</span>
 </span></code></pre></div></p>
 
     </div>

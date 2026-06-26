@@ -551,10 +551,12 @@
 </tr>
 </tbody>
 </table>
+<p>This is achievable with no GUI open. Disable that for the best performance.</p>
+<p>Note: To prevent jitter in some prototypes (see below), a smoothing filter is currently enabled by default, which can introduces a small additional delay. You can disable this, see <a href="fps-performance/#delay--latency-related-issues">Delay</a> for more details.</p>
 <h1 id="known-issues">Known issues</h1>
 <h2 id="tracking-jitter">Tracking jitter</h2>
 <p>Some early prototype gloves (up to May 2026) have occasional tracking glitches. This problem lies in electronics and is solved in future prototypes.</p>
-<p>For these prototype versions, since python API Release v0.0.22 (2026-06-15) a custom filter is turned on by default. This filters out near all jitter. This filter does not add any latency when there is no jitter. Only once it detects jitter it repeats the value before the jitter started.</p>
+<p>For these prototype versions, since python API Release v0.0.22 (2026-06-15) a custom filter is turned on by default. This was further improved in v0.0.22 and v0.0.23. The latest filter filters out near all jitter. This filter exists of two parts: a jitter filter without additional latency, and a smoothing filter that does introduces a small additional latency. To disable or adjust, see <a href="">FPS/delay</a>.</p>
 <h4 id="documentation-sections">📚 Documentation Sections</h4>
 <p>🚀 <strong><a href="getting_started/">Getting Started</a></strong> - Supported software, and basic examples. Read this first!<br />
 🎯 <strong><a href="tracking/">Tracking Data</a></strong> - Finger tracking and position data<br />
