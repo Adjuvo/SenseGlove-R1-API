@@ -1,21 +1,55 @@
-# Why is my glove force jittering? Tips to improve it
+
+
+
+
+# Why is my force feedback jittering? Tips to improve it
 Active haptic feedback (motorized feedback) of the glove works by getting the tracking data, then sending a force back to the glove based on that tracking data. Now there will always be a tiny bit of delay between those. If that delay becomes larger than a few ms, you get the problem where the force isn't engaged fast enough to respond to the movements, and that **will result in instability (jittering), usually on/near contact**.
 
-You can fix this in a couple of ways.
+```
+ user closes fingers ->
+ robot hand touches object and detects force -> 
+ force on glove pulls users finger back -> 
+ robot finger opens -> 
+ robot hand doesn't detect force anymore -> 
+ users finger is no longer stopped -> 
+ user closes fingers -> 
+ and the whole loop restarts
+```
+This can happen fast, causing the jittering at touching surfaces. You can fix this in a couple of ways.
 
 1. First, make sure your commanded forces look smooth over time. You can use Teleplot (VScode extension) to quickly plot this. 
 
-If not, be careful with filtering for latency. Plot the filtered in one plot with the original signal so you can see the caused latency. Latency can also cause instability, so keep it to a minimum.
+If not, be careful with using filtering, since this can cause latency. Plot the filtered values in one plot with the original signal so you can see the caused latency. Latency can also cause instability, so keep it to a minimum.
 
 If the input smooth, some further options:
 
-- Increasing the FPS (frames/second) of the data and reducing the latency between the glove's position update given and force received. 
-- Lower the forces
+- Increasing the FPS (frames/second) of the data and reducing the latency between the glove's position update given and force received. The faster this runs, the less delay between touch and detection is, and smoother the changes in force will be. That prevents jitter. This is the best but often most difficult option. 
+- Lower the forces (causes a more gradual change in force, so the finger is not harshly janked back on the object touch).
 - Reduce how quickly the force responds (for example with a low pass filter, dampening, or a controller on top). This will smooth the signal and cause a more gradual buildup/reduction of force.
 
 Fixing this with the third option might cause:
 - A solid surface to feel more squishy instead of solid. (Due to less sudden force changes.)
 - Less transparency on no forces (meaning how much you feel the force when there should be no force at all).
+
+
+# Delay / Latency related issues
+Aside from FPS, latency can cause the force feedback to respond too late to the users actions. 
+```
+User moves glove -> tracking sent to robot hand -> robot hand moves -> force sensor robot hand touches -> detected force sent to R1 glove -> R1 pulls users finger back.
+```
+If any step in this process is delayed, the users finger is pulled back too late, and the users hand (and therefore also the robot hand) will close further than it should before fingers are stopped. 
+
+If this is at a specific frequency, it can also cause a feedback loop of instability, similar to the one for FPS, but slower.
+
+The R1 has low latency, however, for prototypes with jitter we have added an optional smoothing filter on the tracking that might cause some slight delay as well. This is enabled by default. This might be visible as a tiny delay on the virtual glove moving compared to your real hand. You can disable this by calling the following just after SG_main.init.
+```python
+SG_main.set_filter(hand_id,  SG_T.Filter_type.SUSPICION,  0)
+```
+With the smoothing disabled (0) there should be no additional delay aside from when it actually detects jitter in the SUSPICION filter, so you can keep that SUSPICION filter on. If you fully want to use raw data without any jitter detection, change to `SG_T.Filter_type.OFF`.
+
+However, in our experience, the culprit of the noticable force feedback delays is often the force sensor on the robot hand taking too long before it detected something, and for noticable movement delay, the robot hand reacting slow to a command.
+
+
 
 
 # How to measure data rates
@@ -57,7 +91,7 @@ Don't reduce this sleep time too much or it will become a more and more busy whi
 We recommend instead of using a while loop yourself, to use `SG_main.keep_program_running()`. This internally uses this while loop system to keep the program alive, but also allows closing down smoothly with Ctrl+C, and still allow high data callbacks.
 
 ## Making things faster in python
-We recommend VTune by Intel to profile your code to find the parts taking the longest. 
+We recommend [VTune by Intel](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html) to profile your code to find the parts taking the longest. Profile your code with Hot Spots setting, and use the Bottom-up tab to find your bottleneck.
 
 
 
@@ -71,4 +105,5 @@ If you do, that obviously causes it to be slower, and the callback not to be cal
 
 ## print() can reduce fps
 Don't call them continuously in the main update loop, only print every few seconds.
+
 

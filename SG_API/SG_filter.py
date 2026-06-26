@@ -50,6 +50,7 @@ class SuspicionChecks:
     finger_range: bool = True
     acceleration: bool = True
     suspicion_hold_on_minimal_change: bool = True
+    motion_classifier: bool = True
 
 
 @dataclass
@@ -65,13 +66,20 @@ class FilterSuspicionConfig:
     sibling_stable_threshold: float = 0.06
     min_stable_siblings: int = 6
     finger_range_margin_rad: float = 0.05
-    suspicion_hold_minimal_change_threshold: float = 0.2
-    suspicion_hold_min_entry_level: int = 3
-    suspicion_hold_sibling_entry_level: int = 2
-    suspicion_hold_max_frames: int = 21
+    suspicion_hold_minimal_change_threshold: float = 0.15
+    suspicion_hold_min_entry_level: int = 1
+    suspicion_hold_sibling_entry_level: int = 1
+    suspicion_hold_max_frames: int = 30
     memory_size: int = 76
-    slow_filter_normal_alpha: float = 0.2
-    slow_filter_suspicion_alpha: float = 0.2
+    motion_classifier_window: int = 20
+    motion_classifier_min_window: int = 10
+    motion_classifier_velocity_threshold: float = 0.01
+    motion_classifier_max_jump_rad: float = 0.5
+    motion_classifier_teleport_ceiling_rad: float = 1.2
+    motion_classifier_trend_frames: int = 6
+    motion_classifier_monotonic_ratio: float = 0.7
+    slow_filter_normal_alpha: float = 0.18
+    slow_filter_suspicion_alpha: float = 0.18
     fast_filter_window_size: int = 5
 
     @property
@@ -467,15 +475,18 @@ class FilterSuspicion:
     """
     Per-joint suspicion filter: trusted raw samples go into correct_buffer;
     jitter-like frames are rejected and output stays at correct_buffer[-1].
+
+    final_smoothing_EWMA: If 0, no final smoothing is applied. If > 0, the final smoothing is applied using the EWMA filter. 
+    The higher the number (0 to 1), the more responsive. The closer to 0, the more smooth and more delayed.
     """
 
     def __init__(
         self,
-        window_size: int = 5,
+        final_smoothing_EWMA: float = 0.25,
         checks: Optional[SuspicionChecks] = None,
         config: Optional[FilterSuspicionConfig] = None,
     ):
-        self.window_size = window_size
+        self.final_smoothing_EWMA = final_smoothing_EWMA
         self.checks = checks if checks is not None else SuspicionChecks()
         self.config = config if config is not None else FilterSuspicionConfig()
         c = self.config
@@ -494,6 +505,13 @@ class FilterSuspicion:
         self.suspicion_hold_sibling_entry_level = c.suspicion_hold_sibling_entry_level
         self.suspicion_hold_max_frames = c.suspicion_hold_max_frames
         self.memory_size = c.memory_size
+        self.motion_classifier_window = c.motion_classifier_window
+        self.motion_classifier_min_window = c.motion_classifier_min_window
+        self.motion_classifier_velocity_threshold = c.motion_classifier_velocity_threshold
+        self.motion_classifier_max_jump_rad = c.motion_classifier_max_jump_rad
+        self.motion_classifier_teleport_ceiling_rad = c.motion_classifier_teleport_ceiling_rad
+        self.motion_classifier_trend_frames = c.motion_classifier_trend_frames
+        self.motion_classifier_monotonic_ratio = c.motion_classifier_monotonic_ratio
         self.warmup_frames = c.warmup_frames
         self.slow_filter_normal_alpha = c.slow_filter_normal_alpha
         self.slow_filter_suspicion_alpha = c.slow_filter_suspicion_alpha
@@ -526,20 +544,24 @@ class FilterSuspicion:
         self._suspicion_snapshot: Optional[SuspicionSnapshot] = None
 
         self.slow_filter = EWMAFilter(alpha=self.slow_filter_normal_alpha)
+        self.final_EWMA_filter = EWMAFilter(alpha=self.final_smoothing_EWMA) # Is applied after filtering to smooth out the sudden jumps
         self.fast_filter = MedianFilter(window_size=self.config.fast_filter_window_size)
-        self.raw_history: Deque[float] = deque(maxlen=self.prediction_velocity_frames)
+        self.raw_history: Deque[float] = deque(
+            maxlen=max(self.prediction_velocity_frames, self.motion_classifier_window + 1)
+        )
 
     def _predict_from_velocity(self) -> Optional[float]:
         """Extrapolate next value from median velocity over recent raw samples."""
-        n = len(self.raw_history)
+        hist = list(self.raw_history)[-self.prediction_velocity_frames:]
+        n = len(hist)
         if n < self.min_velocity_samples:
             return None
         if n == 2:
-            velocity = self.raw_history[1] - self.raw_history[0]
+            velocity = hist[1] - hist[0]
         else:
-            deltas = [self.raw_history[i] - self.raw_history[i - 1] for i in range(1, n)]
+            deltas = [hist[i] - hist[i - 1] for i in range(1, n)]
             velocity = _median_small(deltas)
-        return self.raw_history[-1] + velocity
+        return hist[-1] + velocity
 
     def _record_raw_sample(self, value: float) -> None:
         self.raw_history.append(value)
@@ -551,6 +573,81 @@ class FilterSuspicion:
         current_velocity = value - self.raw_history[-1]
         previous_velocity = self.raw_history[-1] - self.raw_history[-2]
         return current_velocity - previous_velocity
+
+    def _is_motion_continuation(self, value: float) -> bool:
+        """Classifier (not a suspicion signal): is this excursion a continuation of
+        established motion (genuine) rather than a jump from rest (jitter)?
+
+        Compares the jump direction against the average velocity of the trusted
+        history (correct_buffer). The trusted buffer excludes rejected frames, so
+        it is not poisoned by the excursion itself.
+        """
+        if self.correct_buffer is None:
+            return False
+        n = len(self.correct_buffer)
+        w = min(self.motion_classifier_window, n - 1)
+        if w < self.motion_classifier_min_window:
+            return False
+        baseline = self.correct_buffer[-1]
+        avg_velocity = (baseline - self.correct_buffer[-1 - w]) / w
+        if abs(avg_velocity) < self.motion_classifier_velocity_threshold:
+            return False
+        jump = value - baseline
+        if jump * avg_velocity <= 0:
+            return False
+        # Genuine motion is monotonic; a jitter staircase bounces (down/up/down)
+        # while riding on top of a real prior trend. Reject when the recent raw
+        # path is incoherent (net displacement small vs total path travelled).
+        if not self._recent_motion_is_coherent(value):
+            return False
+        # Small jumps consistent with established motion: accept immediately.
+        if abs(jump) <= self.motion_classifier_max_jump_rad:
+            return True
+        # Jumps far beyond a plausible single-frame move are teleports (jitter),
+        # never genuine motion — reject regardless of what follows.
+        if abs(jump) > self.motion_classifier_teleport_ceiling_rad:
+            return False
+        # Gray zone (fast genuine move vs jitter look identical on the jump frame).
+        # The filter is already holding, so use that hold as hindsight: only release
+        # once the rejected samples keep progressing in the motion direction
+        # (genuine momentum), not revert or sit flat at a teleported level.
+        return self._excursion_is_progressing(value, baseline, avg_velocity)
+
+    def _recent_motion_is_coherent(self, value: float) -> bool:
+        """Net displacement vs total path over the window (~1 smooth, low if bouncing)."""
+        seq = list(self.raw_history)[-self.motion_classifier_window:]
+        if len(seq) < self.motion_classifier_min_window:
+            return True
+        seq.append(value)
+        total = sum(abs(seq[i] - seq[i - 1]) for i in range(1, len(seq)))
+        if total < 1e-9:
+            return True
+        net = abs(seq[-1] - seq[0])
+        return (net / total) >= self.motion_classifier_monotonic_ratio
+
+    def _excursion_is_progressing(self, value: float, baseline: float, avg_velocity: float) -> bool:
+        """Have the held excursion samples kept moving in the motion direction?
+
+        Only the current episode counts: time_since_correct_val is the number of
+        suspicious samples appended this episode, so requiring >= k-1 of them
+        guarantees the window is built purely from current-excursion samples (the
+        suspicious_buffer is not cleared between episodes and would otherwise be
+        polluted by stale values from an earlier episode).
+        """
+        buf = self.suspicious_buffer
+        k = self.motion_classifier_trend_frames
+        if buf is None or self.time_since_correct_val < k - 1:
+            return False
+        recent = list(buf)[-(k - 1):]
+        recent.append(value)
+        direction = 1.0 if avg_velocity > 0 else -1.0
+        # All recent samples on the motion side of the baseline.
+        if any((s - baseline) * direction <= 0 for s in recent):
+            return False
+        # Still progressing away from baseline at >= the established velocity
+        # (a teleport-and-hold plateau stays flat and fails this).
+        progress = (recent[-1] - recent[0]) * direction
+        return progress >= self.motion_classifier_velocity_threshold * (k - 1)
 
     def _append_to_correct_buffer(self, value: float) -> None:
         if self.correct_buffer is None:
@@ -580,6 +677,7 @@ class FilterSuspicion:
         # physically impossible values so out-of-range jitter never corrupts it.
         if not self._is_out_of_exo_range(value):
             self.slow_filter.update(value)
+
 
     def _warmup_update(self, value: float) -> float:
         self.fast_filter.update(value)
@@ -817,7 +915,7 @@ class FilterSuspicion:
         if self.suspicious_level_sibling_joints > 0 or self.suspicious_level_finger_range > 0:
             self.suspicion_hold_sibling_qualifies = True
 
-    def update(
+    def _update_suspicious(
         self,
         value: float,
         finger_raw: Optional[Sequence[float]] = None,
@@ -826,6 +924,7 @@ class FilterSuspicion:
         other_joint_values: Optional[Sequence[float]] = None,
         other_joint_previous: Optional[Sequence[float]] = None,
     ) -> float:
+        
 
         self.update_count += 1
         in_warmup = self.update_count <= self.warmup_frames
@@ -859,7 +958,11 @@ class FilterSuspicion:
         )
         self._apply_finger_range_suspicion_pass(value)
 
-        if self.suspicion_level >= self.suspicion_threshold:
+        would_hold = self.suspicion_level >= self.suspicion_threshold
+        if would_hold and self.checks.motion_classifier and self._is_motion_continuation(value):
+            would_hold = False
+
+        if would_hold:
             if not was_suspicious:
                 self._reseed_slow_filter_from_correct_buffer()
                 if self.checks.slow_filter_check:
@@ -885,7 +988,28 @@ class FilterSuspicion:
         if self.correct_buffer is None:
             return value
 
+
         return self.correct_buffer[-1]
+
+
+
+    def update(
+        self,
+        value: float,
+        finger_raw: Optional[Sequence[float]] = None,
+        finger_prev: Optional[Sequence[float]] = None,
+        joint_idx: Optional[int] = None,
+        other_joint_values: Optional[Sequence[float]] = None,
+        other_joint_previous: Optional[Sequence[float]] = None,
+    ) -> float:
+
+        suspicious_filter_value = self._update_suspicious(value, finger_raw, finger_prev, joint_idx, other_joint_values, other_joint_previous)
+
+        if self.final_smoothing_EWMA > 0:
+            result = self.final_EWMA_filter.update(suspicious_filter_value)
+            return result
+        else:
+            return suspicious_filter_value
 
     
     def add_value_to_suspicious_buffer(self, value: float):
@@ -934,10 +1058,14 @@ class FilterSuspicion:
 class ExoAnglesFilterSuspicion:
     """
     Applies FilterSuspicion to each joint, passing sibling joint context on the same finger.
+
+    
+    final_smoothing_EWMA: If 0, no final smoothing is applied. If > 0, the final smoothing is applied using the EWMA filter. 
+    The higher the number (0 to 1), the more responsive. The closer to 0, the more smooth and more delayed.
     """
 
-    def __init__(self, hand: SG_T.Hand, window_size: int = 5, checks: Optional[SuspicionChecks] = None):
-        self.window_size = window_size
+    def __init__(self, hand: SG_T.Hand, final_smoothing_EWMA: float = 0.25, checks: Optional[SuspicionChecks] = None):
+        self.final_smoothing_EWMA = final_smoothing_EWMA
         self.checks = checks if checks is not None else SuspicionChecks()
         self.hand = hand
         self.filters: List[List[FilterSuspicion]] = []
@@ -954,7 +1082,7 @@ class ExoAnglesFilterSuspicion:
         for finger_angles in exo_angles:
             n_joints = len(finger_angles)
             finger_filters = [
-                FilterSuspicion(self.window_size, checks=self.checks)
+                FilterSuspicion(final_smoothing_EWMA=self.final_smoothing_EWMA, checks=self.checks)
                 for joint_idx in range(n_joints)
             ]
             for joint_idx, joint_filter in enumerate(finger_filters):

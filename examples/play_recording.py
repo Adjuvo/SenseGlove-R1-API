@@ -51,7 +51,7 @@ try:
     """
         The recording file should be in "recordings/" or "internal/recordings/".
     """
-    recording_filename = "0076_finger_bending.csv"
+    recording_filename = "finger_close_open.csv"
 
     recording_device_info = SG_recorder.get_device_info(recording_filename)
     if recording_device_info is None:

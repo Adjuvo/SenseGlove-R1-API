@@ -44,10 +44,12 @@ try:
     wait_for_x_gloves = 1
     device_ids = SG_main.init(wait_for_x_gloves, SG_T.Com_type.REAL_GLOVE_USB, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 
     hand_id = device_ids[0]
+    SG_main.set_filter(hand_id,  SG_T.Filter_type.SUSPICION,  0.25) # Is enabled by default to prevent jitter on gloves. You can adjust/disable here (read function). 
 
 
     # initialize the GUI with the exo positions
     exo_poss, rots = SG_main.get_exo_joints_poss_rots(hand_id)
+
     gui.create_hand_exo(exo_poss)
 
     # callback called when new data is available

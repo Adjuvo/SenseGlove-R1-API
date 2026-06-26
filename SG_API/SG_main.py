@@ -53,6 +53,9 @@ def init(wait_for_x_gloves : int, com_type : SG_T.Com_type, SIMULATION_MODE : SG
     If wait_for_x_gloves is not 0, the program will not move on until it finds at least x gloves. Returns list of device_ids connected after init.
     
     If setting Com_type to SIMULATED_GLOVE it will generate a single right hand simulator. The movement can be set with the SIMULATION_MODE parameter (which is not used when the REAL glove mod is on).
+
+    smoothing_EWMA: If 0, no final smoothing is applied, resulting in no delay (except for moments when there is jitter actively being surpressed). If > 0, the final smoothing is applied using the EWMA filter. 
+    The higher the number (0 to 1), the more responsive. The closer to 0, the more smooth and more delayed.
     
     **Examples:**
     ```python
@@ -163,6 +166,25 @@ def get_COM_type(device_id: int) -> SG_T.Com_type:
     """
     return SG_devices.get_device(device_id).communication_type
 
+
+def set_filter(device_id: int, filter_type: SG_T.Filter_type, smoothing_EWMA: float):
+    """
+    Is enabled by default even when not called with SG_T.Filter_type.SUSPICION, smoothing 0.25. The SUSPICION should not cause delay, but smoothing > 0 will cause a slight delay.
+    Sets the tracking filter type to prevent jitter for prototypes that have issues with that. Call only once per hand on startup.
+
+    - **filter_type**: The filter type to use. Currently only SUSPICION is supported, which filters out most jitter without any delay (it will repeat data for moments when there is jitter actively being surpressed).
+    - **smoothing_EWMA**: EWMA = Exponentially Weighted Moving Average filter, which smooths out the sudden jumps. If 0, no final smoothing is applied, and no latency is introduced.
+        If > 0, the final smoothing is applied using the EWMA filter. 
+       The higher the number (0 to 1), the more responsive. The closer to 0, the more smooth and more delayed.
+    
+    Use:
+    ```python
+    SG_main.set_filter(device_id, SG_T.Filter_type.SUSPICION, 0.25) # on with regular settings, causes some delay but no sudden jumps when it catches up after jitter.
+    SG_main.set_filter(device_id, SG_T.Filter_type.SUSPICION, 0) # on with no smoothing, filters out most jitter without delay on correct data, but has sudden jumps when it catches up after jitter, and may still show smaller or prolonged jitter.
+    SG_main.set_filter(device_id, SG_T.Filter_type.OFF, 0) # raw data is used, jitter is not filtered out. No smoothing.
+    ```
+    """
+    SG_devices.get_rembrandt_device(device_id).set_tracking_filter(filter_type, smoothing_EWMA)
 
 # ----------------- Update, This is called by the high_freq_update_callback. Updates INCOMING DATA FOR PROTOCOLS THAT USE POLLING (such as livesim or python serial) ----------
 def _update():
