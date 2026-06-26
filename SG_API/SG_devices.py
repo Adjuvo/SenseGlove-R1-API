@@ -99,6 +99,7 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         self.callback_fps_updated_data = SG_FPS.FPSCounter(1.0, "update_data_device_" + str(device_info.device_id) + " FPS", sg_logger.USER_INFO)
         self._device_id = device_info.device_id
         self._device_info = device_info
+        self.filter_type = SG_T.Filter_type.SUSPICION
         #self.raw_recorder = SG_recorder.GloveCsvRecorder(self._device_info)
         self.writing_recording = False
         #self.filtered_recorder = SG_recorder.GloveCsvRecorder(self._device_info)
@@ -125,7 +126,7 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         self.set_percentage_bent_vars()
         # ExoAnglesMedianFilter applies MedianFilter per joint across the full glove structure
         #self.exo_angles_filter = SG_filter.ExoAnglesMedianFilter(window_size=5)
-        self.exo_angles_filter = SG_filter.ExoAnglesFilterSuspicion(window_size=5, hand=self.get_handedness())
+        self.exo_angles_filter = SG_filter.ExoAnglesFilterSuspicion(hand=self.get_handedness())
         self.flex_angles = []
         self.abd_angles = []
 
@@ -152,10 +153,10 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         
         #print("SG_device-raw_exo_angles: " + sg_logger.nested_array_to_str(raw_exo_angles))
         
-
-        # # Apply median filter to reduce noise
-
-        self._data.exo_angles_rad_filtered = self.exo_angles_filter.update(raw_exo_angles)
+        if self.filter_type == SG_T.Filter_type.SUSPICION:
+            self._data.exo_angles_rad_filtered = self.exo_angles_filter.update(raw_exo_angles)
+        elif self.filter_type == SG_T.Filter_type.OFF:
+            self._data.exo_angles_rad_filtered = raw_exo_angles
 
         #self.raw_recorder.update_manually(raw_exo_angles, self._data.exo_angles_rad_filtered)
         
@@ -491,6 +492,14 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         These angles are calculated from the fingertip orientations.
         """
         return self.flex_angles, self.abd_angles
+
+    def set_tracking_filter(self, filter_type: SG_T.Filter_type, smoothing_EWMA: float):
+        """
+        Sets the tracking filter type to prevent jitter.
+        """
+        self.filter_type = filter_type
+        self.exo_angles_filter = SG_filter.ExoAnglesFilterSuspicion(hand=self.get_handedness(), final_smoothing_EWMA=smoothing_EWMA)
+        
 
     # def save_recording(self, filename: str):
     #     self.writing_recording = True

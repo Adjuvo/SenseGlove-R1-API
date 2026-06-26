@@ -47,11 +47,15 @@ The thumb, index, middle and ring finger (excluding pinky) feature Active Force 
 | ------------------------------ | ------------------------------------------------------------------------------------------------ |
 | **Latency**                    | R1-PC one way latency: ~10ms. This is an estimate.                                               |
 
+This is achievable with no GUI open. Disable that for the best performance.
+
+Note: To prevent jitter in some prototypes (see below), a smoothing filter is currently enabled by default, which can introduces a small additional delay. You can disable this, see [Delay](fps-performance.md#delay--latency-related-issues) for more details.
+
 # Known issues
 ## Tracking jitter
 Some early prototype gloves (up to May 2026) have occasional tracking glitches. This problem lies in electronics and is solved in future prototypes.
 
-For these prototype versions, since python API Release v0.0.22 (2026-06-15) a custom filter is turned on by default. This filters out near all jitter. This filter does not add any latency when there is no jitter. Only once it detects jitter it repeats the value before the jitter started.
+For these prototype versions, since python API Release v0.0.22 (2026-06-15) a custom filter is turned on by default. This was further improved in v0.0.22 and v0.0.23. The latest filter filters out near all jitter. This filter exists of two parts: a jitter filter without additional latency, and a smoothing filter that does introduces a small additional latency. To disable or adjust, see [FPS/delay]().
 
 #### 📚 Documentation Sections
 

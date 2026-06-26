@@ -56,7 +56,9 @@ class Control_Mode(IntEnum):
 
 
     
-
+class Filter_type(Enum):
+    SUSPICION = "suspicion_tight_filter"
+    OFF = "off"
 
 
 # currently not distinguishing between encoding type to the buffer and encoding type from firmware.
