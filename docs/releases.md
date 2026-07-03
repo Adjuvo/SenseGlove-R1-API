@@ -1,5 +1,8 @@
 # Releases
 
+## v0.0.25
+Changed the jitter filter thresholds specifically for the first joint (abduction). These generally moves slower.
+
 ## v0.0.24
 The jitter filter is improved, and an optional smoothing filter was added to smooth out any remaining sudden jumps on recovery of signal.The jitter filter itself causes no extra delay while detecting correct data.  However, this smoothing filter causes some slight delay. See [Delay](fps-performance.md#delay--latency-related-issues) on how to disable or adjust.
 
