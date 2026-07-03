@@ -87,6 +87,13 @@ class FilterSuspicionConfig:
         return self.memory_size
 
 
+# Tighter thresholds for j0 (splay/abduction) on all fingers; tune via recordings.
+J0_FILTER_CONFIG = FilterSuspicionConfig(
+    prediction_threshold=0.10,
+    acceleration_threshold=0.10,
+)
+
+
 @dataclass
 class SuspicionSnapshot:
     """Bookmark of suspicion state for duplicate-raw frames."""
@@ -1064,9 +1071,18 @@ class ExoAnglesFilterSuspicion:
     The higher the number (0 to 1), the more responsive. The closer to 0, the more smooth and more delayed.
     """
 
-    def __init__(self, hand: SG_T.Hand, final_smoothing_EWMA: float = 0.25, checks: Optional[SuspicionChecks] = None):
+    def __init__(
+        self,
+        hand: SG_T.Hand,
+        final_smoothing_EWMA: float = 0.25,
+        checks: Optional[SuspicionChecks] = None,
+        config: Optional[FilterSuspicionConfig] = None,
+        joint_0_config: Optional[FilterSuspicionConfig] = J0_FILTER_CONFIG,
+    ):
         self.final_smoothing_EWMA = final_smoothing_EWMA
         self.checks = checks if checks is not None else SuspicionChecks()
+        self.default_config = config if config is not None else FilterSuspicionConfig()
+        self.joint_0_config = joint_0_config
         self.hand = hand
         self.filters: List[List[FilterSuspicion]] = []
         self.initialized = False
@@ -1082,7 +1098,11 @@ class ExoAnglesFilterSuspicion:
         for finger_angles in exo_angles:
             n_joints = len(finger_angles)
             finger_filters = [
-                FilterSuspicion(final_smoothing_EWMA=self.final_smoothing_EWMA, checks=self.checks)
+                FilterSuspicion(
+                    final_smoothing_EWMA=self.final_smoothing_EWMA,
+                    checks=self.checks,
+                    config=self.joint_0_config if joint_idx == 0 and self.joint_0_config is not None else self.default_config,
+                )
                 for joint_idx in range(n_joints)
             ]
             for joint_idx, joint_filter in enumerate(finger_filters):

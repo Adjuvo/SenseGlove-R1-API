@@ -53,9 +53,9 @@ Note: To prevent jitter in some prototypes (see below), a smoothing filter is cu
 
 # Known issues
 ## Tracking jitter
-Some early prototype gloves (up to May 2026) have occasional tracking glitches. This problem lies in electronics and is solved in future prototypes.
+Some prototype gloves have occasional tracking glitches. This problem lies in electronics and is solved in future prototypes.
 
-For these prototype versions, since python API Release v0.0.22 (2026-06-15) a custom filter is turned on by default. This was further improved in v0.0.22 and v0.0.23. The latest filter filters out near all jitter. This filter exists of two parts: a jitter filter without additional latency, and a smoothing filter that does introduces a small additional latency. To disable or adjust, see [FPS/delay]().
+For these prototype versions, python API Release v0.0.22 (2026-06-15) contains a custom filter is turned on by default. This was further improved in v0.0.23, v0.0.24 and v0.0.25. The latest filter filters out near all jitter. This filter exists of two parts: a jitter filter with no additional latency, and a smoothing filter on top that does introduces a small additional latency. To disable or adjust, see [FPS/delay](fps-performance.md#delay--latency-related-issues-performance.md).
 
 #### 📚 Documentation Sections
 
