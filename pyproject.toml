@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SG_API"
+version = "0.1"
+description = "SenseGlove API Package"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy>=1.20",
+    "pyserial",
+    "pygame",
+    "matplotlib",
+    "PySide6",
+    "pefile",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["SG_API*", "Tests_SG_API*"]
+
+[tool.setuptools.package-data]
+SG_API = ["CPPlibs/*.so", "CPPlibs/*.dll", "CPPlibs/*.pyd", "*.csv"]

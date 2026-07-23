@@ -43,6 +43,7 @@ If this is at a specific frequency, it can also cause a feedback loop of instabi
 
 The R1 has low latency, however, for prototypes with jitter we have added an optional smoothing filter on the tracking that might cause some slight delay as well. This is enabled by default. This might be visible as a tiny delay on the virtual glove moving compared to your real hand. You can disable this by calling the following just after SG_main.init.
 ```python
+SG_main.init(....)
 SG_main.set_filter(hand_id,  SG_T.Filter_type.SUSPICION,  0)
 ```
 With the smoothing disabled (0) there should be no additional delay aside from when it actually detects jitter in the SUSPICION filter, so you can keep that SUSPICION filter on. If you fully want to use raw data without any jitter detection, change to `SG_T.Filter_type.OFF`.

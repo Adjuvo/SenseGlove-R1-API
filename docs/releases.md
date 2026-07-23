@@ -1,12 +1,31 @@
 # Releases
+To update the API:
+
+- Enter the SG_API folder.
+```bash
+cd to the parent folder of SG_API, containing setup.py
+git pull
+# activate python environment if any!!!
+pip install .
+```
+
+## v0.0.26
+2026-07-23
+
+- Fixed .csv and other files not being found correctly for pip install . or uv, by adding a pyproject.toml file.
+- Docs improvements
+
 
 ## v0.0.25
-Changed the jitter filter thresholds specifically for the first joint (abduction). These generally moves slower.
+2026-07-03
+Changed the jitter filter thresholds specifically for the first joint (abduction). These generally move slower.
 
 ## v0.0.24
+2026-06-26
 The jitter filter is improved, and an optional smoothing filter was added to smooth out any remaining sudden jumps on recovery of signal.The jitter filter itself causes no extra delay while detecting correct data.  However, this smoothing filter causes some slight delay. See [Delay](fps-performance.md#delay--latency-related-issues) on how to disable or adjust.
 
 ## v0.0.23
+2026-06-25
 - Fix for left gloves thumb abduction.
 - Improved the jitter filter even further.
 

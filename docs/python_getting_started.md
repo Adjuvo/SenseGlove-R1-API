@@ -1,7 +1,9 @@
 
 
 # What is this?
-This is the python API to interface with R1, an active force feedback glove with precise position tracking made for telerobotics by SenseGlove. With this API you can retrieve tracking data in many formats, and control the active force feedback pulling on the fingers in the glove. 
+This [Git](https://github.com/Adjuvo/SenseGlove-R1-API) is the python API to interface with R1, an active force feedback glove with precise position tracking made for telerobotics by SenseGlove. With this API you can retrieve tracking data in many formats, and control the active force feedback pulling on the fingers in the glove. 
+
+For other supported software see [Getting started](./getting_started.md)
 
 > ⚠️ **In Development - Please give your feedback!**
 >
@@ -15,82 +17,62 @@ This is the python API to interface with R1, an active force feedback glove with
 
 
 # Supported python versions (currently)
+If you don't have a python environment yet. We recommend installing python through [Anaconda](https://docs.conda.io/projects/conda/en/stable/user-guide/getting-started.html) to manage multiple versions/python environments.
 
 - python 3.8
 - python 3.11
 - python 3.12
 
-We recommend anaconda to install these to manage multiple versions (now or in the future) easily.
-
 If you require a different version >3.8, we can support it by recompiling the library. Send us a message if required.
+
 
 # Installation
 ## Required Software/drivers:
 
 ### Windows
 For Windows, install the WinUSB driver: [Zadig](https://zadig.akeo.ie/). Linux does not require a driver.
-   * Opening this, with the glove plugged in, Select R1 (Composite Parent) in the dropdown. Don't change any other settings. Click Install Driver.
+
+   * Open this, with the glove plugged in.
+   * Select R1 (Composite Parent) in the dropdown. Don't change any other settings. Click Install Driver.
 
 ### Linux
-To allow non-root access to the Rembrandt device over USB, you need to add a custom udev rule.
-1. Create a new rule file:
-  
-        sudo nano /etc/udev/rules.d/99-rembrandt.rules
-
-2. Paste the following:
-
-        SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="10f3", MODE="0666"
-
-3. Reload & Apply:
-
-        sudo udevadm control --reload-rules && sudo udevadm trigger
+To allow non-root access to the Rembrandt device over USB, you need to add a custom udev rule. After cloning this repo, run:
+```bash
+./scripts/install_udev_rule.sh
+```
 
 ### WSL
 For Installation on Windows Subsystem for Linux (WSL), so you can run Linux within your Windows OS without dual boot, that's possible with minor caveats, see Troubleshooting.
 
 # Setup
+
 See [Troubleshooting](#troubleshooting) for common errors and issues.
 
-* Install one of the supported python versions. Use [Python](https://www.python.org/downloads/) or [Anaconda](https://www.anaconda.com/download/success) (virtual env manager for python, allowing multiple python versions on one pc). 
-*  **Clone the Repository**
+
+1. Clone the repo:
    ```bash
    git clone https://github.com/Adjuvo/SenseGlove-R1-API
+   cd SenseGlove-R1-API
    ```
-   You can clone this to a subfolder of your project, or run examples directly from the provided API.
-* **Install python packages**
-* Set your python interpreter to your python environment (VScode: Ctrl+Shift+P > Python interpreter). 
-
-
 
     
-2. pip install, with examples below. Make sure it uses the same python environment you are going to run it in!
+2. `pip install`, see examples below. Make sure it uses the same **python environment** you are going to run it in!
 
 
-    1. In terminal, navigate to the parent directory of `SG_API` (where the setup.py file is).
     ```bash
-    cd SenseGlove-R1-API
-    ```
+    cd SenseGlove-R1-API     # Navigate to the parent directory of `SG_API` (where the setup.py file is).
 
-    Activate your python, and run `pip install .` (replace yourEnvironment)
+    # Activate your (single) python environment if any!!! Example:
+    conda activate yourenvironment # (see below for windows), or source /.venv/activate in linux envs for example
 
-    Example Linux:
-
-    ```
-    conda activate yourEnvironment
     pip install .
     ```
+
+```bash
+    # For windows conda,(doesn't let you run conda activate from anywhere)
+        %USERPROFILE%/anaconda3/envs/yourEnvironment/python.exe -m pip install .
+```
     
-
-    Example for Windows anaconda. (Windows usually doesn't let you call "conda activate" from anywhere, so this is a workaround:)
-    ```
-    %USERPROFILE%/anaconda3/envs/yourEnvironment/python.exe -m pip install .
-    ```
-
-    If normal python (no anaconda):
-    ```bash
-        pip install .
-    ```
-
 
 
 ## Examples / Quick start
@@ -99,19 +81,13 @@ PLEASE READ THIS SECTION ENTIRELY BEFORE STARTING
 This section walks you through the most important features of the script `main_example.py` which is a script using the main features of the API, as you would in your project. You can find this and more in the `examples` folder. 
 
 #### Switch between Simulated and Real glove
-You can develop even without a physical glove. For that, use the following init:
+For using an actual glove vs simulated glove (if you don't have one plugged in, want simple motion to debug, or no motion), change REAL_GLOVE_USB to SIMULATED_GLOVE:
 ```python
-from SG_API import SG_main, SG_types as SG_T 
-
-device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE)
+device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
+#vs
+device_ids = SG_main.init(1, SG_T.Com_type.REAL_GLOVE_USB, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) #for real glove Simulation mode is ignored
 ```
-This will start a steady simulated glove, which you can set to continually open/close, or set to steady (see main_example.py). 
-For in depth simulated glove functions see [Simulated Glove](simulated_glove.md)
 
-For using an actual glove, change SIMULATED_GLOVE to REAL_GLOVE_USB :
-```python
-device_ids = SG_main.init(1, SG_T.Com_type.REAL_GLOVE_USB)
-```
 #### On new data callback
 The on_new_data callback fires when the glove has updated the data in the API, such as tracking or force data. `SG_main` contains all functions you need. Some commonly needed functions are given here.
 
@@ -125,7 +101,7 @@ The on_new_data callback fires when the glove has updated the data in the API, s
 
             flexion_perc_bents, abduction_perc_bents = SG_main.get_percentage_bents(hand_id)
 
-            forces = simulate_forces()
+            forces = [5000, 5000, 5000, 5000] #sets all fingers to 500 mN
             SG_main.set_force_goals(hand_id, forces)
 
     SG_main.add_rembrandt_data_callback(on_new_data)
@@ -136,6 +112,10 @@ The on_new_data callback fires when the glove has updated the data in the API, s
 > ⚠️ **Important Note**
 >
 > Keep what is in the new_data callback as brief as possible (preferably just copying the data). Heavy calculations will drop the 1kHz framerate required for crisp haptic feedback. For more info see [Performance](fps-performance.md).
+
+
+### Not using the callback 
+You can call functions such as `SG_main.get_fingertips_pos_rot(hand_id)` or `SG_main.set_force_goals()` in your own while loop instead of the `on_new_data` callback. This will retrieve the latest tracking data available. When setting the forces, they will only be sent when the SG_API callback ends internally, sending the latest data in force goals to the glove. The callback `on_new_data` is purely a method to only update when new glove data is available.
  
 ### Keep the script running
 The data callback will automatically update with new data at 1khz, but only if the file is still running.
@@ -146,20 +126,23 @@ To do this, call:
     # Ctrl+C or a command closing python stops it.
 ```
 
-Alternatively, you can replace SG_main.keep_program_running() with this to run your own while loop with:
+
+
+### Not using keep program running
+Alternatively, you can replace keep_program_running() with this to run your own while loop with:
 ```python
     try:
         while SG_main.SG_cb.running:
-            time.sleep(1)  # This loop does not do anything but keep the program alive. Some sleep is important to not eat all CPU capacity.
+            time.sleep(0.01)  # This loop does not do anything but keep the program alive. Some sleep is important to not eat all CPU capacity.
     except: 
         pass # important errors will still log. This try/except just ignores the keyboard interrupt error on Ctrl+C.
 ```
 
-You can call functions such as `SG_main.get_fingertips_pos_rot(hand_id)` or `SG_main.set_force_goals()` in your own while loop instead of the `on_new_data` callback. This will retrieve the latest tracking data available, and when the callback loop ends internally, send the latest data in force goals to the glove. The callback `on_new_data` is purely a method to only update when new glove data is available.
-
 > ⚠️ **Important Note**
 >
 > You must use sleep in the while loop, or your loop can eat up all CPU space which the callback needs to give data at 1kHz, important for good force feedback! For more info, see: [Performance](fps-performance.md).
+ 
+
  
 
 
@@ -224,6 +207,12 @@ FileNotFoundError: Could not find module 'C:\Users\<username>\anaconda3\envs\<yo
 ```
 
 This means that `pip install .` did not work correctly. Please try that again and make sure you use the correct python to call it. When in doubt, pip install using the python.exe similar to `C:/Users/yourUserName/anaconda3/envs/yourEnvironmentName/python.exe -m pip install -e .` (In some cases it may be pip3.) Then double check your interpreter in vscode to use the correct one (Ctrl+Shift+P -> Python interpreter). 
+
+## FileNotFoundError: finger_joint_range_limits.csv not found
+```
+FileNotFoundError: Finger joint range limits CSV not found: /usr/local/lib/python3.12/dist-packages/SG_API/finger_joint_range_limits.csv
+```
+This was a packaging bug (not an environment/activation problem) in older versions of this repo: the CSV file was missing from the installed package data whenever installing with a plain, non-editable `pip install .`. It's fixed as of this package including `finger_joint_range_limits.csv` in `package-data`. If you still see this, update to the latest version of the repo, then reinstall (`pip install --force-reinstall .`, or `uv run` again which reinstalls automatically) so the CSV is picked up.
 
 ## Type errors
 You might get yellow bars with errors similar to:

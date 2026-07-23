@@ -7,12 +7,13 @@ Congratulations on being among the first to work with the R1 prototype! We since
 
 ## Robot hand mapping
 Quick implementable mapping to:
-- Robot hands with 1DOF per finger: currently supported.
-- Robot hands with 4DOF per finger: planned in May. 
 
-These algorithms remap glove tracking to robot hand values while maintaining accurate robot hand pinches.  
+- Robot hands with 1DOF (degree of freedom) per finger, and 2DOF thumb: supported, needing some configuration to make pinches match. See [Robot hand mapper](./robot_hand_mapper.md) for more information.
+- Robot hands with more DOF's per finger: Supported via custom integration projects. Contact us for more info.
 
-See [Robot hand mapper](./robot_hand_mapper.md) for more information.
+
+
+
 
 ## Glove tracking data
 40 (5 fingers x 8 sensors) rotary hall effect sensors enable robust tracking of all five fingers, providing millimeter level precision at the fingertips and along each phalanx. Data can be retrieved from software in the following formats: fingertip position/rotations, exoskeleton rotations/positions, and percentage bents.
