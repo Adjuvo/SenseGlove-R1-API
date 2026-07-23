@@ -228,7 +228,7 @@ class Glove_Simulator:
             self.update_exo_hand_angles_rad(self.starting_angles_rad_hand + np.sin(self.i))
         
         if self.mode == Simulation_Mode.FINGERS_OPEN_CLOSE:
-            self.t += self.dt * 20  # Keep time increasing normally
+            self.t += self.dt  # Keep time increasing normally
 
             MIN_ANGLE_RAD = math.radians(55)  # Set your minimum angle (e.g., 10°)
             MAX_ANGLE_RAD = math.radians(90)  # Set your maximum angle (e.g., 60°)
