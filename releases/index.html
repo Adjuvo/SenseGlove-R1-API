@@ -490,6 +490,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v010" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.1.0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v0025_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.0.25
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v0024" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -707,6 +729,30 @@
 <h2 id="v0025">v0.0.25</h2>
 <p>2026-07-03
 Changed the jitter filter thresholds specifically for the first joint (abduction). These generally move slower.</p>
+<h2 id="v010">v0.1.0</h2>
+<p>BREAKING CHANGES! For users using Robot hand mapper and minor changes for percentage_bents. See notes below.
+- New robot hand mapper example.
+- Simplified the robot hand mapper, made it easier to tune the pinches, and improved docs.
+- Renaming and other improvements for code consistency.
+- See examples/robot_pinch_mapper_example.py for an updated example.</p>
+<p>Changes to make it work again with your implementation, rename in order: </p>
+<ul>
+<li><code>SG_robot_hand_mapper</code> -&gt; <code>SG_robot_pinch_mapper</code></li>
+<li><code>RobotHandMapper</code> -&gt; <code>Robot_Pinch_Mapper</code></li>
+<li><code>PinchMapperGUI</code> -&gt; <code>Robot_Pinch_GUI</code></li>
+<li><code>from SG_API.SG_robot_pinch_mapper import PinchConfig</code> -&gt; <code>from SG_API.SG_robot_pinch_mapper import Robot_Pinch_Config</code></li>
+</ul>
+<p>Other changes for PinchConfig (Now Robot_Pinch_Config):
+- distance_thresholds no longer has enter_distance and exit_distance. Just min and max distance. In practice this removal causes no change, since it was unused/duplicate.
+- blend_weight is no longer a single float, but now split with thumb and distance</p>
+<p>Percentage_bent changes:
+Still outputs the same format, however we updated minimum/maximum exo angles mapping to 0 - 10000, especially for abduction. 
+While abduction angle 0 is forward for the glove, it doesn't work well for natural straight hand pose.
+Therefore we added midpoint angles now, to properly get 5000 with fingers straight forward, irrespective of assymetric finger min/max limits.
+It should not change too much. If you notices it changes your mapping undesirably, and you want to revert to old behavior, use set_perc_bent_vars() with midpoint [0.5, 0, 0, 0, 0], and min/max values of the previous release.</p>
+<h2 id="v0025_1">v0.0.25</h2>
+<p>Better implementation, manual tuning GUI, and docs for the 1DOF RobotHandMapper included.</p>
+<p>For Pro users/integration projects, we can also provide a better handmapper, which moves in multiple DOFS per finger while still pinching well. If interested, please contact sales.</p>
 <h2 id="v0024">v0.0.24</h2>
 <p>2026-06-26
 The jitter filter is improved, and an optional smoothing filter was added to smooth out any remaining sudden jumps on recovery of signal.The jitter filter itself causes no extra delay while detecting correct data.  However, this smoothing filter causes some slight delay. See <a href="../fps-performance/#delay--latency-related-issues">Delay</a> on how to disable or adjust.</p>

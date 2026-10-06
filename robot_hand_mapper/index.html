@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#robot-hand-percentage-bent-mapper" class="md-skip">
+        <a href="#robot-hand-pinch-mapper" class="md-skip">
           Skip to content
         </a>
       
@@ -380,6 +380,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robot hand mapper
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -396,6 +414,47 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GUI
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -475,6 +534,36 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GUI
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -490,24 +579,58 @@
 
 
 
-<h1 id="robot-hand-percentage-bent-mapper">Robot hand percentage bent mapper</h1>
-<p>The robot hand percentage bent (pbent) mapper internally takes the R1 pbent values, and also outputs pbent values. However, it adjusts them to make the robot hand pinch when the user pinches. To do that, there is a one time config calibration to note down the pbent values at which the robot hand pinches.</p>
-<p><code>examples/Robot_hand_mapper_pbent.py</code> is an example where you can map percentage bents to accurate pinches on the robot hand when the glove pinches. </p>
-<p>In this GUI, the green bars are the original R1 percentage bent values.
-The orange bars are the output of the robot pbent algorithm.</p>
+<h1 id="robot-hand-pinch-mapper">Robot hand pinch mapper</h1>
+<p>In essence, it outputs the same <code>percentage_bent</code> 0 to 10000 glove flexions/abductions, but better: putting these values in the robot hand, the robot hand also pinches when the glove does.</p>
+<p>The robot hand pinch mapper (<code>Robot_Pinch_Mapper</code>) takes the R1 percentage bent (pbent) values and fingertip distances, and outputs adjusted pbent values. It blends the glove's normal values towards a pre-calibrated "robot pinch target" as the user's glove approaches a pinch.</p>
+<p><code>examples/robot_pinch_mapper_example.py</code> is an example that maps percentage bents to accurate pinches on the robot hand when the glove pinches.</p>
+<p>In this GUI, the green/blue bars are the original R1 percentage bent values ("Normal").
+The orange/purple bars are the output of the pinch mapper ("Robot").</p>
 <ul>
-<li>When not pinching it will use the default percentage bent values of the glove (green).</li>
-<li>When approaching a pinch, the percentage bent values from the glove (green) will be gradually mapped to the saved robot hand values when the glove detects pinching for a specific finger.</li>
+<li>When not pinching, the mapper outputs the normal percentage bent values of the glove unchanged.</li>
+<li>As the thumb abducts and a fingertip gets close to the thumb, the pinch influence ramps up smoothly and the output is blended towards the saved robot-hand pinch target for that finger.</li>
+<li>Only the finger closest to the thumb is treated as the active pinch finger; the rest keep following the glove.</li>
 </ul>
-<p>The robot_hand_mapper_pbent.py has a GUI that shows the updated mapping considering pinches as orange bars.</p>
-<p><img alt="alt text" src="../images/robot_hand_mapper.png" /></p>
-<p>In the image you can see the index + thumb are pinching, and only that value (orange) is adjusted to map to a robot hand pinch.</p>
+<h2 id="usage">Usage</h2>
+<p>See <code>robot_pinch_mapper_example.py</code>.
+It can be imported seperately from SG_main, so you can import and it on the robot hand side.</p>
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">SG_API.SG_robot_pinch_mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">Robot_Pinch_Mapper</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">mapper</span> <span class="o">=</span> <span class="n">Robot_Pinch_Mapper</span><span class="p">(</span><span class="n">hand_id</span><span class="p">)</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># per data-frame:</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">normal_flex</span><span class="p">,</span> <span class="n">normal_abd</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_percentage_bents</span><span class="p">(</span><span class="n">hand_id</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">distances</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_fingertip_distances</span><span class="p">(</span><span class="n">hand_id</span><span class="p">)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">robot_flex</span><span class="p">,</span> <span class="n">robot_abd</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">compute_rpm_bents</span><span class="p">(</span><span class="n">normal_flex</span><span class="p">,</span> <span class="n">normal_abd</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span>
+</span></code></pre></div>
+<p><code>robot_flex</code>/<code>robot_abd</code> are 5-length arrays (thumb, index, middle, ring, pinky) ready to send to the robot hand.</p>
+<h2 id="gui">GUI</h2>
+<p><code>Robot_Pinch_GUI</code> (in <code>SG_API/SG_robot_pinch_gui.py</code>) visualizes the mapper live and has two modes, selectable from the dropdown at the top:</p>
+<ul>
+<li><strong>Glove</strong>: <ul>
+<li>Live Glove values against the Robot Blended values for Abduction and Flexion of the thumb and each finger.</li>
+<li>Include the current pinch factor/thumb factor/distance factor debug info.</li>
+</ul>
+</li>
+</ul>
+<p><img alt="alt text" src="../images/robot_pinch_mapper_glove.png" /></p>
+<ul>
+<li><strong>Manual</strong>: <ul>
+<li>Per-finger Abd/Flex sliders that drive the mapper's output directly (bypassing live glove data). </li>
+<li>Each finger has a <strong>Save {Finger} Pinch Row</strong> button that captures the thumb sliders + that finger's sliders straight into the mapper's <code>Robot_Pinch_Config.robot_pinch_targets</code> for that finger; no live glove required.</li>
+</ul>
+</li>
+</ul>
+<p><img alt="alt text" src="../images/robot_pinch_mapper_manual.png" /></p>
+<p>Both modes also expose <strong>Pinch Parameters</strong> (min/max pinch distance in mm, and the thumb/distance blend weights) that can be tuned live via <strong>Set Parameters</strong>.</p>
 <h1 id="calibrate-your-own-robot-hand">Calibrate your own robot hand</h1>
-<p>Create a config similar to the seed hand config with values the robot hand takes for each pinch.  The config file for this example can be found in <code>SG_API/configs/robot_hand_mapper/</code>. </p>
-<p>The config must contain the values going out to the robot hand. The easiest way to record the pbent values of the robot hand, is to use the glove to control the robot hand to go to a pinch, then note down the values. </p>
-<p>To make this easier, you can use the button below each finger to save that current number to a config file, using also the Save config button at the bottom. Note that the <strong>robot hand</strong> (so not your glove) <strong>should be making the pinches</strong> when pressing the button. In the end, via GUI buttons or not, the saved config file must contain the inputs going into the robot hand that result in a robot hand pinch.</p>
-<p>After loading that config, the orange values retrieved with <code>robot_flex, robot_abd = SG_main.get_rhm_percentage_bents(hand_id)</code> should give the robot hand accurate pinches when the glove pinches.</p>
-<p>Therefore at a pinch, the values in the orange bars should be equal to the percentage bent values filled in the config file.</p>
+<p><strong>Manual mode</strong>: 
+1. Switch the GUI to Manual
+2. Drive the sliders until the robot hand (via your own control loop reading <code>mapper.get_manual_bents()</code>) makes the desired pinch.
+3. Click <strong>Save {Finger} Pinch Row</strong> for that finger. 
+4. Repeat for each finger.
+5. Once you've captured targets for all four fingers, click <strong>Save Config</strong> at the bottom to write out a <code>Robot_Pinch_Config</code> Python file.</p>
+<p>After loading/applying that config with <code>mapper.apply_config(config)</code>, the "Robot" values returned by <code>mapper.compute_rpm_bents(...)</code> should give the robot hand accurate pinches when the glove pinches.</p>
 <p>Currently we only provide this solution for 1DOF robot finger control via percentage bent.
 To learn how to adjust percentage bents and how they work, see <a href="../tracking/">Tracking</a>.</p>
 
