@@ -158,11 +158,12 @@ class Glove_Simulator:
         self.starting_angles_rad_hand = np.tile(angles_rad_single_finger, (device_info.nr_fingers_tracking, 1))
         self.set_exo_rad_hand(self.starting_angles_rad_hand.copy())  # Initialize current angles
 
-        self.i = 0
-        self.prev_time = time.perf_counter()
-        self.t = 0
+        self.start_time = time.perf_counter()
 
         self.custom_sim_fn = None  #Custom Update function for when CUSTOM_FUNCTION is chosen.
+
+    def _elapsed_time(self) -> float:
+        return time.perf_counter() - self.start_time
 
     def restart(self):
         """
@@ -221,20 +222,17 @@ class Glove_Simulator:
         - FINGERS_OPEN_CLOSE: Smooth finger opening/closing cycles
         - STEADY_MODE: Maintains static finger positions
         """
-        self.dt = time.perf_counter() - self.prev_time
+        t = self._elapsed_time()
 
         if self.mode == Simulation_Mode.SINE_MODE:
-            self.i += 2 * self.dt
-            self.update_exo_hand_angles_rad(self.starting_angles_rad_hand + np.sin(self.i))
+            self.update_exo_hand_angles_rad(self.starting_angles_rad_hand + np.sin(2 * t))
         
         if self.mode == Simulation_Mode.FINGERS_OPEN_CLOSE:
-            self.t += self.dt  # Keep time increasing normally
-
             MIN_ANGLE_RAD = math.radians(55)  # Set your minimum angle (e.g., 10°)
             MAX_ANGLE_RAD = math.radians(90)  # Set your maximum angle (e.g., 60°)
 
             # Smooth oscillation between 0 and 1
-            t_normalized = 0.5 * (1 - math.cos(2 * math.pi * self.t))  
+            t_normalized = 0.5 * (1 - math.cos(2 * math.pi * t * 0.5))  
 
             # Scale the angle to fit between MIN and MAX
             angle = MIN_ANGLE_RAD + smoothstep(t_normalized) * (MAX_ANGLE_RAD - MIN_ANGLE_RAD)
@@ -256,8 +254,7 @@ class Glove_Simulator:
                 print(f"If you only see this warning once, you're likely switching to CUSTOM_FUNCTION mode before setting your function. In that case, you can ignore this.")
                 pass
 
-            self.t += self.dt
-            new_exo_angles_rad = self.custom_sim_fn(self.t) #new_exo_angles_rad is passed into custom_sim_fn, and can be edited at any time inside it. Todo: Add dT?
+            new_exo_angles_rad = self.custom_sim_fn(t)
             
             #validate that it's actually valid!
             #if not self.is_exo_angles_type(new_exo_angles_rad):
@@ -266,8 +263,6 @@ class Glove_Simulator:
             #        f"Expected Sequence[Sequence[Union[int, float]]] structure."
             #    )
             self.update_exo_hand_angles_rad(new_exo_angles_rad)  # type: ignore (Since we check beforehand that this is indeed the correct type)
-        
-        self.prev_time = time.perf_counter()
         
 
 

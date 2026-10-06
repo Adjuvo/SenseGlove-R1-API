@@ -20,6 +20,37 @@ pip install .
 2026-07-03
 Changed the jitter filter thresholds specifically for the first joint (abduction). These generally move slower.
 
+## v0.1.0
+BREAKING CHANGES! For users using Robot hand mapper and minor changes for percentage_bents. See notes below.
+- New robot hand mapper example.
+- Simplified the robot hand mapper, made it easier to tune the pinches, and improved docs.
+- Renaming and other improvements for code consistency.
+- See examples/robot_pinch_mapper_example.py for an updated example.
+
+Changes to make it work again with your implementation, rename in order: 
+
+- `SG_robot_hand_mapper` -> `SG_robot_pinch_mapper`
+- `RobotHandMapper` -> `Robot_Pinch_Mapper`
+- `PinchMapperGUI` -> `Robot_Pinch_GUI`
+- `from SG_API.SG_robot_pinch_mapper import PinchConfig` -> `from SG_API.SG_robot_pinch_mapper import Robot_Pinch_Config`
+
+
+Other changes for PinchConfig (Now Robot_Pinch_Config):
+- distance_thresholds no longer has enter_distance and exit_distance. Just min and max distance. In practice this removal causes no change, since it was unused/duplicate.
+- blend_weight is no longer a single float, but now split with thumb and distance
+
+Percentage_bent changes:
+Still outputs the same format, however we updated minimum/maximum exo angles mapping to 0 - 10000, especially for abduction. 
+While abduction angle 0 is forward for the glove, it doesn't work well for natural straight hand pose.
+Therefore we added midpoint angles now, to properly get 5000 with fingers straight forward, irrespective of assymetric finger min/max limits.
+It should not change too much. If you notices it changes your mapping undesirably, and you want to revert to old behavior, use set_perc_bent_vars() with midpoint [0.5, 0, 0, 0, 0], and min/max values of the previous release.
+
+
+## v0.0.25
+Better implementation, manual tuning GUI, and docs for the 1DOF RobotHandMapper included.
+
+For Pro users/integration projects, we can also provide a better handmapper, which moves in multiple DOFS per finger while still pinching well. If interested, please contact sales.
+
 ## v0.0.24
 2026-06-26
 The jitter filter is improved, and an optional smoothing filter was added to smooth out any remaining sudden jumps on recovery of signal.The jitter filter itself causes no extra delay while detecting correct data.  However, this smoothing filter causes some slight delay. See [Delay](fps-performance.md#delay--latency-related-issues) on how to disable or adjust.

@@ -212,7 +212,7 @@ This means that `pip install .` did not work correctly. Please try that again an
 ```
 FileNotFoundError: Finger joint range limits CSV not found: /usr/local/lib/python3.12/dist-packages/SG_API/finger_joint_range_limits.csv
 ```
-This was a packaging bug (not an environment/activation problem) in older versions of this repo: the CSV file was missing from the installed package data whenever installing with a plain, non-editable `pip install .`. It's fixed as of this package including `finger_joint_range_limits.csv` in `package-data`. If you still see this, update to the latest version of the repo, then reinstall (`pip install --force-reinstall .`, or `uv run` again which reinstalls automatically) so the CSV is picked up.
+This was a packaging bug (not an environment/activation problem) in older versions of this repo: the CSV file was missing from the installed package data whenever installing with a plain, non-editable `pip install .`. It's fixed as of this package including `finger_joint_range_limits.csv` in `package-data`. If you still see this, update to the latest version of the repo, then reinstall (`pip install --force-reinstall .`) so the CSV is picked up.
 
 ## Type errors
 You might get yellow bars with errors similar to:

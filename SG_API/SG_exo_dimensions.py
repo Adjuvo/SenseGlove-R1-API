@@ -161,6 +161,8 @@ class Exo_finger_dimensions_Base(Exo_dimensions):
         
         #TODO: function to set these by the user
         self._FINGERTIP_OFFSET = [14, 0, 0] # top front of thimble
+        # self._FINGERTIP_OFFSET = [7, - 7, -15] # top front of thimble
+        # self._FINGERTIP_OFFSET = [0, 0, 0] # top front of thimble
         self._FINGERTIP_OFFSET_ROT = [0, -math.pi/2, 0]
 
 

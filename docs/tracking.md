@@ -44,8 +44,8 @@ Percentage bent can be retrieved with the function [get_percentage_bents()](api-
         - 0 → thumb is in plane with the palm
         - 10000 → thumb is not aligned with handpalm, but radially extended maximally
     - **Fingers**:
-        - 0 → splay to the left
-        - 10000 → splay to the right 
+        - 0 → splay towards thumb
+        - 10000 → splay towards pinky
         - 5000 → in the middle
 
 ### How percentage bent is calculated

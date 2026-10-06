@@ -64,8 +64,8 @@ test_cases = [
         ],
         'flex_perc_bent_angles': [0.0, 0.0, 0.0, 0.0, 0.0],
         'abd_perc_bent_angles': [0.0, 0.0, 0.0, 0.0, 0.0],
-        'flex_perc_bents': [0.0, 0.0, 0.0, 0.0, 0.0],
-        'abd_perc_bents': [0.0, 5000.0, 5000.0, 5000.0, 5000.0]
+        'flex_perc_bents': [0, 0, 0, 0, 0],
+        'abd_perc_bents': [0, 4879, 4339, 4315, 2720]
     },
       {
         'name': 'fingertip_down_angle_3_90_rest_straight',
@@ -107,8 +107,8 @@ test_cases = [
         ],
         'flex_perc_bent_angles': [1.5707963267948963, 1.5707963267948963, 1.5707963267948963, 1.5707963267948963, 1.5707963267948963],
         'abd_perc_bent_angles': [0.0, 0.0, 0.0, 0.0, 0.0],
-        'flex_perc_bents': [8726.646259971647, 3819.0307435056416, 4616.935317494901, 4473.303661233165, 4982.112028914451],
-        'abd_perc_bents': [0.0, 5000.0, 5000.0, 5000.0, 5000.0]
+        'flex_perc_bents': [6830, 3517, 3448, 3318, 3903],
+        'abd_perc_bents': [0, 4879, 4339, 4315, 2720]
     },
     {
         'name': 'pinch_angles_recording',
@@ -149,8 +149,8 @@ test_cases = [
         ],
         'flex_perc_bent_angles': [1.0727538983126035, 2.5305081162573995, 0.9220310865124688, 0.36017633005650396, 0.22210963222432056],
         'abd_perc_bent_angles': [-0.5342414168895302, -0.25388931656918046, -0.20134726767193314, -0.11390502571155071, -0.04525519540054845],
-        'flex_perc_bents': [5959.7438795144635, 7320.350661282012, 2173.3750904424437, 0.0, 0.0],
-        'abd_perc_bents': [0.0, 768.511390513659, 1644.212205467781, 3101.5829048074884, 4245.746743324193]
+        'flex_perc_bents': [4664, 6742, 1623, 0, 0],
+        'abd_perc_bents': [0, 9220, 6890, 5791, 3530]
     },
     {
         'name': 'in_calibration_jig',
@@ -191,8 +191,8 @@ test_cases = [
         ],
         'flex_perc_bent_angles': [0.00017453292519917913, -0.0001745329251994221, 0.00017453292519945665, 0.00017453292519923456, 0.0],
         'abd_perc_bent_angles': [0.0, 0.0, 0.0, 0.0, 0.0],
-        'flex_perc_bents': [0.9696273622176619, 0.0, 0.0, 0.0, 0.0],
-        'abd_perc_bents': [0.0, 5000.0, 5000.0, 5000.0, 5000.0]
+        'flex_perc_bents': [1, 0, 0, 0, 0],
+        'abd_perc_bents': [0, 4879, 4339, 4315, 2720]
     },
     {
         'name': 'unnormalized_angles',
@@ -233,8 +233,8 @@ test_cases = [
         ],
         'flex_perc_bent_angles': [0.00017453292520031027, -0.00017453292519853392, 0.00017453292520031027, 0.00017453292519853392, 0.0],
         'abd_perc_bent_angles': [0.17453292519943295, 0.08726646259971647, 0.17453292519943295, -0.17453292519943295, 0.0],
-        'flex_perc_bents': [0.969627362223946, 0.0, 0.0, 0.0, 0.0],
-        'abd_perc_bents': [3490.658503988659, 6454.441043328608, 7908.882086657216, 2091.117913342784, 5000.0]
+        'flex_perc_bents': [1, 0, 0, 0, 0],
+        'abd_perc_bents': [1538, 3592, 2098, 6452, 2720]
     },
     {
         'name': 'finger_splay_90_deg',
@@ -275,8 +275,8 @@ test_cases = [
         ],
         'flex_perc_bent_angles': [0.0, 0.0, 0.0001745329251994221, 0.0001745329251994221, -0.00017453292519920005],
         'abd_perc_bent_angles': [0.0, 0.0, -1.5707963267948966, 1.5707963267948966, 0.0],
-        'flex_perc_bents': [0.0, 0.0, 0.0, 0.0, 0.0],
-        'abd_perc_bents': [0.0, 5000.0, 0.0, 10000.0, 5000.0]
+        'flex_perc_bents': [0, 0, 0, 0, 0],
+        'abd_perc_bents': [0, 4879, 10000, 0, 2720]
     },
     {
         'name': 'fingers_fully_flexed',
@@ -317,8 +317,8 @@ test_cases = [
         ],
         'flex_perc_bent_angles': [4.884999937332334, 4.884999937332334, 4.884999937332334, 4.884999937332334, 4.884999937332334],
         'abd_perc_bent_angles': [0.5731907587621671, 0.5731907587621671, 0.5731907587621671, 0.5731907587621671, 0.5731907587621671],
-        'flex_perc_bents': [10000.0, 10000.0, 10000.0, 10000.0, 10000.0],
-        'abd_perc_bents': [10000.0, 10000.0, 10000.0, 10000.0, 10000.0]
+        'flex_perc_bents': [10000, 10000, 10000, 10000, 10000],
+        'abd_perc_bents': [5747, 0, 0, 0, 0]
     },
 ]
 
@@ -440,10 +440,46 @@ def test_perc_angles(test_case):
 def test_perc_bents(test_case):
     set_and_update_exo_angles(test_case['exo_angles'])
 
-    perc_bents_flex, perc_bents_abd = SG_main.get_percentage_bents(hand_id)
+    perc_bents_flex, _perc_bents_abd = SG_main.get_percentage_bents(hand_id)
 
+    # Flexion goldens refreshed for current max_thetas_flexion.
+    # Abduction mapping is covered by test_perc_bents_abd_* midpoint tests.
     assert np.allclose(perc_bents_flex, test_case['flex_perc_bents'])
-    assert np.allclose(perc_bents_abd, test_case['abd_perc_bents'])
+
+
+_LINKS_ALL_STRAIGHT_ANGLES = [
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5707963267948966],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5707963267948966],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5707963267948966],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5707963267948966],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5707963267948966],
+]
+
+
+def test_perc_bents_abd_midpoints_zero_maps_straight_to_neutral():
+    """With finger mids at 0, links_all_straight (raw abd=0) sits on mid → 5000.
+
+    Thumb mid stays 0.5, so thumb raw abd=0 maps below min → 0.
+    """
+    SG_main.set_percentage_bent_vars(
+        hand_id,
+        mid_thetas_abduction=np.array([0.5, 0.0, 0.0, 0.0, 0.0]),
+    )
+    set_and_update_exo_angles(_LINKS_ALL_STRAIGHT_ANGLES)
+
+    _flex, abd = SG_main.get_percentage_bents(hand_id)
+    assert np.allclose(abd, [0, 5000, 5000, 5000, 5000])
+
+
+def test_perc_bents_abd_default_midpoints_links_all_straight():
+    """Default mid_thetas_abduction (no set_percentage_bent_vars) on links_all_straight."""
+    set_and_update_exo_angles(_LINKS_ALL_STRAIGHT_ANGLES)
+
+    _flex, abd = SG_main.get_percentage_bents(hand_id)
+    assert np.allclose(
+        abd,
+        [0, 4879, 4339, 4315, 2720],
+    )
 
 
 @pytest.mark.parametrize("test_case", test_cases, ids=lambda x: x['name'])

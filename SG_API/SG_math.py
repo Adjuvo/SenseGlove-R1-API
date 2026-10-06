@@ -192,6 +192,45 @@ def rescale(val, in_min, in_max, out_min, out_max):
     
     return result
 
+def smooth_step(t):
+    """
+    Classic ease-in/ease-out smoothstep: t^2 * (3 - 2t), for t in [0, 1].
+    Zero slope at both t=0 and t=1, same formula used elsewhere in this codebase
+    (e.g. SG_simulator.smoothstep, SG_Pro Robot_Pinch_Mapper._smooth_step).
+    """
+    t = np.clip(t, 0.0, 1.0)
+    return t * t * (3.0 - 2.0 * t)
+
+def rescale_smooth_step(val, x0, x1, x2, y0, y1, y2):
+    """
+    Smooth map through three knots (x0,y0) -> (x1,y1) -> (x2,y2), built from two
+    smoothstep-eased segments. smooth_step() has zero slope at both of its ends, so
+    the two segments meet at x1 with matching (zero) slope - no kink there, regardless
+    of how asymmetric x1-x0 vs x2-x1 are. Assumes y0..y1..y2 is monotonic, and
+    x0..x1..x2 is monotonic (increasing or decreasing).
+    """
+    val = np.asarray(val, dtype=np.float64)
+    x0 = np.asarray(x0, dtype=np.float64)
+    x1 = np.asarray(x1, dtype=np.float64)
+    x2 = np.asarray(x2, dtype=np.float64)
+    y0 = np.asarray(y0, dtype=np.float64)
+    y1 = np.asarray(y1, dtype=np.float64)
+    y2 = np.asarray(y2, dtype=np.float64)
+
+    h0 = x1 - x0
+    h1 = x2 - x1
+
+    t0 = np.divide(val - x0, h0, out=np.zeros_like(val + h0), where=h0 != 0)
+    t1 = np.divide(val - x1, h1, out=np.zeros_like(val + h1), where=h1 != 0)
+
+    lower_val = y0 + smooth_step(t0) * (y1 - y0)
+    upper_val = y1 + smooth_step(t1) * (y2 - y1)
+
+    increasing_x = x1 >= x0
+    on_lower_segment = np.where(increasing_x, val <= x1, val >= x1)
+
+    return np.where(on_lower_segment, lower_val, upper_val)
+
 def clamp(val, minimum, maximum):
     val = np.array(val)
     minimum = np.array(minimum)
@@ -199,6 +238,16 @@ def clamp(val, minimum, maximum):
     val = np.minimum(val, maximum)
     val = np.maximum(val, minimum)
     return val
+
+def poly2_features(values) -> npt.NDArray[np.float64]:
+    """
+    Degree-2 polynomial feature expansion for least-squares fitting: [1, x_0..x_n, x_0^2..x_n^2,
+    pairwise products x_i*x_j for i<j]. E.g. for [a, b]: [1, a, b, a^2, b^2, a*b].
+    """
+    values = np.asarray(values, dtype=np.float64)
+    n = len(values)
+    cross = [values[i] * values[j] for i in range(n) for j in range(i + 1, n)]
+    return np.concatenate(([1.0], values, values ** 2, cross))
 
 def dot_list(a, b):
     return [np.dot(a, b) for a, b in zip(a, b)]
