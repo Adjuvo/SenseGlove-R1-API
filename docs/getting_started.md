@@ -6,7 +6,7 @@ If you are working with one or two physical gloves, this is how to connect them 
 
 > ⚠️ **Always use the specified charger and cables**
 >
-> The R1s need a 100W charger + cable, and high power, fast data cables (60 W PD 3.0, PPS USB-C + USB2.0 (480 MBit)). If using other cables or charger than delivered, the gloves may not work as intended, or can disable themselves!
+> The R1s need a 100W charger + cable, and high power, fast data cables (60 W PD 3.0, PPS USB-C + USB2.0 (480 MBit), shielded). If using other cables or charger than delivered, the gloves may not work as intended, or can disable themselves!
 
 
 Always use the specified charger, cable and linkbox as below.

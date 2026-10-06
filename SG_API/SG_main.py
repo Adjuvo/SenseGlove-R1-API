@@ -31,8 +31,6 @@ from SG_API import SG_callback_manager as SG_cb
 from SG_API import SG_types as SG_T
 from SG_API import SG_recorder
 from SG_API import SG_timer
-from SG_API.SG_robot_hand_mapper import RobotHandMapper, PinchConfig
-# PinchMapperGUI imported lazily in create_rhm_pinch_gui() to avoid GUI dependencies in testing
 from SG_API.SG_logger import sg_logger
 
 
@@ -498,6 +496,10 @@ def get_fingertip_distances(device_id: int) -> Sequence[float]:
     """
     return SG_devices.get_rembrandt_device(device_id).get_fingertip_distances()
 
+def get_thumb_to_finger_joint_distances(device_id: int) -> Sequence[Sequence[float]]:
+    """returns: corrected distance (mm) from thumb tip to [MCP, PIP, DIP, FINGERTIP] joint per finger"""
+    return SG_devices.get_rembrandt_device(device_id).get_thumb_to_finger_joint_distances()
+
 def get_default_exo_poss(device_info: SG_T.Device_Info) -> Sequence[Sequence[SG_T.Vec3_type]]:
     """
     Default exoskeleton joint positions for a device configuration (no glove connection required).
@@ -573,6 +575,55 @@ def get_percentage_bents(device_id: int) -> Tuple[SG_T.Sequence[int], SG_T.Seque
     return result
 
 
+def get_percentage_bents_distal(device_id: int) -> SG_T.Sequence[int]:
+    """
+    Returns the distal-only flexion percentage bent for each finger.
+
+    Similar to get_percentage_bents(), except instead of the flexion of the whole finger
+    (all joints), it only sums the angles of joint 5 through the fingertip. So essentially, it acts as
+    clawing feature.
+    
+    Returns:
+
+    - **flexion_perc_bents_distal**: Array of distal flexion percentages (0-out_max_perc_bent, 10000 by default)
+
+    ```python
+    distal_flex_bents = SG_main.get_percentage_bents_distal(device_id)
+    ```
+
+    **Can be indexed like:**
+
+    - `finger_distal_flex_bent = distal_flex_bents[finger_nr]`
+
+    """
+    result = SG_devices.get_rembrandt_device(device_id).get_percentage_bents_distal()
+    return result
+
+
+def get_percentage_bents_proximal(device_id: int) -> SG_T.Sequence[int]:
+    """
+    Returns the proximal-only flexion percentage bent for each finger.
+
+    Similar to get_percentage_bents(), except instead of the flexion of the whole finger
+    (all joints), it only sums the angles of joint 1 through joint 3.
+
+    Returns:
+
+    - **flexion_perc_bents_proximal**: Array of proximal flexion percentages (0-out_max_perc_bent, 10000 by default)
+
+    ```python
+    proximal_flex_bents = SG_main.get_percentage_bents_proximal(device_id)
+    ```
+
+    **Can be indexed like:**
+
+    - `finger_proximal_flex_bent = proximal_flex_bents[finger_nr]`
+
+    """
+    result = SG_devices.get_rembrandt_device(device_id).get_percentage_bents_proximal()
+    return result
+
+
 def get_raw_percentage_bent_angles(device_id: int) -> Tuple[SG_T.Sequence[float], SG_T.Sequence[float]]:
     """
     Returns the raw flexion and abduction angles used to calculate percentage bent.
@@ -596,156 +647,102 @@ def get_raw_percentage_bent_angles(device_id: int) -> Tuple[SG_T.Sequence[float]
     return rb_device.get_raw_percentage_bent_angles()
 
 
+def get_raw_percentage_bent_distal_angles(device_id: int) -> SG_T.Sequence[float]:
+    """
+    Returns the raw distal flexion angles used to calculate get_percentage_bents_distal().
+    Array of the fingers, containing the summed raw angle (in radians) of joint 5 through the fingertip.
+    Use:
+    ```python
+    distal_flex_angles = SG_main.get_raw_percentage_bent_distal_angles(device_id)
+    ```
+    Can be indexed like:
+    - `finger_distal_flex_angle = distal_flex_angles[finger_nr]`
+    """
+    rb_device = SG_devices.get_rembrandt_device(device_id)
+    return rb_device.get_raw_percentage_bent_distal_angles()
 
-def set_percentage_bent_vars(device_id: int,        
-        min_thetas_flexion: npt.NDArray[np.float64] = np.array([0, 0.524, 0.345, 0.414, 0.4]), 
-        max_thetas_flexion: npt.NDArray[np.float64] = np.array([1.8, 3.265, 3.00, 3.00, 2.75]), 
-        min_thetas_abduction: npt.NDArray[np.float64] = np.array([0.0, -0.3, -0.3, -0.3, -0.3]), 
-        max_thetas_abduction: npt.NDArray[np.float64] = np.array([0.5, 0.3, 0.3, 0.3, 0.3]), 
+
+def get_raw_percentage_bent_proximal_angles(device_id: int) -> SG_T.Sequence[float]:
+    """
+    Returns the raw proximal flexion angles used to calculate get_percentage_bents_proximal().
+    Array of the fingers, containing the summed raw angle (in radians) of joint 1 through joint 3.
+    Use:
+    ```python
+    proximal_flex_angles = SG_main.get_raw_percentage_bent_proximal_angles(device_id)
+    ```
+    Can be indexed like:
+    - `finger_proximal_flex_angle = proximal_flex_angles[finger_nr]`
+    """
+    rb_device = SG_devices.get_rembrandt_device(device_id)
+    return rb_device.get_raw_percentage_bent_proximal_angles()
+
+
+def set_percentage_bent_vars(device_id: int,
+        min_thetas_flexion: npt.NDArray[np.float64] = np.array([0, 0.524, 0.345, 0.414, 0.4]),
+        max_thetas_flexion: npt.NDArray[np.float64] = np.array([2.3, 3.5, 3.9, 3.9, 3.4]),
+        min_thetas_abduction: npt.NDArray[np.float64] = np.array([0.03, 0.3307, 0.338, 0.261, 0.152]),
+        mid_thetas_abduction: npt.NDArray[np.float64] = np.array([0.5, -0.0082, -0.0515, -0.0414, -0.1274]),
+        max_thetas_abduction: npt.NDArray[np.float64] = np.array([0.99, -0.2993, -0.448, -0.5, -0.556]),
         out_max_perc_bent: int = 10000):
     """
     Sets the variables used to calculate percentage bent values.
     With this you can override when a finger is considered bent or open:
-    
+
     **Steps:**
-    
+
     1. Monitor your values from get_raw_percentage_bent_angles()
-    2. Move your fingers and note down the values per finger of your desired bent and open
-    3. Set the min and max values to the values you noted down on startup of your program, just after init()
-    
+    2. Move your fingers and note down the values per finger of your desired bent, mid (straight), and open
+    3. Set the min, mid, and max values to the values you noted down on startup of your program, just after init()
+
     **Example:**
     ```python
     device_ids = SG_main.init(1, SG_T.Com_type.REAL_GLOVE_USB)
     device_id = device_ids[0]
-    SG_main.set_percentage_bent_vars(device_id, 
-        min_flex = [0.23, -0.27, -0.27, -0.27, 0.1], 
-        max_flex = [1.00, 2.75, 2.75, 2.75, 2.75], 
-        min_abd = [0.04, -0.18, -0.27, -0.27, 0.1], 
-        max_abd = [0.6, 0.18, 0.27, 0.27, 0.1])
+    SG_main.set_percentage_bent_vars(device_id,
+        min_thetas_flexion=[0.23, -0.27, -0.27, -0.27, 0.1],
+        max_thetas_flexion=[1.00, 2.75, 2.75, 2.75, 2.75],
+        min_thetas_abduction=[0.04, -0.18, -0.27, -0.27, 0.1],
+        mid_thetas_abduction=[0.5, -0.0082, -0.0515, -0.0414, -0.1274],
+        max_thetas_abduction=[0.6, 0.18, 0.27, 0.27, 0.1])
 
     # using SG_main.get_percentage_bents(device_id) you can now see the adjusted percentage bent values for each finger.
     ```
     """
     rb_device = SG_devices.get_rembrandt_device(device_id)
-    rb_device.set_percentage_bent_vars(min_thetas_flexion, max_thetas_flexion, min_thetas_abduction, max_thetas_abduction, out_max_perc_bent)
+    rb_device.set_percentage_bent_vars(
+        min_thetas_flexion,
+        max_thetas_flexion,
+        min_thetas_abduction,
+        mid_thetas_abduction,
+        max_thetas_abduction,
+        out_max_perc_bent,
+    )
 
-_robot_mappers : Dict[int, RobotHandMapper] = {}
-def create_robot_hand_mapper(device_id: int, config: Optional[PinchConfig] = None) -> RobotHandMapper:
+
+def set_percentage_bent_distal_vars(device_id: int,
+        min_thetas_flexion_distal: npt.NDArray[np.float64] = np.array([0.35, 0.39, 0.12, 0.05, 0.19]),
+        max_thetas_flexion_distal: npt.NDArray[np.float64] = np.array([1.62, 2.99, 2.93, 2.79, 2.65]),
+        out_max_perc_bent: int = 10000):
     """
-    Create and return a RobotHandMapper instance.
-    If no config is provided, the default pinch mapping config is used.
+    Sets the variables used to calculate the distal-only percentage bent values.
 
-    Args:
-        device_id: Rembrandt device ID
-        config: Optional custom PinchConfig
+    These defaults cover only a much smaller angle range than the whole finger (only joint 5
+    through the fingertip), so they were tuned separately from set_percentage_bent_vars().
 
-    Returns:
-        Configured RobotHandMapper instance
     """
-    if config is None:
-        mapper = RobotHandMapper(device_id)
-    else:
-        mapper = RobotHandMapper(device_id, config)
-    _robot_mappers[device_id] = mapper
-    return mapper
+    rb_device = SG_devices.get_rembrandt_device(device_id)
+    rb_device.set_percentage_bent_distal_vars(min_thetas_flexion_distal, max_thetas_flexion_distal, out_max_perc_bent)
 
-def get_robot_hand_mapper(device_id: int) -> RobotHandMapper:
+
+def set_percentage_bent_proximal_vars(device_id: int,
+    min_thetas_flexion_proximal = np.array([-0.762, -0.785, -0.836, -0.875, -0.897]),
+    max_thetas_flexion_proximal = np.array([-0.602, 0.257, 0.246, 0.190, 0.071]),
+    out_max_perc_bent: int = 10000):
     """
-    Return the RobotHandMapper instance for the specified device.
-    If no config is provided, the default pinch mapping config is used.
-
-    Args:
-        device_id: Rembrandt device ID
-
-    Returns:
-        Configured RobotHandMapper instance
+    Sets the variables used to calculate the proximal-only percentage bent values.
     """
-    mapper = _robot_mappers.get(device_id)
-    
-    if mapper is None:
-        sg_logger.warn(f"No RobotHandMapper registered for device {device_id}.")
-        raise RuntimeError(f"No RobotHandMapper registered for device {device_id}.")
-
-    return mapper
-
-def create_rhm_pinch_gui(device_id: int):
-    """
-    Create and register a PinchMapperGUI for the given device_id.
-    """
-    from SG_API.SG_robot_pinch_gui import PinchMapperGUI
-
-    mapper = get_robot_hand_mapper(device_id)
-    pinch_gui = PinchMapperGUI(mapper)
-    _robot_mappers[device_id].register_gui(pinch_gui)
-    return pinch_gui
-
-
-def get_pinch_debug_info(device_id: int):
-    """
-    Retrieve pinch-config debug info from the RobotHandMapper.
-    Returns pinch diagnostics as dictionary.
-
-    Args:
-        device_id: Rembrandt device ID
-    """
-    mapper = _robot_mappers.get(device_id)
-    
-    if mapper is None:
-        sg_logger.warn(f"No RobotHandMapper registered for device {device_id}.")
-        raise RuntimeError(f"No RobotHandMapper registered for device {device_id}.")
-
-    try:
-        debug_info = mapper.get_pinch_debug_info()
-        return debug_info
-    except Exception as e:
-        sg_logger.warn(f"Failed to retrieve pinch debug info for device {device_id}: {e}")
-        raise
-
-def get_rhm_percentage_bents(device_id: int) -> Tuple[SG_T.Sequence[Union[int, float]], SG_T.Sequence[Union[int, float]]]:
-    """
-    Retrieve robot-mapped percentage flexion and abduction values (pinch mapping).
-
-    Args:
-        device_id: Rembrandt device ID
-
-    Returns:
-        tuple: (robot_flex, robot_abd)
-    """
-    mapper = _robot_mappers.get(device_id)
-
-    if mapper is None:
-        sg_logger.warn(f"No RobotHandMapper registered for device {device_id}.")
-        raise RuntimeError(f"No RobotHandMapper registered for device {device_id}.")
-    
-    try:
-        return mapper.get_rhm_percentage_bents()
-    except Exception as e:
-        sg_logger.warn(f"Failed to retrieve pinch data for device {device_id}: {e}")
-        raise
-
-def update_robot_hand_mapper_gui(device_id: int):
-    """
-    Update the RHM GUI
-
-    Args:
-        device_id: Rembrandt device ID
-    """
-    mapper = _robot_mappers.get(device_id)
-    if mapper is None:
-        sg_logger.warn(f"No RobotHandMapper registered for device {device_id}.")
-        raise RuntimeError(f"No RobotHandMapper registered for device {device_id}.")
-
-    gui = getattr(mapper, "_gui", None)
-    if gui is None:
-        sg_logger.warn(f"No GUI registered for RobotHandMapper (device {device_id}).")
-        return
-
-    try:
-        mapper.update_mapper_gui()
-    except Exception as e:
-        sg_logger.warn(f"Failed to update RobotHandMapper GUI for device {device_id}: {e}")
-
-
+    rb_device = SG_devices.get_rembrandt_device(device_id)
+    rb_device.set_percentage_bent_proximal_vars(min_thetas_flexion_proximal, max_thetas_flexion_proximal, out_max_perc_bent)
 
 
 ############## TODO:

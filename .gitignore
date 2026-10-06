@@ -6,6 +6,8 @@ __pycache__/
 
 dist/
 build/
+install/
+log/
 logs/
 profiles/
 *.prof
@@ -14,6 +16,7 @@ profiles/
 site/
 
 Rembrandt_CPP_SDK/
+fastcom_cpp/
 
 # Token files (never commit!)
 tokens/
@@ -21,3 +24,7 @@ tokens/
 
 # VTune profiling results (local only)
 **/vtune_results/
+
+# Local FastCom C++ tree (not a submodule; keep out of this repo)
+fastcom_cpp/
+

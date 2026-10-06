@@ -91,7 +91,7 @@ sys.excepthook = handle_exception
 
 from PySide6.QtCore import QObject, Property, QPropertyAnimation, Signal
 from PySide6.QtGui import QGuiApplication, QColor, QMatrix4x4, QQuaternion, QVector3D
-from PySide6.QtWidgets import QApplication as _QApplication, QWidget, QHBoxLayout
+from PySide6.QtWidgets import QApplication as _QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLabel
 from PySide6.Qt3DCore import Qt3DCore
 from PySide6.Qt3DExtras import Qt3DExtras
 from PySide6.Qt3DRender import Qt3DRender
@@ -597,6 +597,14 @@ class UI_Exo_Display(Qt3DExtras.Qt3DWindow):
         """Let embedded Qt3D finish its first paint before high-frequency data updates."""
         if not self._embedded_in_widget:
             return
+        # Headless platforms often cannot paint Qt3D (native crash on Windows offscreen).
+        try:
+            from PySide6.QtGui import QGuiApplication
+            platform = (QGuiApplication.platformName() or "").lower()
+        except Exception:
+            platform = os.environ.get("QT_QPA_PLATFORM", "").lower()
+        if platform in ("offscreen", "minimal", "null"):
+            return
         app = QApplication.instance()
         if app is None:
             return
@@ -912,43 +920,79 @@ class UI_Exo_Display(Qt3DExtras.Qt3DWindow):
 from .SG_percentage_bent_gui import PercentageBentGUI
 
 
-class UI_Exo_Display_With_PercentageBent(QWidget):
+class UI_Exo_Display_With_SidePanel(QWidget):
     """
-    Combined window showing 3D exoskeleton view and percentage bent display side by side.
-    
-    Usage:
-        combined_gui = GUI.UI_Exo_Display_With_PercentageBent()
-        combined_gui.show()
-        
-        # Access the 3D view: combined_gui.exo_display
-        # Access the percentage bent GUI: combined_gui.perc_bent_gui
+    3D exo view plus an optional right-side widget.
+
+    Same embed as the working pinch-mapper example: left VBox (optional banner +
+    Qt3D container). Show this window first, then call set_side_panel() if the
+    side GUI needs a live device.
+
+    Use for PercentageBentGUI, a future Percentage_Bent_Manual_GUI, or Robot_Pinch_GUI:
+
+        gui = GUI.UI_Exo_Display_With_SidePanel(banner_text="Manual mode")
+        gui.show()
+        gui.set_side_panel(my_gui, apply_pending=my_gui._apply_pending_update)
+        gui.create_hand_exo(exo_poss)
     """
-    
-    def __init__(self, window_width=1200, window_height=800):
+
+    def __init__(
+        self,
+        banner_text: Optional[str] = None,
+        window_title: str = "Rembrandt Glove Display",
+        window_width: int = 1600,
+        window_height: int = 700,
+        exo_stretch: int = 6,
+        placeholder_hand: SG_T.Hand = SG_T.Hand.RIGHT,
+        embedded: bool = False,
+    ):
         super().__init__()
-        
-        self.setWindowTitle("Rembrandt Glove Display")
-        
-        # Create main layout
-        main_layout = QHBoxLayout()
-        main_layout.setSpacing(0)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        
-        # Create 3D exoskeleton display
-        self.exo_display = UI_Exo_Display()
-        self.exo_container = QWidget.createWindowContainer(self.exo_display, self)
+        self.setWindowTitle(window_title)
+        self.side_panel = None
+        self.banner_label: Optional[QLabel] = None
+
+        self._main_layout = QHBoxLayout()
+        self._main_layout.setSpacing(0)
+        self._main_layout.setContentsMargins(0, 0, 0, 0)
+
+        left = QWidget(self)
+        left_layout = QVBoxLayout(left)
+        left_layout.setContentsMargins(0, 0, 0, 0)
+        left_layout.setSpacing(0)
+
+        if banner_text is not None:
+            self.banner_label = QLabel(banner_text)
+            self.banner_label.setAlignment(Qt.AlignCenter)
+            self.banner_label.setStyleSheet(
+                "QLabel { background-color: #4a5568; color: white;"
+                " font-size: 14pt; font-weight: bold; padding: 12px; }"
+            )
+            self.banner_label.setVisible(False)
+            left_layout.addWidget(self.banner_label)
+
+        self.exo_display = UI_Exo_Display(placeholder_hand=placeholder_hand)
+        self.exo_container = QWidget.createWindowContainer(self.exo_display, left)
         self.exo_display._window_container = self.exo_container
         self.exo_container.setMinimumSize(640, 480)
-        main_layout.addWidget(self.exo_container, 5)  # 3D view gets 75% of space
-        
-        # Create percentage bent display
-        self.perc_bent_gui = PercentageBentGUI()
-        self.perc_bent_gui.setMaximumWidth(500)
-        main_layout.addWidget(self.perc_bent_gui, 1)  # Percentage bent gets 25%
-        self.exo_display._gui_update_timer.timeout.connect(self.perc_bent_gui._apply_pending_update)
+        left_layout.addWidget(self.exo_container, 1)
 
-        self.setLayout(main_layout)
-        self.setGeometry(100, 100, window_width, window_height)
+        self._main_layout.addWidget(left, exo_stretch)
+        self.setLayout(self._main_layout)
+        if not embedded:
+            self.setGeometry(100, 100, window_width, window_height)
+
+    def set_side_panel(self, side_panel: QWidget, apply_pending=None, max_width: int = 700, stretch: int = 1):
+        """Add the right-side widget after show() (matches the working pinch-mapper example)."""
+        self.side_panel = side_panel
+        if max_width is not None:
+            side_panel.setMaximumWidth(max_width)
+        self._main_layout.addWidget(side_panel, stretch)
+        if apply_pending is not None:
+            self.exo_display._gui_update_timer.timeout.connect(apply_pending)
+
+    def set_banner_visible(self, visible: bool) -> None:
+        if self.banner_label is not None:
+            self.banner_label.setVisible(visible)
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -956,12 +1000,10 @@ class UI_Exo_Display_With_PercentageBent(QWidget):
             self.exo_display._flush_embedded_render()
 
     def ensure_exo_rendered(self, timeout_ms=500):
-        """Let embedded Qt3D paint after setup (e.g. after create_hand_exo post-init)."""
         self.exo_container.hide()
         self.exo_container.show()
         self.exo_display._flush_embedded_render(timeout_ms)
 
-    # Forward common methods to the 3D display for convenience
     def create_hand_exo(self, exo_poss):
         self.exo_display.create_hand_exo(exo_poss)
         self.ensure_exo_rendered()
@@ -971,14 +1013,42 @@ class UI_Exo_Display_With_PercentageBent(QWidget):
         return self.create_hand_exo(SG_exo_dimensions.get_default_exo_poss(device_info))
 
     def update_hand_exo(self, exo_poss):
-        return self.exo_display.update_hand_exo(exo_poss)
-    
+        self.exo_display.update_hand_exo(exo_poss)
+
     def set_fingertip_points(self, fingertips_poss, fingertips_rots):
-        return self.exo_display.set_fingertip_points(fingertips_poss, fingertips_rots)
-    
+        self.exo_display.set_fingertip_points(fingertips_poss, fingertips_rots)
+
     def set_fingertip_thimbles(self, thimble_dims):
-        return self.exo_display.set_fingertip_thimbles(thimble_dims)
-    
+        self.exo_display.set_fingertip_thimbles(thimble_dims)
+
+
+class UI_Exo_Display_With_PercentageBent(UI_Exo_Display_With_SidePanel):
+    """
+    Combined window showing 3D exoskeleton view and percentage bent display side by side.
+
+    Usage:
+        combined_gui = GUI.UI_Exo_Display_With_PercentageBent()
+        combined_gui.show()
+
+        # Access the 3D view: combined_gui.exo_display
+        # Access the percentage bent GUI: combined_gui.perc_bent_gui
+    """
+
+    def __init__(self, window_width=1200, window_height=800):
+        self.perc_bent_gui = PercentageBentGUI()
+        super().__init__(
+            window_title="Rembrandt Glove Display",
+            window_width=window_width,
+            window_height=window_height,
+            exo_stretch=5,
+        )
+        self.set_side_panel(
+            self.perc_bent_gui,
+            apply_pending=self.perc_bent_gui._apply_pending_update,
+            max_width=500,
+            stretch=1,
+        )
+
     def update_percentage_bent(self, flexion, abduction):
         """Update the percentage bent display"""
         return self.perc_bent_gui.update(flexion, abduction)
@@ -987,51 +1057,56 @@ class UI_Exo_Display_With_PercentageBent(QWidget):
 class DualHandGUI(QWidget):
     """
     Dual hand display showing two gloves side by side, each with 3D view and percentage bent display.
-    
+
     Usage:
         dual_gui = GUI.DualHandGUI()
         dual_gui.show()
-        
+
         # Access left hand: dual_gui.left_gui, dual_gui.left_perc_bent
         # Access right hand: dual_gui.right_gui, dual_gui.right_perc_bent
     """
-    
+
     def __init__(self, window_width=1920, window_height=600):
         super().__init__()
         self.setWindowTitle("Dual Hand Rembrandt Display")
         self.setGeometry(0, 0, window_width, window_height)
-        
-        # Create horizontal layout
+
         layout = QHBoxLayout()
         layout.setSpacing(5)
         layout.setContentsMargins(0, 0, 0, 0)
-        
-        # ===== LEFT HAND SECTION =====
-        # Create 3D display for left hand
-        self.left_gui = UI_Exo_Display(placeholder_hand=SG_T.Hand.LEFT)
-        self.left_container = QWidget.createWindowContainer(self.left_gui, self)
-        self.left_gui._window_container = self.left_container
-        layout.addWidget(self.left_container, 2)
-        
-        # Create percentage bent display for left hand
+
+        self._left_panel = UI_Exo_Display_With_SidePanel(
+            placeholder_hand=SG_T.Hand.LEFT,
+            exo_stretch=2,
+            embedded=True,
+        )
         self.left_perc_bent = PercentageBentGUI()
-        self.left_perc_bent.setMaximumWidth(400)
-        self.left_gui._gui_update_timer.timeout.connect(self.left_perc_bent._apply_pending_update)
-        layout.addWidget(self.left_perc_bent, 1)
-        
-        # ===== RIGHT HAND SECTION =====
-        # Create 3D display for right hand
-        self.right_gui = UI_Exo_Display(placeholder_hand=SG_T.Hand.RIGHT)
-        self.right_container = QWidget.createWindowContainer(self.right_gui, self)
-        self.right_gui._window_container = self.right_container
-        layout.addWidget(self.right_container, 2)
-        
-        # Create percentage bent display for right hand
+        self._left_panel.set_side_panel(
+            self.left_perc_bent,
+            apply_pending=self.left_perc_bent._apply_pending_update,
+            max_width=400,
+            stretch=1,
+        )
+        self.left_gui = self._left_panel.exo_display
+        self.left_container = self._left_panel.exo_container
+        layout.addWidget(self._left_panel, 3)
+
+        self._right_panel = UI_Exo_Display_With_SidePanel(
+            placeholder_hand=SG_T.Hand.RIGHT,
+            exo_stretch=2,
+            embedded=True,
+        )
         self.right_perc_bent = PercentageBentGUI()
-        self.right_perc_bent.setMaximumWidth(400)
-        self.right_gui._gui_update_timer.timeout.connect(self.right_perc_bent._apply_pending_update)
-        layout.addWidget(self.right_perc_bent, 1)
-        
+        self._right_panel.set_side_panel(
+            self.right_perc_bent,
+            apply_pending=self.right_perc_bent._apply_pending_update,
+            max_width=400,
+            stretch=1,
+        )
+        self.right_gui = self._right_panel.exo_display
+        self.right_container = self._right_panel.exo_container
+        layout.addWidget(self._right_panel, 3)
+
         self.setLayout(layout)
 
     def showEvent(self, event):
@@ -1039,6 +1114,52 @@ class DualHandGUI(QWidget):
         for exo_display in (self.left_gui, self.right_gui):
             if exo_display.nr_fingers() > 0:
                 exo_display._flush_embedded_render()
+
+
+from .SG_robot_pinch_gui import Robot_Pinch_Mapper_GUI
+
+
+class UI_Robot_Pinch_Mapper_Display(UI_Exo_Display_With_SidePanel):
+    """
+    3D exo + Robot_Pinch_GUI. Show before SG_main.init(), then attach_mapper().
+
+        gui = GUI.UI_Robot_Pinch_Mapper_Display()
+        gui.show()
+        gui.attach_mapper(Robot_Pinch_Mapper(hand_id))
+        gui.create_hand_exo(exo_poss)
+    """
+
+    MANUAL_BANNER = "Manual mode. No glove data used."
+
+    def __init__(self, window_width=1600, window_height=700):
+        super().__init__(
+            banner_text=self.MANUAL_BANNER,
+            window_title="Robot Hand Pinch Mapper",
+            window_width=window_width,
+            window_height=window_height,
+            exo_stretch=6,
+        )
+        self.mapper = None
+        self.pinch_mapper_gui = None
+        self.pinch_gui = None
+
+    def attach_mapper(self, mapper) -> None:
+        self.mapper = mapper
+        self.pinch_mapper_gui = Robot_Pinch_Mapper_GUI(mapper)
+        self.pinch_gui = self.pinch_mapper_gui.widget
+        self.set_side_panel(
+            self.pinch_gui,
+            apply_pending=self.pinch_mapper_gui.apply_pending_update,
+            max_width=700,
+            stretch=1,
+        )
+        self.pinch_gui.mode_combo.currentIndexChanged.connect(self._on_mode_changed)
+
+    def _on_mode_changed(self, _index):
+        self.set_banner_visible(self.pinch_gui.mode_combo.currentData() == "manual")
+
+    def update_pinch_mapper(self, raw_flex, raw_abd, robot_flex, robot_abd):
+        self.pinch_mapper_gui.emit_update(raw_flex, raw_abd, robot_flex, robot_abd)
 
 
 if __name__ == '__main__':

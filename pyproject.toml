@@ -22,3 +22,20 @@ include = ["SG_API*", "Tests_SG_API*"]
 
 [tool.setuptools.package-data]
 SG_API = ["CPPlibs/*.so", "CPPlibs/*.dll", "CPPlibs/*.pyd", "*.csv"]
+
+[tool.pytest.ini_options]
+testpaths = ["Tests_SG_API", "Tests_SG_Pro", "Tests_install_process"]
+norecursedirs = [
+    "Rembrandt_CPP_SDK",
+    "fastcom_cpp",
+    ".*",
+    "build",
+    "dist",
+    "site",
+    "venv",
+    ".venv",
+]
+addopts = [
+    "--ignore=Rembrandt_CPP_SDK",
+    "--ignore=fastcom_cpp",
+]
