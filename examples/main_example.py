@@ -36,10 +36,13 @@ gui.show()
 
 try: 
     """
-        Develop without/with a physical glove? Switch SG_T.Com_type.REAL_GLOVE_USB and SG_T.Com_type.SIMULATED_GLOVE or vice versa. 
-        Or use play_recording.py for an example playing actual glove recordings. 
-        Simulation_Mode = ignored for the real glove, but can set movement for the simulated glove.
-        wait_for_x_gloves = nr of gloves it waits on before continuing from this line. 
+        Develop without/with a physical glove? Switch SG_T.Com_type.REAL_GLOVE_USB and SG_T.Com_type.SIMULATED_GLOVE or vice versa.
+        Simulation_Mode is ignored for the real glove. For simulated gloves:
+          FINGERS_OPEN_CLOSE — bundled open/close recording (default here)
+          STEADY_MODE — static pose
+          PLAYBACK_MODE — use with examples/play_recording.py / SG_recorder.play_recording
+          CUSTOM_FUNCTION / FINGERS_OPEN_CLOSE_SINE — see simulation_custom_example.py / docs
+        wait_for_x_gloves = nr of gloves it waits on before continuing from this line.
     """
     wait_for_x_gloves = 1
     device_ids = SG_main.init(wait_for_x_gloves, SG_T.Com_type.REAL_GLOVE_USB, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 
@@ -74,12 +77,15 @@ try:
             
             fingertips_distances = SG_main.get_fingertip_distances(hand_id)
 
+           
+
+
             """
             Forces: switch on or off by commenting/uncommenting
             """
-            #forces = [int(f) for f in simulate_forces()]            # gradual on/off forces
+            forces = [int(f) for f in simulate_forces()]            # gradual on/off forces
             #forces = [1000, 1000, 1000, 1000]                      # means you set all fingers to 1000mN
-            forces = [0, 0, 0, 0]                                    # no force. 
+            #forces = [0, 0, 0, 0]                                    # no force. 
 
             SG_main.set_force_goals(hand_id, forces)
 

@@ -21,7 +21,14 @@ where = ["."]
 include = ["SG_API*", "Tests_SG_API*"]
 
 [tool.setuptools.package-data]
-SG_API = ["CPPlibs/*.so", "CPPlibs/*.dll", "CPPlibs/*.pyd", "*.csv"]
+SG_API = [
+    "CPPlibs/*.so",
+    "CPPlibs/*.dll",
+    "CPPlibs/*.pyd",
+    "*.csv",
+    "recordings/*.csv",
+    "recordings/*.json",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["Tests_SG_API", "Tests_SG_Pro", "Tests_install_process"]

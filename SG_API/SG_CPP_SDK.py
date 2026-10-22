@@ -27,6 +27,7 @@ import sys
 import numpy as np
 import threading
 import time
+import signal
 
 
 if USE_CPP_SDK:
@@ -52,59 +53,55 @@ if USE_CPP_SDK:
 
 
     _CPP_device_dict : Dict[int, Any] = {}
+    # device_id -> {data, force, tracking} subscription capsules from RembrandtPySDK
+    _CPP_device_subscriptions : Dict[int, Dict[str, Any]] = {}
 
     lib = None
     device_connected_handle = None
     device_disconnected_handle = None
     dm = None # device manager
+    _cpp_closing = False
+    # Serialize USB→Python callbacks vs Terminate (GUI path otherwise ACCESS_VIOLATIONs).
+    _cpp_callback_lock = threading.RLock()
     
-
-    # (Optionally, you can store these handles for later unsubscription, but this should already be handled within the C++ lib.)
 
     # Callback for device-disconnected events.
     def device_disconnected_callback_CPP(device_info):
-        
-        sg_logger.log("Rembrandt Client - Device Disconnected!", level=sg_logger.INFO)
-        sg_logger.log("Device Info: Vendor ID:", device_info.GetVendorId(), "Device ID:", device_info.GetDeviceId(), level=sg_logger.INFO)      
-        _remove_CPP_device(device_info.GetDeviceId())
+        with _cpp_callback_lock:
+            if _cpp_closing:
+                return
+            sg_logger.log("Rembrandt Client - Device Disconnected!", level=sg_logger.INFO)
+            sg_logger.log("Device Info: Vendor ID:", device_info.GetVendorId(), "Device ID:", device_info.GetDeviceId(), level=sg_logger.INFO)      
+            _remove_CPP_device(device_info.GetDeviceId())
 
-        try:
-            SG_cb.on_disconnected_callback_manager.call_all(device_info.GetDeviceId())
-            # Buffer cleanup handled by Python garbage collection
-        except Exception as e:
-            raise RuntimeError(f"Error in user-defined callback: {e}") from e
+            try:
+                SG_cb.on_disconnected_callback_manager.call_all(device_info.GetDeviceId())
+                # Buffer cleanup handled by Python garbage collection
+            except Exception as e:
+                raise RuntimeError(f"Error in user-defined callback: {e}") from e
 
-
-
-
-    # buff = SG_buff.get_buffers(device.GetDeviceInfo().GetDeviceId())
-    # if buff is not None:
-    #     buff.set_receive_data(data) 
-        #on_data_source_updated.call_all(device.GetDeviceInfo().GetDeviceId(), SG_T.Data_Origin.CPP_SDK) (is called from inside the buffer)
-
-
-        # this triggers on_data_source_updated. And when that triggers, SG_devices rembrandt update_data() triggers, doing kinematics and populating rembrandt data the user can retrieve.
-        # then in that function, it calls: on_new_rembrandt_data.call_all(self._device_id) 
-        # so it arrives back here after all users operations in on_new_rembrandt_data subscription have been completed.
-
-    #device.SendHapticData(buff.)
     
     # Callback for data received events.
     def on_data_received_callback_CPP(device, data : Sequence[Sequence[int]]):
         """
         outputs nested list [fingerNr][data_nr]. First 8 data points are raw hall data of splay until fingertip exo rots.  The one after is the force sensor.
         """
-        # Convert List[List[int]] from C++ to numpy array
-        if isinstance(data, list):
-            data = np.array(data, dtype=np.int32)
+        with _cpp_callback_lock:
+            # Ignore late USB frames during / after shutdown (avoids GIL deadlock with Terminate).
+            if _cpp_closing or not SG_cb.running:
+                return
 
-        device_id = device.GetDeviceInfo().GetDeviceId()
-        
-        raw_buffer = SG_RB_buffer.get_buffer(device_id)
-        if raw_buffer is not None:
-            if raw_buffer.device_info.data_origin == SG_T.Data_Origin.CPP_SDK: 
-                raw_buffer.update_incoming_data_raw(data)
-                SG_cb.on_data_source_updated.call_all(device_id, SG_T.Data_Origin.CPP_SDK)
+            # Convert List[List[int]] from C++ to numpy array
+            if isinstance(data, list):
+                data = np.array(data, dtype=np.int32)
+
+            device_id = device.GetDeviceInfo().GetDeviceId()
+            
+            raw_buffer = SG_RB_buffer.get_buffer(device_id)
+            if raw_buffer is not None:
+                if raw_buffer.device_info.data_origin == SG_T.Data_Origin.CPP_SDK: 
+                    raw_buffer.update_incoming_data_raw(data)
+                    SG_cb.on_data_source_updated.call_all(device_id, SG_T.Data_Origin.CPP_SDK)
 
 
         
@@ -227,8 +224,10 @@ if USE_CPP_SDK:
         global device_connected_handle
         global device_disconnected_handle
         global dm
+        global _cpp_closing
 
         if lib == None:
+            _cpp_closing = False
             sg_logger.info("Initializing Rembrandt C++ SDK")
             _ensure_cpp_logging_enabled()
             # Get the singleton Library instance.
@@ -255,7 +254,17 @@ if USE_CPP_SDK:
                 )
                 sg_logger.info(start_message, level=sg_logger.USER_INFO)
                 _write_cpp_init_watchdog_notice(start_message)
-                init_success = lib.Initialize()
+                # C++ loguru may install its own SIGINT handler during Initialize().
+                # Only reclaim SIGINT for Qt GUI apps. Calling signal.signal() replaces
+                # rclpy's C-level handlers and breaks ROS Ctrl+C shutdown.
+                gui_loaded = "SG_API.SG_GUI" in sys.modules
+                on_main = threading.current_thread() is threading.main_thread()
+                prev_sigint = signal.getsignal(signal.SIGINT) if gui_loaded and on_main else None
+                try:
+                    init_success = lib.Initialize()
+                finally:
+                    if prev_sigint is not None:
+                        signal.signal(signal.SIGINT, prev_sigint)
                 init_done.set()
                 watchdog.cancel()
                 sg_logger.info("R1 C++ SDK initialized successfully.", level=sg_logger.USER_INFO)
@@ -290,37 +299,61 @@ if USE_CPP_SDK:
 
 
 
+    def _unsubscribe_device_callbacks(device_id: int):
+        device = _CPP_device_dict.get(device_id)
+        subs = _CPP_device_subscriptions.pop(device_id, None)
+        if device is None or subs is None:
+            return
+        for method_name, handle_key in (
+            ("UnsubscribeOnDataReceived", "data"),
+            ("UnsubscribeOnForceDataReceived", "force"),
+            ("UnsubscribeOnTrackingDataReceived", "tracking"),
+        ):
+            handle = subs.get(handle_key)
+            if handle is None:
+                continue
+            try:
+                getattr(device, method_name)(handle)
+            except Exception as e:
+                sg_logger.log(f"{method_name} failed for device {device_id}: {e}", level=sg_logger.DEBUG)
+
+    def _hard_exit_process(code: int = 0):
+        """Kill the process without C++ DLL_PROCESS_DETACH (hangs on live USB)."""
+        try:
+            sys.stdout.flush()
+            sys.stderr.flush()
+        except Exception:
+            pass
+        if platform.system() == "Windows":
+            import ctypes
+            # ExitProcess (os._exit) runs DLL detach and wedges on Rembrandt USB.
+            # TerminateProcess skips that. Must use c_void_p: default ctypes
+            # truncates the -1 pseudo-handle on 64-bit (ERROR_INVALID_HANDLE).
+            k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+            k32.TerminateProcess.argtypes = (ctypes.c_void_p, ctypes.c_uint)
+            k32.TerminateProcess.restype = ctypes.c_bool
+            k32.TerminateProcess(ctypes.c_void_p(-1), int(code))
+        os._exit(code)
+
     def close():
-        # Unsubscribe from device-connected events.
-        if dm:
-            try:
-                unsub_dc = dm.UnsubscribeOnDeviceConnected(device_connected_handle)
-            #    warnings.warn("Unsubscribed from device connected events.")
-            except Exception as e:
-                sg_logger.log(f"Failed to unsubscribe from OnDeviceConnected: {e}", level=sg_logger.ERROR)
-                raise RuntimeError(f"Failed to unsubscribe from OnDeviceConnected: {e}") from e
+        global lib, dm, device_connected_handle, device_disconnected_handle, _cpp_closing
+        _cpp_closing = True
 
-            # Unsubscribe from device-disconnected events.
-            try:
-                unsub_dd = dm.UnsubscribeOnDeviceDisconnected(device_disconnected_handle)
-            #    warnings.warn("Unsubscribed from device disconnected events.")
-            except Exception as e:
-                sg_logger.log(f"Failed to unsubscribe from OnDeviceDisconnected: {e}", level=sg_logger.ERROR)
-                raise RuntimeError(f"Failed to unsubscribe from OnDeviceDisconnected: {e}") from e
-        
-
-
-        # Terminate the library.
+        # lib.Terminate() hangs joining USB threads. os._exit / ExitProcess then
+        # hangs in DLL_PROCESS_DETACH on Windows. Forces already zeroed by
+        # close_devices(); hard-kill the process instead.
         if lib:
-            try:
-                term_success = lib.Terminate()
-                if not term_success:
-                    raise RuntimeError("Failed to terminate the SGRembrandt Library.")
-            except Exception as e:
-                sg_logger.log(f"Termination error: {e}", level=sg_logger.ERROR)
-                raise RuntimeError(f"Termination error: {e}") from e
+            sg_logger.log(
+                "Exited and Closed SenseGlove API",
+                level=sg_logger.USER_INFO,
+            )
+            _hard_exit_process(0)
 
-            # warnings.warn("SGRembrandt Library terminated successfully.")
+        with _cpp_callback_lock:
+            _CPP_device_subscriptions.clear()
+            _CPP_device_dict.clear()
+            lib = None
+            dm = None
         return 0
 
 
@@ -333,6 +366,7 @@ if USE_CPP_SDK:
 
     def _remove_CPP_device(id):
         global _CPP_device_dict
+        _unsubscribe_device_callbacks(id)
         _CPP_device_dict.pop(id, None)
 
     def _get_CPP_device(device_id : int):
@@ -409,9 +443,8 @@ def device_connected_callback_CPP(device):
     
     SG_cb.device_com_connected_callback(device_info)
     
-    # Subscribe to data events on the device.
+    # Subscribe to data events on the device (store handles so close() can unsubscribe on Linux).
     try:
-        # Subscribe to OnDataReceived
         data_handle = device.SubscribeOnDataReceived(on_data_received_callback_CPP) 
         sg_logger.log("Successfully subscribed to OnDataReceived!", level=sg_logger.INFO)
     except Exception as e:
@@ -431,8 +464,13 @@ def device_connected_callback_CPP(device):
     except Exception as e:
         sg_logger.log("Failed to subscribe to OnTrackingDataReceived:", e, level=sg_logger.ERROR)
         raise RuntimeError(f"Failed to subscribe to OnTrackingDataReceived: {e}") from e
-    
-    
+
+    _CPP_device_subscriptions[CPP_device_info.GetDeviceId()] = {
+        "data": data_handle,
+        "force": force_handle,
+        "tracking": tracking_handle,
+    }
+
 
 
 

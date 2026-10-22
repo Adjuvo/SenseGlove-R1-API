@@ -17,16 +17,7 @@ Always use the specified charger, cable and linkbox as below.
 - Windows
 - Linux Ubuntu >= 20.04, and other Linux systems with >= GCC 9 
 
-## Getting started in supported software:
 
-[![Python](images/python_logo.png)](./python_getting_started.md)
-- [Getting started: Python](./python_getting_started.md). This is the main API.
-
-[![ROS2](images/ROS2_logo.png)](https://github.com/Adjuvo/senseglove_r1_ros)
-- [ROS2 is supported](https://github.com/Adjuvo/senseglove_r1_ros), and is a wrapper around the Python API. Please let us know if your project requires ROS1. Our current python API can support ROS1, requiring **python 3.8.x**.
-
-### Other software
-- Please contact sales to discuss projects needing  other software support.
 
 ## Glove installation
 ### Windows
@@ -53,6 +44,19 @@ To mount the glove to a tracker or other device, you can unscrew the R1 logo, th
  
 Note: Mounting the glove directly to a haptic arm can be dangerous, as the arm may generate unintended high forces or speeds while the user is strapped into the glove. Mounting the glove to a haptic arm is done at the user’s own risk.
 
+## Getting started in supported software:
+
+[![Python](images/python_logo.png)](./python_getting_started.md)
+
+[The R1 Python API](./python_getting_started.md) is the main API.
+
+[![ROS2](images/ROS2_logo.png)](https://github.com/Adjuvo/senseglove_r1_ros)
+
+[The R1 ROS2 Git](https://github.com/Adjuvo/senseglove_r1_ros) is a wrapper around the Python API. Please let us know if your project requires ROS1. Our current python API can support ROS1, requiring **python 3.8.x**.
+
+### Other software
+Please contact sales to discuss projects needing  other software support.
+
 
 ## More docs:
 #### 📚 Documentation Sections
@@ -64,6 +68,7 @@ Note: Mounting the glove directly to a haptic arm can be dangerous, as the arm m
 📖 **[API Reference](api-reference.md)** - Available functions and their docs.
 
 📦 **[Releases](releases.md)** - Changelog of new releases
-    **[Troubleshooting](troubleshooting.md)** - Gloves not connecting? Start here.
+
+   **[Troubleshooting](troubleshooting.md)** - Gloves not connecting? Start here.
 
 

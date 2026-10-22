@@ -9,16 +9,22 @@ git pull
 pip install .
 ```
 
-## v0.0.26
-2026-07-23
+## v0.1.1
+2026-10-20
 
-- Fixed .csv and other files not being found correctly for pip install . or uv, by adding a pyproject.toml file.
-- Docs improvements
+- Updates for simulated gloves, and resolved shutdown hangs for Linux.
+- Updated to work with the latest ROS release.
+- Better split for the SG_Pro functions. If you want to have better hand mapping with SG_Pro, for many degree of freedom hands, please contact sales.
+- Default simulated gloves can now play back actual position recordings we made in our office, without wearing the glove. You can get data exactly as you would normally from the real glove.
 
+To try, find the init in your program, and turn on SIMULATED_GLOVE, and set the Mode.
 
-## v0.0.25
-2026-07-03
-Changed the jitter filter thresholds specifically for the first joint (abduction). These generally move slower.
+```
+ device_ids = SG_main.init(wait_for_x_gloves, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 
+``` 
+Init with for example FINGERS_OPEN_CLOSE or FINGER_PINCHES.
+
+If updating, run `pip install .` again after!
 
 ## v0.1.0
 BREAKING CHANGES! For users using Robot hand mapper and minor changes for percentage_bents. See notes below.
@@ -45,6 +51,17 @@ While abduction angle 0 is forward for the glove, it doesn't work well for natur
 Therefore we added midpoint angles now, to properly get 5000 with fingers straight forward, irrespective of assymetric finger min/max limits.
 It should not change too much. If you notices it changes your mapping undesirably, and you want to revert to old behavior, use set_perc_bent_vars() with midpoint [0.5, 0, 0, 0, 0], and min/max values of the previous release.
 
+
+## v0.0.26
+2026-07-23
+
+- Fixed .csv and other files not being found correctly for pip install . or uv, by adding a pyproject.toml file.
+- Docs improvements
+
+
+## v0.0.25
+2026-07-03
+Changed the jitter filter thresholds specifically for the first joint (abduction). These generally move slower.
 
 ## v0.0.25
 Better implementation, manual tuning GUI, and docs for the 1DOF RobotHandMapper included.

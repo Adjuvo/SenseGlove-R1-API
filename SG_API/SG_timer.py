@@ -116,6 +116,7 @@ class SGTimer:
         self.platform_timer_id = None  # Windows timer ID
         self.timer_fd = None          # Linux timer fd
         self.timer_thread = None      # Linux timer thread / Windows waitable timer thread
+        self._windows_mm_uses_thread = False
         
     def start(self):
         """Start the timer"""
@@ -134,19 +135,20 @@ class SGTimer:
             
         sg_logger.info(f"Timer {self.timer_id} started at {self.frequency_hz} Hz")
     
-    def stop(self):
-        """Stop the timer"""
-        if not self.is_running:
-            return
-            
+    def stop(self, join_thread: bool = True):
+        """Stop the timer. Set join_thread=False from signal handlers (no GIL deadlock)."""
+        was_running = self.is_running
         self.is_running = False
-        
+        if not was_running and self.timer_thread is None and self.timer_fd is None and self.platform_timer_id is None:
+            return
+
         if IS_WINDOWS:
-            self._stop_windows_timer()
+            self._stop_windows_timer(join_thread=join_thread)
         elif IS_LINUX:
-            self._stop_linux_timer()
-            
-        sg_logger.info(f"Timer {self.timer_id} stopped")
+            self._stop_linux_timer(join_thread=join_thread)
+
+        if join_thread:
+            sg_logger.info(f"Timer {self.timer_id} stopped")
     
     def set_callback(self, callback: Callable[[int, int], None]):
         """Set the callback function for timer events"""
@@ -169,27 +171,44 @@ class SGTimer:
     
     def _start_windows_multimedia_timer(self):
         """Start Windows multimedia timer (up to 1000 Hz)"""
+        winmm.timeBeginPeriod(1)
+
+        # timeSetEvent runs the callback on a winmm thread. Entering Python there
+        # freezes embedded Qt3D when two D3D windows are live (DualHandGUI).
+        if "SG_API.SG_GUI" in sys.modules:
+            self._windows_mm_uses_thread = True
+            self.platform_timer_id = 1
+            self.timer_thread = threading.Thread(target=self._windows_sleep_timer_loop, daemon=True)
+            self.timer_thread.start()
+            return
+
         def timer_callback(timer_id, msg, user_data, dw1, dw2):
             self._on_timer_event(0)
-        
-        # Create the timer callback
+
         self.callback_func = TIMECALLBACK(timer_callback)
-        
-        # Set timer resolution to 1ms
-        winmm.timeBeginPeriod(1)
-        
-        # Create multimedia timer
-        interval_ms = max(1, round(self.period_ms))  # At least 1ms
+        interval_ms = max(1, round(self.period_ms))
         self.platform_timer_id = winmm.timeSetEvent(
-            interval_ms,        # Interval
-            1,                  # Resolution  
-            self.callback_func, # Callback function
-            None,               # User data
-            1                   # TIME_PERIODIC
+            interval_ms,
+            1,
+            self.callback_func,
+            None,
+            1,
         )
-        
+
         if self.platform_timer_id == 0:
             raise Exception(f"Failed to create Windows multimedia timer for timer {self.timer_id}")
+
+    def _windows_sleep_timer_loop(self):
+        interval = self.period_ms / 1000.0
+        next_t = time.perf_counter()
+        while self.is_running:
+            next_t += interval
+            self._on_timer_event(0)
+            remaining = next_t - time.perf_counter()
+            if remaining > 0:
+                time.sleep(remaining)
+            else:
+                next_t = time.perf_counter()
     
     def _start_windows_high_precision_timer(self):
         """Start Windows high-precision timer using sleep + busy-wait (>1000 Hz)"""
@@ -259,13 +278,12 @@ class SGTimer:
                 self._on_timer_event(0)
 
     
-    def _stop_windows_timer(self):
+    def _stop_windows_timer(self, join_thread: bool = True):
         """Stop Windows timer (multimedia or high-precision)"""
         if self.platform_timer_id:
             if self.frequency_hz > 1000:
                 # Stop high-precision timer thread
-                # Wait for timer thread to finish
-                if self.timer_thread:
+                if join_thread and self.timer_thread:
                     self.timer_thread.join(timeout=1.0)
                     self.timer_thread = None
                 
@@ -276,6 +294,12 @@ class SGTimer:
                     ntdll.NtSetTimerResolution(0, False, ctypes.byref(actual_resolution))
                 except:
                     pass
+            elif self._windows_mm_uses_thread:
+                if join_thread and self.timer_thread:
+                    self.timer_thread.join(timeout=1.0)
+                    self.timer_thread = None
+                winmm.timeEndPeriod(1)
+                self._windows_mm_uses_thread = False
             else:
                 # Stop multimedia timer
                 winmm.timeKillEvent(self.platform_timer_id)
@@ -318,12 +342,17 @@ class SGTimer:
         self.timer_thread = threading.Thread(target=self._linux_timer_loop, daemon=True)
         self.timer_thread.start()
     
-    def _stop_linux_timer(self):
-        """Stop Linux timerfd timer"""
-        if self.timer_fd:
-            os.close(self.timer_fd)
-            self.timer_fd = None
-        if self.timer_thread:
+    def _stop_linux_timer(self, join_thread: bool = True):
+        """Stop Linux timerfd timer. join_thread=False from signal handlers."""
+        # Closing the fd wakes select() in the timer thread.
+        timer_fd = self.timer_fd
+        self.timer_fd = None
+        if timer_fd is not None:
+            try:
+                os.close(timer_fd)
+            except OSError:
+                pass
+        if join_thread and self.timer_thread is not None and self.timer_thread is not threading.current_thread():
             self.timer_thread.join(timeout=1.0)
             self.timer_thread = None
     
@@ -414,12 +443,13 @@ def start_timer(timer_id: int):
     
     timer.start()
 
-def stop_timer(timer_id: int):
+def stop_timer(timer_id: int, join_thread: bool = True):
     """
     Stop a timer.
     
     Args:
         timer_id: Timer identifier
+        join_thread: Wait for the timer thread to finish. Must be False in signal handlers.
         
     **Example:**
     ```python
@@ -431,7 +461,7 @@ def stop_timer(timer_id: int):
         # Silently ignore if timer doesn't exist (already cleaned up)
         return
     
-    timer.stop()
+    timer.stop(join_thread=join_thread)
 
 def destroy_timer(timer_id: int):
     """

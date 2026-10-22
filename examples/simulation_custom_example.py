@@ -1,6 +1,10 @@
 """
-Example on how to make the simulation exo angles move in a custom way when no physical glove is used.
-Alternatively, use play_recording.py to play a recording of a glove, or use main_example for the built in OPEN_CLOSE or STEADY_MODE.
+Example on how to make the simulation exo angles move in a custom way when no physical glove is used
+(Simulation_Mode.CUSTOM_FUNCTION).
+
+Alternatively:
+- examples/main_example.py — FINGERS_OPEN_CLOSE (bundled open/close recording) or STEADY_MODE
+- examples/play_recording.py — PLAYBACK_MODE with a custom recording via SG_recorder.play_recording
 """
 
 import sys
@@ -81,7 +85,7 @@ try:
             flexion_perc_bents, abduction_perc_bents = SG_main.get_percentage_bents(hand_id)
             gui.update_percentage_bent(flexion_perc_bents, abduction_perc_bents)
 
-            flex_angles, abd_angles = SG_main.get_raw_percentage_bent_angles(hand_id)
+            flex_angles, abd_angles = SG_main.get_fingertip_angles_local(hand_id)
 
             #print("flexion_angles:", flex_angles, "abd_angles:", abd_angles)
 

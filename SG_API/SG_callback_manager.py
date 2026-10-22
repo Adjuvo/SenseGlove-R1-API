@@ -84,10 +84,18 @@ on_high_freq_loop_callback_manager = CallbackManager[_on_high_freq_loop]()
 
 
 
+
+
 on_data_source_updated = CallbackManagerDataOrigin[Callable[[int], None]]()
 """
 Expects a function accepting a device_id. Fires when new data is available in the buffer or other data origin, and only gets called if the device_info.data_origin matches where this event fired from!
 (Among others), calls update_data in the rembrandt device
+"""
+
+
+on_post_update_internal = CallbackManager[Callable[[int], None]]()
+"""
+Fires after device update_data() finished calc, before on_new_rembrandt_data (user cbs). (Used to call SG_Pro calculations)
 """
 
 on_new_rembrandt_data = CallbackManager[Callable[[int], None]]()
@@ -121,6 +129,8 @@ _high_freq_timer_id = SG_timer.create_timer(frequency_hz=1000)
 # Define timer callback - this replaces all the platform-specific code!
 def _on_high_freq_timer(timer_id, missed_events):
     global on_high_freq_loop_callback_manager
+    if not running:
+        return
     on_high_freq_loop_callback_manager.call_all()
     if missed_events > 0:
         sg_logger.warn(f"Missed {missed_events} high frequency timer events")
@@ -131,6 +141,17 @@ SG_timer.subscribe_timer_callback(_high_freq_timer_id, _on_high_freq_timer)
 
 def init_high_freq_timer():
     SG_timer.start_timer(_high_freq_timer_id)
+
+def stop_high_freq_timer(*, join_thread: bool = True):
+    """
+    Stop the internal 1kHz loop. Safe to call more than once.
+
+    join_thread=False is for signal handlers: only flag/wake the timer thread,
+    never join (joining from a signal handler deadlocks on the GIL).
+    """
+    global running
+    running = False
+    SG_timer.stop_timer(_high_freq_timer_id, join_thread=join_thread)
 
 # ------------------------------------------------------------------------------------------------------
 
@@ -145,7 +166,6 @@ def clear_callbacks():
     on_new_rembrandt_data.clear()
     on_data_source_updated.clear()
     on_high_freq_loop_callback_manager.clear()
-
 
 
 def device_com_connected_callback(device_info : SG_T.Device_Info):
@@ -185,14 +205,16 @@ def init():
 
 def close():
     global CPP_active
-    global running
-    running = False
+    stop_high_freq_timer()
     clear_callbacks()
 
+    result = 0
     if CPP_active:
         from . import SG_CPP_SDK
         if SG_CPP_SDK.USE_CPP_SDK:
-            return SG_CPP_SDK.close()
+            result = SG_CPP_SDK.close()
+        CPP_active = False
+    return result
 
 
 if __name__ == '__main__':

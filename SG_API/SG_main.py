@@ -18,7 +18,6 @@ import numpy.typing as npt
 from datetime import datetime
 import sys
 import traceback
-import signal
 import time
 from typing import Dict, Sequence, Union
 
@@ -50,7 +49,7 @@ def init(wait_for_x_gloves : int, com_type : SG_T.Com_type, SIMULATION_MODE : SG
     
     If wait_for_x_gloves is not 0, the program will not move on until it finds at least x gloves. Returns list of device_ids connected after init.
     
-    If setting Com_type to SIMULATED_GLOVE it will generate a single right hand simulator. The movement can be set with the SIMULATION_MODE parameter (which is not used when the REAL glove mod is on).
+    If setting Com_type to SIMULATED_GLOVE it will generate a single right hand simulator. The movement can be set with the SIMULATION_MODE parameter (which is not used when the REAL glove mode is on). Common modes: FINGERS_OPEN_CLOSE (bundled recording), STEADY_MODE (static), PLAYBACK_MODE (custom recording / manual angles), CUSTOM_FUNCTION, FINGERS_OPEN_CLOSE_SINE. See docs/simulated_glove.md.
 
     smoothing_EWMA: If 0, no final smoothing is applied, resulting in no delay (except for moments when there is jitter actively being surpressed). If > 0, the final smoothing is applied using the EWMA filter. 
     The higher the number (0 to 1), the more responsive. The closer to 0, the more smooth and more delayed.
@@ -86,7 +85,6 @@ def init(wait_for_x_gloves : int, com_type : SG_T.Com_type, SIMULATION_MODE : SG
 
     sys.excepthook = log_uncaught_exceptions
 
-
     sg_logger.log("Waiting for glove to connect...", level=sg_logger.USER_INFO)
 
     SG_devices.initiate_add_device_on_connection(com_type)
@@ -102,12 +100,22 @@ def init(wait_for_x_gloves : int, com_type : SG_T.Com_type, SIMULATION_MODE : SG
     while(len(get_device_ids()) < wait_for_x_gloves):
         if SG_cb.device_connected_event.is_set() == False:
             sg_logger.log("Blocking program until", wait_for_x_gloves, "gloves connected. If you want the program to continue despite not having a connected glove, instead call SG_main.init(wait_for_x_gloves = 0), or set to SIMULATED_GLOVE.", level=sg_logger.USER_INFO)          
-        SG_cb.device_connected_event.wait() # it will hang on here until it has a connection to a glove.
+        SG_cb.device_connected_event.wait()
         SG_cb.device_connected_event.clear()        
 
     sg_logger.log("Unblocked waiting for glove.", level=sg_logger.USER_INFO)
 
 
+    # C++ loguru steals SIGINT during Initialize(). Reclaim only for Qt GUI apps.
+    # Do NOT install headless signal wrappers: rclpy installs C-level SIGINT/SIGTERM
+    # handlers that set context.ok()=False. Python signal.signal() replaces those,
+    # so wrapping/chaining breaks ROS shutdown (launch escalates to SIGKILL).
+    if "SG_API.SG_GUI" in sys.modules:
+        try:
+            from SG_API.SG_GUI import install_sigint_handler
+            install_sigint_handler()
+        except Exception:
+            pass
     
     device_ids = get_device_ids()
     sg_logger.info("Initiated Device ids: " + str(device_ids))
@@ -125,7 +133,7 @@ def init_rembrandt_sim(handedness : SG_T.Hand, simulation_mode: SG_sim.Simulatio
     Examples:
     ```python
     right_sim = SG_main.init_rembrandt_sim(SG_T.Hand.RIGHT, SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
-    left_sim = SG_main.init_rembrandt_sim(SG_T.Hand.LEFT, SG_sim.Simulation_Mode.STATIC)
+    left_sim = SG_main.init_rembrandt_sim(SG_T.Hand.LEFT, SG_sim.Simulation_Mode.STEADY_MODE)
     ```
     """
     #TODO: This currently only supports one LEFT and one RIGHT glove (id 0 and 1). So to fix that make this a loop that increases device_id if not odd/even for handedness AND not present in current get_device_ids(). Use that device_id to make the glove. 
@@ -205,7 +213,7 @@ def _update():
     
     """
     if SG_cb.running:
-        SG_recorder.update() 
+        SG_recorder.update_all_recorders() 
         SG_sim.update_all_glove_sims()
 
 
@@ -569,69 +577,20 @@ def get_percentage_bents(device_id: int) -> Tuple[SG_T.Sequence[int], SG_T.Seque
     - 10000 is used by default instead of 100 to avoid floating point inaccuracies
     - It calculates this based on the fingertip orientation with respect to the finger base orientation
     - This method is used because it's independent of user hand sizes, and requires no calibration
-    - Use set_perc_bent_vars() to change the max perc bent values to control and how 0 and 10000 are mapped to the raw values (from raw_percentage_bent_angles())
+    - Use set_perc_bent_vars() to change the max perc bent values to control and how 0 and 10000 are mapped to the raw values (from get_fingertip_angles_local())
     """
     result =  SG_devices.get_rembrandt_device(device_id).get_percentage_bents()
     return result
 
 
-def get_percentage_bents_distal(device_id: int) -> SG_T.Sequence[int]:
+def get_fingertip_angles_local(device_id: int) -> Tuple[SG_T.Sequence[float], SG_T.Sequence[float]]:
     """
-    Returns the distal-only flexion percentage bent for each finger.
-
-    Similar to get_percentage_bents(), except instead of the flexion of the whole finger
-    (all joints), it only sums the angles of joint 5 through the fingertip. So essentially, it acts as
-    clawing feature.
-    
-    Returns:
-
-    - **flexion_perc_bents_distal**: Array of distal flexion percentages (0-out_max_perc_bent, 10000 by default)
-
-    ```python
-    distal_flex_bents = SG_main.get_percentage_bents_distal(device_id)
-    ```
-
-    **Can be indexed like:**
-
-    - `finger_distal_flex_bent = distal_flex_bents[finger_nr]`
-
-    """
-    result = SG_devices.get_rembrandt_device(device_id).get_percentage_bents_distal()
-    return result
-
-
-def get_percentage_bents_proximal(device_id: int) -> SG_T.Sequence[int]:
-    """
-    Returns the proximal-only flexion percentage bent for each finger.
-
-    Similar to get_percentage_bents(), except instead of the flexion of the whole finger
-    (all joints), it only sums the angles of joint 1 through joint 3.
-
-    Returns:
-
-    - **flexion_perc_bents_proximal**: Array of proximal flexion percentages (0-out_max_perc_bent, 10000 by default)
-
-    ```python
-    proximal_flex_bents = SG_main.get_percentage_bents_proximal(device_id)
-    ```
-
-    **Can be indexed like:**
-
-    - `finger_proximal_flex_bent = proximal_flex_bents[finger_nr]`
-
-    """
-    result = SG_devices.get_rembrandt_device(device_id).get_percentage_bents_proximal()
-    return result
-
-
-def get_raw_percentage_bent_angles(device_id: int) -> Tuple[SG_T.Sequence[float], SG_T.Sequence[float]]:
-    """
-    Returns the raw flexion and abduction angles used to calculate percentage bent.
+    Returns the raw flexion and abduction angles.
     Returns: (flex_angles, abd_angles)
     Each is an array of the fingers, containing the raw angles in radians. See the tracking documentation for more info.
     Use:
     ```python
-    flex_angles, abd_angles = SG_main.get_raw_percentage_bent_angles(device_id)
+    flex_angles, abd_angles = SG_main.get_fingertip_angles_local(device_id)
     ```
     Can be indexed like:
     - `finger_flex_angle = flex_angles[finger_nr]`
@@ -644,37 +603,7 @@ def get_raw_percentage_bent_angles(device_id: int) -> Tuple[SG_T.Sequence[float]
     ```
     """
     rb_device = SG_devices.get_rembrandt_device(device_id)
-    return rb_device.get_raw_percentage_bent_angles()
-
-
-def get_raw_percentage_bent_distal_angles(device_id: int) -> SG_T.Sequence[float]:
-    """
-    Returns the raw distal flexion angles used to calculate get_percentage_bents_distal().
-    Array of the fingers, containing the summed raw angle (in radians) of joint 5 through the fingertip.
-    Use:
-    ```python
-    distal_flex_angles = SG_main.get_raw_percentage_bent_distal_angles(device_id)
-    ```
-    Can be indexed like:
-    - `finger_distal_flex_angle = distal_flex_angles[finger_nr]`
-    """
-    rb_device = SG_devices.get_rembrandt_device(device_id)
-    return rb_device.get_raw_percentage_bent_distal_angles()
-
-
-def get_raw_percentage_bent_proximal_angles(device_id: int) -> SG_T.Sequence[float]:
-    """
-    Returns the raw proximal flexion angles used to calculate get_percentage_bents_proximal().
-    Array of the fingers, containing the summed raw angle (in radians) of joint 1 through joint 3.
-    Use:
-    ```python
-    proximal_flex_angles = SG_main.get_raw_percentage_bent_proximal_angles(device_id)
-    ```
-    Can be indexed like:
-    - `finger_proximal_flex_angle = proximal_flex_angles[finger_nr]`
-    """
-    rb_device = SG_devices.get_rembrandt_device(device_id)
-    return rb_device.get_raw_percentage_bent_proximal_angles()
+    return rb_device.get_fingertip_angles_local()
 
 
 def set_percentage_bent_vars(device_id: int,
@@ -690,7 +619,7 @@ def set_percentage_bent_vars(device_id: int,
 
     **Steps:**
 
-    1. Monitor your values from get_raw_percentage_bent_angles()
+    1. Monitor your values from get_fingertip_angles_local()
     2. Move your fingers and note down the values per finger of your desired bent, mid (straight), and open
     3. Set the min, mid, and max values to the values you noted down on startup of your program, just after init()
 
@@ -717,32 +646,6 @@ def set_percentage_bent_vars(device_id: int,
         max_thetas_abduction,
         out_max_perc_bent,
     )
-
-
-def set_percentage_bent_distal_vars(device_id: int,
-        min_thetas_flexion_distal: npt.NDArray[np.float64] = np.array([0.35, 0.39, 0.12, 0.05, 0.19]),
-        max_thetas_flexion_distal: npt.NDArray[np.float64] = np.array([1.62, 2.99, 2.93, 2.79, 2.65]),
-        out_max_perc_bent: int = 10000):
-    """
-    Sets the variables used to calculate the distal-only percentage bent values.
-
-    These defaults cover only a much smaller angle range than the whole finger (only joint 5
-    through the fingertip), so they were tuned separately from set_percentage_bent_vars().
-
-    """
-    rb_device = SG_devices.get_rembrandt_device(device_id)
-    rb_device.set_percentage_bent_distal_vars(min_thetas_flexion_distal, max_thetas_flexion_distal, out_max_perc_bent)
-
-
-def set_percentage_bent_proximal_vars(device_id: int,
-    min_thetas_flexion_proximal = np.array([-0.762, -0.785, -0.836, -0.875, -0.897]),
-    max_thetas_flexion_proximal = np.array([-0.602, 0.257, 0.246, 0.190, 0.071]),
-    out_max_perc_bent: int = 10000):
-    """
-    Sets the variables used to calculate the proximal-only percentage bent values.
-    """
-    rb_device = SG_devices.get_rembrandt_device(device_id)
-    rb_device.set_percentage_bent_proximal_vars(min_thetas_flexion_proximal, max_thetas_flexion_proximal, out_max_perc_bent)
 
 
 ############## TODO:
@@ -839,14 +742,16 @@ def exit():
     SG_main.exit()
     ```
     """
-    SG_timer.stop_timer(SG_cb._high_freq_timer_id)
+    # Stop the 1kHz loop first so callbacks cannot run during teardown.
+    SG_cb.stop_high_freq_timer()
     SG_sim.stop_all_glove_sims()
     #TODO: stop_glove_data_exchanges, with in there stop_glove_sim, but also set force back to free mode, and no longer wanting to receive cb bool
-    SG_devices.close_devices() # first this to send final zero value haptic data
-    SG_cb.close() #then this to prevent callbacks
-    SG_RB_buffer.clear_buffers()
+
+    # Zero forces; SG_cb.close() hard-exits (Terminate hangs with live USB).
+    SG_devices.close_devices(remove=False)
+    SG_cb.close()
+
     sg_logger.log("Exited and Closed SenseGlove API", level=sg_logger.USER_INFO)
-    SG_cb.running = False
 
 
 

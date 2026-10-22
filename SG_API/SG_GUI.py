@@ -19,6 +19,7 @@ from __future__ import annotations
 import sys
 import signal
 import math
+import time
 import numpy as np
 import warnings
 import traceback
@@ -129,14 +130,20 @@ class QApplication(_QApplication):
         
         super().__init__(argv if argv is not None else sys.argv)
 
-        # Qt blocks Python signal handling during exec(); timer + SIGINT -> quit()
+        # Qt blocks Python signal handling during exec(); timer polls a flag set by SIGINT.
+        self._ctrl_c_requested = False
         self._ctrl_c_timer = QTimer()
-        self._ctrl_c_timer.timeout.connect(lambda: None)
-        self._ctrl_c_timer.start(200)
-        signal.signal(signal.SIGINT, self._quit_on_ctrl_c)
+        self._ctrl_c_timer.timeout.connect(self._poll_ctrl_c)
+        self._ctrl_c_timer.start(100)
+        install_sigint_handler(self)
 
-    def _quit_on_ctrl_c(self, signum, frame):
-        self.quit()
+    def _poll_ctrl_c(self):
+        if self._ctrl_c_requested:
+            self._ctrl_c_requested = False
+            self.quit()
+
+    def _request_quit_from_sigint(self, signum, frame):
+        self._ctrl_c_requested = True
 
     def exec(self):
         try:
@@ -144,6 +151,39 @@ class QApplication(_QApplication):
         except KeyboardInterrupt:
             self.quit()
             return 0
+
+
+def install_sigint_handler(app: Optional[QApplication] = None):
+    """
+    Install / reclaim SIGINT so Ctrl+C quits the Qt app (or exits the process).
+    Must be called again after C++ SDK init — loguru steals SIGINT on Linux.
+
+    No-ops when there is no Qt application (e.g. ROS nodes) so rclpy keeps SIGINT.
+    """
+    import platform as _platform
+
+    if app is None:
+        app = QApplication.instance()
+    if app is None:
+        return
+
+    def _on_sigint(signum, frame):
+        if hasattr(app, "_request_quit_from_sigint"):
+            app._request_quit_from_sigint(signum, frame)
+        else:
+            app.quit()
+
+        # Linux fallback: if quit/atexit wedges (USB callback race), hard-exit.
+        if _platform.system() == "Linux":
+            def _deadline():
+                time.sleep(1.0)
+                os._exit(0)
+            threading.Thread(target=_deadline, name="SG_SIGINT_deadline", daemon=True).start()
+
+        # Unblocks init waits / keep_program_running; exec() also catches this.
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGINT, _on_sigint)
 
 def log_gui_exception(operation_name: str, exception: Exception):
     """Helper function to consistently log GUI exceptions with context"""
@@ -533,7 +573,6 @@ class UI_Exo_Display(Qt3DExtras.Qt3DWindow):
         self.camController.setCamera(self.camera())
 
         self.setRootEntity(self.rootEntity)
-
         self.refresh_rate = 60 #fps
 
         self._gui_update_timer = QTimer()
@@ -1000,8 +1039,6 @@ class UI_Exo_Display_With_SidePanel(QWidget):
             self.exo_display._flush_embedded_render()
 
     def ensure_exo_rendered(self, timeout_ms=500):
-        self.exo_container.hide()
-        self.exo_container.show()
         self.exo_display._flush_embedded_render(timeout_ms)
 
     def create_hand_exo(self, exo_poss):
@@ -1111,9 +1148,6 @@ class DualHandGUI(QWidget):
 
     def showEvent(self, event):
         super().showEvent(event)
-        for exo_display in (self.left_gui, self.right_gui):
-            if exo_display.nr_fingers() > 0:
-                exo_display._flush_embedded_render()
 
 
 from .SG_robot_pinch_gui import Robot_Pinch_Mapper_GUI
