@@ -45,9 +45,10 @@ gui.show()
 
 try: 
     """
-        To develop without physical glove, switch SG_T.Com_type.REAL_GLOVE_USB to SG_T.Com_type.SIMULATED_GLOVE. Or use play_recording.py for actual glove recordings. 
-        Only for simulation, the Simulation_Mode matters, it is ignored for the real glove.
-        wait_for_x_gloves = nr of gloves it waits on before continuing from this line. 
+        To develop without physical glove, switch SG_T.Com_type.REAL_GLOVE_USB to SG_T.Com_type.SIMULATED_GLOVE.
+        Or use play_recording.py (PLAYBACK_MODE) for actual glove recordings.
+        Simulation_Mode only matters for simulated gloves; it is ignored for the real glove.
+        wait_for_x_gloves = nr of gloves it waits on before continuing from this line.
     """
     wait_for_x_gloves = 1
     device_ids = SG_main.init(wait_for_x_gloves, SG_T.Com_type.REAL_GLOVE_USB, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 

@@ -38,13 +38,13 @@ try:
     """
     TO PUT 2 HANDS to REAL Devices:
     """
-    #device_ids = SG_main.init(2, SG_T.Com_type.REAL_GLOVE_USB) 
+    device_ids = SG_main.init(2, SG_T.Com_type.REAL_GLOVE_USB) 
 
     """
     TO PUT 1 (RIGHT) HAND to SIMULATED & 1 (LEFT) to REAL:
     """
-    device_ids = SG_main.init(1, SG_T.Com_type.REAL_GLOVE_USB) 
-    SG_main.init_rembrandt_sim(SG_T.Hand.RIGHT, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
+    # device_ids = SG_main.init(1, SG_T.Com_type.REAL_GLOVE_USB) 
+    # SG_main.init_rembrandt_sim(SG_T.Hand.LEFT, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
     """
     Change RIGHT to LEFT if getting "Right hand device not found" error.
     """

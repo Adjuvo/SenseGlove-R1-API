@@ -4,10 +4,12 @@ SenseGlove Rembrandt Simulator Module
 This module provides glove simulation functionality for testing and development when no physical 
 device is connected. It simulates finger tracking data with various animation modes.
 
-The simulator can generate realistic finger movements for:
+The simulator can generate finger movements for:
 - Static poses (STEADY_MODE)
-- Sine wave animations (SINE_MODE) 
-- Finger open/close cycles (FINGERS_OPEN_CLOSE)
+- Built-in open/close recording playback (FINGERS_OPEN_CLOSE)
+- Sine-based open/close (FINGERS_OPEN_CLOSE_SINE)
+- Custom angle functions (CUSTOM_FUNCTION)
+- External/manual angle updates or custom recordings (PLAYBACK_MODE)
 
 **Basic Usage:**
 ```python
@@ -47,6 +49,7 @@ from SG_API import SG_math
 from SG_API import SG_callback_manager as SG_cb
 from SG_API import SG_RB_buffer
 from SG_API.SG_logger import sg_logger
+from SG_API import SG_recorder
 
 
 
@@ -77,20 +80,25 @@ class Simulation_Mode(Enum):
     Enumeration of available simulation modes for the glove simulator.
     
     **Modes:**
-    - **STEADY_MODE**: Static finger pose, no animation
-    - **SINE_MODE**: Sine wave oscillations across all finger joints
-    - **FINGERS_OPEN_CLOSE**: Smooth finger opening and closing cycles
+    - **STEADY_MODE**: Static finger pose; sim fires the data callback each update
+    - **FINGERS_OPEN_CLOSE**: Auto-plays the bundled ``finger_close_open.csv`` recording (full open/close)
+    - **FINGERS_OPEN_CLOSE_SINE**: Smooth sine-based open/close (not full range of motion)
+    - **CUSTOM_FUNCTION**: Angles come from a user function set via ``set_simulation_fn``
+    - **PLAYBACK_MODE**: Passive mode for ``SG_recorder.play_recording`` or manual ``set_angles_*``;
+      sim does not drive angles or fire an extra callback (avoids double ``on_new_data`` per sample)
     
     **Examples:**
     ```python
-    # Set different animation modes
     SG_sim.set_mode(device_id, SG_sim.Simulation_Mode.STEADY_MODE)
     SG_sim.set_mode(device_id, SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
+    SG_sim.set_mode(device_id, SG_sim.Simulation_Mode.PLAYBACK_MODE)
     ```
     """
     STEADY_MODE = "steady"
-    SINE_MODE = "sine"
-    FINGERS_OPEN_CLOSE = "fingers_open_close"
+    FINGERS_OPEN_CLOSE = "fingers_open_close_recording"
+    FINGER_PINCHES = "finger_pinches_recording"
+    THUMB_TOUCH_JOINTS = "thumb_touch_joints_recording"
+    FINGERS_OPEN_CLOSE_SINE = "fingers_open_close_sine"
     CUSTOM_FUNCTION = "custom_function"
     PLAYBACK_MODE = "playback_mode"
 
@@ -144,7 +152,7 @@ class Glove_Simulator:
             
         **Examples:**
         ```python
-        sim = Glove_Simulator(123, Simulation_Mode.SINE_MODE)
+        sim = Glove_Simulator(123, Simulation_Mode.FINGERS_OPEN_CLOSE_SINE)
         ```
         """
         self.device_id = device_info.device_id
@@ -160,7 +168,27 @@ class Glove_Simulator:
 
         self.start_time = time.perf_counter()
 
-        self.custom_sim_fn = None  #Custom Update function for when CUSTOM_FUNCTION is chosen.
+        self.custom_sim_fn = None  # Custom update function when CUSTOM_FUNCTION is chosen.
+
+
+        self.recording_filename = None
+        if mode == Simulation_Mode.FINGERS_OPEN_CLOSE:
+            self.recording_filename = "finger_close_open.csv"  #(included in package) or absolute/relative path to a custom recording
+
+        if mode == Simulation_Mode.FINGER_PINCHES:
+            self.recording_filename = "finger_pinches.csv"  #(included in package) or absolute/relative path to a custom recording
+
+        if mode == Simulation_Mode.THUMB_TOUCH_JOINTS:
+            self.recording_filename = "thumb_touch_joints.csv"  #(included in package) or absolute/relative path to a custom recording
+
+        if self.recording_filename is not None:
+            recording_device_info = SG_recorder.get_device_info(self.recording_filename)
+            if recording_device_info is None:
+                raise ValueError(
+                    f"Recording '{self.recording_filename}' has no metadata. "
+                    "Use a JSON recording from record_glove.py, or a CSV (raw_/filtered_ columns)."
+                )
+
 
     def _elapsed_time(self) -> float:
         return time.perf_counter() - self.start_time
@@ -218,43 +246,47 @@ class Glove_Simulator:
         Update the simulation for one frame. This is called automatically by update_all_glove_sims (called by SG_main.update)
         
         Calculates new finger positions based on the current simulation mode:
-        - SINE_MODE: Applies sine wave oscillations to all joints
-        - FINGERS_OPEN_CLOSE: Smooth finger opening/closing cycles
-        - STEADY_MODE: Maintains static finger positions
+        - STEADY_MODE: Keeps angles fixed; fires the data callback each update
+        - FINGERS_OPEN_CLOSE: Starts bundled open/close recording playback if not already playing
+        - FINGERS_OPEN_CLOSE_SINE: Smooth sine-based open/close around starting angles
+        - PLAYBACK_MODE: No-op here; angles come from SG_recorder.play_recording or set_angles_*
+        - CUSTOM_FUNCTION: Calls the user-supplied simulation function
         """
-        t = self._elapsed_time()
+        if self.recording_filename is not None:
+            if SG_recorder.get_recorder(self.device_id) is None:
+                SG_recorder.play_recording(self.device_info, self.recording_filename, loop=True)
+            # Playback advances via SG_recorder.update() in the high-freq loop
+            pass
+        elif self.mode == Simulation_Mode.FINGERS_OPEN_CLOSE_SINE:
+            t = self._elapsed_time()
 
-        if self.mode == Simulation_Mode.SINE_MODE:
-            self.update_exo_hand_angles_rad(self.starting_angles_rad_hand + np.sin(2 * t))
-        
-        if self.mode == Simulation_Mode.FINGERS_OPEN_CLOSE:
             MIN_ANGLE_RAD = math.radians(55)  # Set your minimum angle (e.g., 10°)
             MAX_ANGLE_RAD = math.radians(90)  # Set your maximum angle (e.g., 60°)
 
             # Smooth oscillation between 0 and 1
-            t_normalized = 0.5 * (1 - math.cos(2 * math.pi * t * 0.5))  
+            t_normalized = 0.5 * (1 - math.cos(2 * math.pi * t))
 
             # Scale the angle to fit between MIN and MAX
             angle = MIN_ANGLE_RAD + smoothstep(t_normalized) * (MAX_ANGLE_RAD - MIN_ANGLE_RAD)
             self.update_exo_hand_angles_rad(self.starting_angles_rad_hand + np.cos(angle))
 
-        if self.mode == Simulation_Mode.STEADY_MODE:
+        elif self.mode == Simulation_Mode.STEADY_MODE:
             # don't change the data, do call the callback update
             SG_cb.on_data_source_updated.call_all(self.device_id, SG_T.Data_Origin.LIVE_TEST_SIM)
             pass
 
-        if self.mode == Simulation_Mode.PLAYBACK_MODE:
-            #expects an external function to be called to update the angles and callback
+        elif self.mode == Simulation_Mode.PLAYBACK_MODE:
+            # Angles/callbacks are driven by SG_recorder.update_playback or set_angles_*
             pass
 
-        if self.mode == Simulation_Mode.CUSTOM_FUNCTION:
+        elif self.mode == Simulation_Mode.CUSTOM_FUNCTION:
             
             if self.custom_sim_fn is None:
                 print(f"WARNING: Mode is CUSTOM_FUNCTION, but no update function was set! Use SG_main.SG_sim.set_simulation_fn(hand_id, test_custom_fn) to do so!")
                 print(f"If you only see this warning once, you're likely switching to CUSTOM_FUNCTION mode before setting your function. In that case, you can ignore this.")
                 pass
 
-            new_exo_angles_rad = self.custom_sim_fn(t)
+            new_exo_angles_rad = self.custom_sim_fn(self._elapsed_time())
             
             #validate that it's actually valid!
             #if not self.is_exo_angles_type(new_exo_angles_rad):
@@ -278,8 +310,9 @@ class Glove_Simulator:
             
         **Examples:**
         ```python
-        sim.set_simulation_mode(Simulation_Mode.SINE_MODE)     # Switch to sine waves
-        sim.set_simulation_mode(Simulation_Mode.STEADY_MODE)   # Switch to static pose
+        sim.set_simulation_mode(Simulation_Mode.FINGERS_OPEN_CLOSE_SINE)
+        sim.set_simulation_mode(Simulation_Mode.STEADY_MODE)
+        sim.set_simulation_mode(Simulation_Mode.PLAYBACK_MODE)
         ```
         """
         if not _validate_simulation_mode(mode):
@@ -496,11 +529,14 @@ def _create_glove_sim(device_info : SG_T.Device_Info, mode : Simulation_Mode) ->
     
     **Examples:**
     ```python
-    # Create animated simulator
+    # Create animated simulator (bundled open/close recording)
     sim = SG_sim.create_glove_sim(123, SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
     
     # Create static simulator
     sim = SG_sim.create_glove_sim(456, SG_sim.Simulation_Mode.STEADY_MODE)
+
+    # Create passive simulator for custom recording playback
+    sim = SG_sim.create_glove_sim(789, SG_sim.Simulation_Mode.PLAYBACK_MODE)
     ```
     """
     sg_logger.log(f"create_glove_sim: Creating new glove simulator with device_id {device_info.device_id } in mode {mode.value}", level=sg_logger.INFO)
@@ -538,7 +574,7 @@ def create_glove_sim_device(device_info :SG_T.Device_Info, mode : Simulation_Mod
     ```python
     # Create left hand simulator that integrates with SG_main functions
     device_info = SG_T.Device_Info(device_id=123, handedness=SG_T.Hand.LEFT)
-    sim = SG_sim.create_glove_sim_device(device_info, SG_sim.Simulation_Mode.SINE_MODE)
+    sim = SG_sim.create_glove_sim_device(device_info, SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
     
     # Now you can use normal API functions
     angles = SG_main.get_exo_angles_rad(123)
@@ -632,9 +668,9 @@ def set_mode(device_id : int, mode : Simulation_Mode ):
         
     **Examples:**
     ```python
-    # Switch to different animation modes
-    SG_sim.set_mode(123, SG_sim.Simulation_Mode.SINE_MODE)
     SG_sim.set_mode(123, SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE)
+    SG_sim.set_mode(123, SG_sim.Simulation_Mode.PLAYBACK_MODE)
+    SG_sim.set_mode(123, SG_sim.Simulation_Mode.CUSTOM_FUNCTION)
     ```
     """
     if not _validate_simulation_mode(mode):

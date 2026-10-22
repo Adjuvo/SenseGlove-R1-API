@@ -5,7 +5,7 @@ That can be played back with play_recording.py as a simulated glove.
 
 Set the file name and duration below.
 Run the script. It will record for the set amount of seconds, then exit.
-The recording will be saved in the /recordings/ folder.
+The recording will be saved in ./recordings/ under the current working directory (or to an absolute / relative path if you set one).
 Use play_recording.py to play it back as a simulated glove.
 
 Questions? Written by:
@@ -28,7 +28,7 @@ def main():
     device_ids = SG_main.init(1, SG_T.Com_type.REAL_GLOVE_USB) # new: 1 indicates nr of gloves it waits on before continuing from this line.
     hand_id = device_ids[0]
 
-    filename = "test_recording.csv"
+    filename = "test_recording.csv" #or an absolute / relative path you want to put it
     duration = 15.0
     print("Recording glove data to recordings/" + filename + " for " + str(duration) + " seconds...")
     SG_recorder.record_glove_data(hand_id, duration, filename)

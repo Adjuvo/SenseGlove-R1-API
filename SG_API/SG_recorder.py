@@ -19,36 +19,315 @@ from SG_API import SG_types as SG_T
 from SG_API import SG_simulator as SG_sim
 import os
 
-# Global recorder instance for playback
-_playback_recorder: Optional['GloveRecorder'] = None
 
 
-def _repo_root() -> str:
-    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+class GloveRecorder:
+    def __init__(self, device_info: SG_T.Device_Info):
+        """
+        Initialize the glove recorder for a specific device
+        """
+        self.device_info = device_info
+        self.recorded_data: List[Dict[str, Any]] = []
+        self.is_recording = False
+        self.start_time = 0
+        self.is_playing = False
+        self.playback_start_time = 0
+        self.playback_time_origin = 0.0
+        self.current_frame_index = 0
+        self.loop = True
+        self._recording_metadata: Optional[Dict[str, Any]] = None
+
+    def start_recording(self):
+        """
+        Start recording glove data
+        """
+        self.recorded_data = []
+        self.is_recording = True
+        self.start_time = time.time()
+
+    def stop_recording(self):
+        """
+        Stop recording glove data
+        """
+        self.is_recording = False
+
+    def update(self):
+        """
+        Record current glove state if recording is active
+        """
+        if not self.is_recording:
+            return
+
+        current_time = time.time() - self.start_time
+        angles_rad = SG_main.get_exo_angles_rad(self.device_info.device_id)
+        
+        # Convert numpy array to list for JSON serialization
+        angles_list = [[float(x) for x in angles] for angles in angles_rad]
+        
+        self.recorded_data.append({
+            'timestamp': current_time,
+            'angles_rad': angles_list
+        })
+
+    def update_manually(self, raw_angles_rad, filtered_angles_rad):
+
+        current_time = time.time() - self.start_time
+        # Convert numpy array to list for JSON serialization
+        raw_angles_list = [[float(x) for x in angles] for angles in raw_angles_rad]
+        filtered_angles_list = [[float(x) for x in angles] for angles in filtered_angles_rad]
+        
+        self.recorded_data.append({
+            'timestamp': current_time,
+            'angles_rad': raw_angles_list,
+            'filtered_angles_rad': filtered_angles_list
+        })
+
+    def set_loop(self, loop: bool):
+        self.loop = loop
+
+    def save_recording(self, filename: str):
+        """
+        Save recorded data to a JSON file with metadata
+        """
+        if not self.recorded_data:
+            raise ValueError("No data recorded to save")
+
+        # Create recording with metadata
+        recording_with_metadata = {
+            'metadata': {
+                'exo_linkage_type': self.device_info.exo_linkage_type.value,
+                'hand': self.device_info.hand.value,
+                'nr_fingers_tracking': self.device_info.nr_fingers_tracking,
+                'nr_fingers_force': self.device_info.nr_fingers_force
+            },
+            'frames': self.recorded_data
+        }
+
+        with open(filename, 'w') as f:
+            json.dump(recording_with_metadata, f)
+
+    def load_recording(self, filename: str):
+        """
+        Load recorded data from a JSON or CSV file.
+        JSON supports old format (list) and new format (dict with metadata).
+        CSV uses raw_/filtered_ columns when present (see GloveCsvRecorder).
+        """
+        if _is_csv_recording(filename):
+            self._load_csv_into(filename)
+            return
+
+        with open(filename, "r") as f:
+            data = json.load(f)
+        
+        # Check if new format with metadata
+        if isinstance(data, dict) and "metadata" in data and "frames" in data:
+            self.recorded_data = cast(List[Dict[str, Any]], data["frames"])
+            self._recording_metadata = data["metadata"]
+        else:
+            self.recorded_data = cast(List[Dict[str, Any]], data)
+            self._recording_metadata = None
+
+    def start_playback(self):
+        """
+        Start playing back the loaded recording
+        """
+        if not self.recorded_data:
+            raise ValueError("No recording loaded to play back")
+        
+        self.is_playing = True
+        self.playback_start_time = time.time()
+        self.playback_time_origin = float(self.recorded_data[0]["timestamp"])
+        self.current_frame_index = 0
+
+    def _playback_elapsed(self) -> float:
+        return time.time() - self.playback_start_time
+
+    def _frame_playback_offset(self, frame_index: int) -> float:
+        return float(self.recorded_data[frame_index]["timestamp"]) - self.playback_time_origin
+
+    def update_playback(self):
+        """
+        Update playback state - should be called in the main update loop
+        """
+        if not self.is_playing:
+            return
+
+        elapsed = self._playback_elapsed()
+        
+        # Find the next frame to play
+        while (self.current_frame_index < len(self.recorded_data) - 1 and 
+               self._frame_playback_offset(self.current_frame_index + 1) <= elapsed):
+            self.current_frame_index += 1
+
+        # If we've reached the end of the recording
+        if (self.current_frame_index >= len(self.recorded_data) - 1 and 
+            elapsed > self._frame_playback_offset(len(self.recorded_data) - 1)):
+            self.is_playing = False
+            if self.loop:
+                self.current_frame_index = 0
+                self.playback_start_time = time.time()
+                self.is_playing = True
+            return
+
+        # Play the current frame
+        frame = self.recorded_data[self.current_frame_index]
+        angles_rad = cast(
+            List[List[float]],
+            frame.get('filtered_angles_rad', frame['angles_rad']),
+        )
+        SG_sim.set_angles_rad(self.device_info, angles_rad)
+
+    def _load_csv_into(self, filename: str) -> None:
+        with open(filename, "r", newline="") as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            if not header or "timestamp" not in header:
+                raise ValueError("CSV must have a header row with a timestamp column")
+
+            recorded_data: List[Dict[str, Any]] = []
+            for row in reader:
+                if not row:
+                    continue
+                ts = float(row[header.index("timestamp")])
+                has_prefixed_cols = any(
+                    name.startswith("raw_") or name.startswith("filtered_")
+                    for name in header
+                    if name != "timestamp"
+                )
+                if has_prefixed_cols:
+                    angles_rad = _unflatten_angles(header, row, prefix="raw_")
+                    if any(name.startswith("filtered_") for name in header):
+                        filtered_angles_rad = _unflatten_angles(header, row, prefix="filtered_")
+                    else:
+                        filtered_angles_rad = angles_rad
+                else:
+                    angles_rad = _unflatten_angles(header, row, prefix="")
+                    filtered_angles_rad = angles_rad
+                recorded_data.append({
+                    "timestamp": ts,
+                    "angles_rad": angles_rad,
+                    "filtered_angles_rad": filtered_angles_rad,
+                })
 
 
-def _recordings_dir() -> str:
-    """Repo recordings/ folder (next to SG_API/), not relative to process cwd."""
-    return os.path.join(_repo_root(), "recordings")
+        self.recorded_data = recorded_data
+        sidecar = load_sidecar_metadata(filename)
+        self._recording_metadata = sidecar
+
+
+
+_playback_recorders: Dict[int, GloveRecorder] = {}
+
+def get_recorder(device_id: int) -> Optional[GloveRecorder]:
+    global _playback_recorders
+    if device_id in _playback_recorders:
+        return _playback_recorders[device_id]
+    else:
+        return None
+
+def create_recorder(device_info: SG_T.Device_Info) -> GloveRecorder:
+    global _playback_recorders
+    recorder = GloveRecorder(device_info)
+    _playback_recorders[device_info.device_id] = recorder
+    return recorder
+
+
+def update_all_recorders():
+    global _playback_recorders
+    for recorder in _playback_recorders.values():
+        recorder.update_playback()
+
+
+def _package_dir() -> str:
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+def _package_recordings_dir() -> str:
+    """Bundled demo recordings shipped inside SG_API/."""
+    return os.path.join(_package_dir(), "recordings")
+
+
+def _cwd_recordings_dir() -> str:
+    """User recordings folder under the process current working directory."""
+    return os.path.join(os.getcwd(), "recordings")
 
 
 def _recordings_search_dirs() -> List[str]:
-    root = _repo_root()
+    """Playback lookup order: cwd first, then packaged demos, then internal/dev."""
+    pkg = _package_dir()
+    repo_root = os.path.dirname(pkg)
     return [
-        os.path.join(root, "recordings"),
-        os.path.join(root, "internal", "recordings"),
+        _cwd_recordings_dir(),
+        _package_recordings_dir(),
+        os.path.join(repo_root, "internal", "recordings"),
     ]
 
 
+def _normalize_user_path(path: str) -> str:
+    """Expand ~ and accept both / and \\ separators (Windows-style paths)."""
+    path = os.path.expanduser(str(path).strip())
+    if "\\" in path:
+        path = path.replace("\\", "/")
+    return path
+
+
+def _is_absolute_path(path: str) -> bool:
+    """True for POSIX abs, Windows drive-letter (C:/...), and UNC (//server/share)."""
+    if os.path.isabs(path):
+        return True
+    if len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/":
+        return True
+    if path.startswith("//"):
+        return True
+    return False
+
+
 def _resolve_recording_path(input_file: str) -> str:
-    if os.path.isabs(input_file):
-        return input_file
-    name = os.path.basename(input_file)
+    """Resolve a recording for playback.
+
+    Absolute / ~/ paths are used as-is. Relative paths are relative to cwd.
+    Bare filenames are searched under cwd/recordings/, then packaged demos.
+    """
+    path = _normalize_user_path(input_file)
+    if _is_absolute_path(path):
+        return os.path.normpath(path)
+    if os.path.dirname(path):
+        # Explicit relative path (./out/x.csv, recordings/x.csv, ...) — cwd-based
+        return os.path.abspath(path)
+    if os.path.isfile(path):
+        return os.path.abspath(path)
+    name = os.path.basename(path)
     for directory in _recordings_search_dirs():
-        path = os.path.join(directory, name)
-        if os.path.isfile(path):
-            return path
-    return os.path.join(_recordings_dir(), name)
+        candidate = os.path.join(directory, name)
+        if os.path.isfile(candidate):
+            return candidate
+    return os.path.join(_cwd_recordings_dir(), name)
+
+
+def _resolve_output_path(output_file: str) -> str:
+    """Resolve where to save a recording.
+
+    Absolute / ~/ paths are used as-is. Relative paths are relative to cwd.
+    Bare filenames go under cwd/recordings/ (created if needed), never site-packages.
+    """
+    path = _normalize_user_path(output_file)
+    if _is_absolute_path(path) or os.path.dirname(path):
+        if not _is_absolute_path(path):
+            path = os.path.abspath(path)
+        else:
+            path = os.path.normpath(path)
+        parent = os.path.dirname(path)
+        if parent:
+            try:
+                os.makedirs(parent, exist_ok=True)
+            except OSError:
+                # e.g. UNC roots; save/open will report a clearer error if unusable
+                pass
+        return path
+    recordings_dir = _cwd_recordings_dir()
+    os.makedirs(recordings_dir, exist_ok=True)
+    return os.path.join(recordings_dir, path)
 
 
 def _is_csv_path(path: str) -> bool:
@@ -178,198 +457,7 @@ def default_playback_device_info(
 
 
 
-def _load_csv_into(recorder: "GloveRecorder", filename: str) -> None:
-    with open(filename, "r", newline="") as f:
-        reader = csv.reader(f)
-        header = next(reader)
-        if not header or "timestamp" not in header:
-            raise ValueError("CSV must have a header row with a timestamp column")
 
-        recorded_data: List[Dict[str, Any]] = []
-        for row in reader:
-            if not row:
-                continue
-            ts = float(row[header.index("timestamp")])
-            has_prefixed_cols = any(
-                name.startswith("raw_") or name.startswith("filtered_")
-                for name in header
-                if name != "timestamp"
-            )
-            if has_prefixed_cols:
-                angles_rad = _unflatten_angles(header, row, prefix="raw_")
-                if any(name.startswith("filtered_") for name in header):
-                    filtered_angles_rad = _unflatten_angles(header, row, prefix="filtered_")
-                else:
-                    filtered_angles_rad = angles_rad
-            else:
-                angles_rad = _unflatten_angles(header, row, prefix="")
-                filtered_angles_rad = angles_rad
-            recorded_data.append({
-                "timestamp": ts,
-                "angles_rad": angles_rad,
-                "filtered_angles_rad": filtered_angles_rad,
-            })
-
-    recorder.recorded_data = recorded_data
-    sidecar = load_sidecar_metadata(filename)
-    recorder._recording_metadata = sidecar
-
-
-class GloveRecorder:
-    def __init__(self, device_info: SG_T.Device_Info):
-        """
-        Initialize the glove recorder for a specific device
-        """
-        self.device_info = device_info
-        self.recorded_data: List[Dict[str, Any]] = []
-        self.is_recording = False
-        self.start_time = 0
-        self.is_playing = False
-        self.playback_start_time = 0
-        self.playback_time_origin = 0.0
-        self.current_frame_index = 0
-        self.loop = True
-        self._recording_metadata: Optional[Dict[str, Any]] = None
-
-    def start_recording(self):
-        """
-        Start recording glove data
-        """
-        self.recorded_data = []
-        self.is_recording = True
-        self.start_time = time.time()
-
-    def stop_recording(self):
-        """
-        Stop recording glove data
-        """
-        self.is_recording = False
-
-    def update(self):
-        """
-        Record current glove state if recording is active
-        """
-        if not self.is_recording:
-            return
-
-        current_time = time.time() - self.start_time
-        angles_rad = SG_main.get_exo_angles_rad(self.device_info.device_id)
-        
-        # Convert numpy array to list for JSON serialization
-        angles_list = [[float(x) for x in angles] for angles in angles_rad]
-        
-        self.recorded_data.append({
-            'timestamp': current_time,
-            'angles_rad': angles_list
-        })
-
-    def update_manually(self, raw_angles_rad, filtered_angles_rad):
-
-        current_time = time.time() - self.start_time
-        # Convert numpy array to list for JSON serialization
-        raw_angles_list = [[float(x) for x in angles] for angles in raw_angles_rad]
-        filtered_angles_list = [[float(x) for x in angles] for angles in filtered_angles_rad]
-        
-        self.recorded_data.append({
-            'timestamp': current_time,
-            'angles_rad': raw_angles_list,
-            'filtered_angles_rad': filtered_angles_list
-        })
-
-    def set_loop(self, loop: bool):
-        self.loop = loop
-
-    def save_recording(self, filename: str):
-        """
-        Save recorded data to a JSON file with metadata
-        """
-        if not self.recorded_data:
-            raise ValueError("No data recorded to save")
-
-        # Create recording with metadata
-        recording_with_metadata = {
-            'metadata': {
-                'exo_linkage_type': self.device_info.exo_linkage_type.value,
-                'hand': self.device_info.hand.value,
-                'nr_fingers_tracking': self.device_info.nr_fingers_tracking,
-                'nr_fingers_force': self.device_info.nr_fingers_force
-            },
-            'frames': self.recorded_data
-        }
-
-        with open(filename, 'w') as f:
-            json.dump(recording_with_metadata, f)
-
-    def load_recording(self, filename: str):
-        """
-        Load recorded data from a JSON or CSV file.
-        JSON supports old format (list) and new format (dict with metadata).
-        CSV uses raw_/filtered_ columns when present (see GloveCsvRecorder).
-        """
-        if _is_csv_recording(filename):
-            _load_csv_into(self, filename)
-            return
-
-        with open(filename, "r") as f:
-            data = json.load(f)
-        
-        # Check if new format with metadata
-        if isinstance(data, dict) and "metadata" in data and "frames" in data:
-            self.recorded_data = cast(List[Dict[str, Any]], data["frames"])
-            self._recording_metadata = data["metadata"]
-        else:
-            self.recorded_data = cast(List[Dict[str, Any]], data)
-            self._recording_metadata = None
-
-    def start_playback(self):
-        """
-        Start playing back the loaded recording
-        """
-        if not self.recorded_data:
-            raise ValueError("No recording loaded to play back")
-        
-        self.is_playing = True
-        self.playback_start_time = time.time()
-        self.playback_time_origin = float(self.recorded_data[0]["timestamp"])
-        self.current_frame_index = 0
-
-    def _playback_elapsed(self) -> float:
-        return time.time() - self.playback_start_time
-
-    def _frame_playback_offset(self, frame_index: int) -> float:
-        return float(self.recorded_data[frame_index]["timestamp"]) - self.playback_time_origin
-
-    def update_playback(self):
-        """
-        Update playback state - should be called in the main update loop
-        """
-        if not self.is_playing:
-            return
-
-        elapsed = self._playback_elapsed()
-        
-        # Find the next frame to play
-        while (self.current_frame_index < len(self.recorded_data) - 1 and 
-               self._frame_playback_offset(self.current_frame_index + 1) <= elapsed):
-            self.current_frame_index += 1
-
-        # If we've reached the end of the recording
-        if (self.current_frame_index >= len(self.recorded_data) - 1 and 
-            elapsed > self._frame_playback_offset(len(self.recorded_data) - 1)):
-            self.is_playing = False
-            if self.loop:
-                self.current_frame_index = 0
-                self.playback_start_time = time.time()
-                self.is_playing = True
-            return
-
-        # Play the current frame
-        frame = self.recorded_data[self.current_frame_index]
-        angles_rad = cast(
-            List[List[float]],
-            frame.get('filtered_angles_rad', frame['angles_rad']),
-        )
-        SG_sim.set_angles_rad(self.device_info, angles_rad)
 
 
 def _angle_column_names(
@@ -468,8 +556,7 @@ class GloveCsvRecorder(GloveRecorder):
         sidecar = save_sidecar_metadata(filename, self.device_info)
         print(f"Recording metadata saved at: {sidecar}")
 
-    def load_recording(self, filename: str):
-        _load_csv_into(self, filename)
+
 
 
 def _create_recorder(
@@ -496,14 +583,12 @@ def record_glove_data(
     Args:
         device_id: The ID of the glove to record from
         duration: How long to record in seconds
-        output_file: Filename under the recordings folder (e.g. "my_recording.json" or "my_recording.csv")
+        output_file: Bare filename under cwd/recordings/ (created if needed), or an
+            absolute / cwd-relative path (e.g. "take.csv", "/tmp/take.csv", "./out/take.csv")
         pump_events: Optional callback (e.g. QApplication.processEvents) so a GUI can repaint during recording
         record_filtered: For CSV output, also record filtered angle columns (default: raw only)
     """
-    recordings_dir = _recordings_dir()
-    os.makedirs(recordings_dir, exist_ok=True)
-    filename = os.path.basename(output_file)
-    output_path = os.path.join(recordings_dir, filename)
+    output_path = _resolve_output_path(output_file)
 
     device_info = SG_main.get_device_info(device_id)
     recorder = _create_recorder(device_info, output_path, record_filtered=record_filtered)
@@ -546,12 +631,13 @@ def record_glove_data_csv(
     Prefer ``record_glove_data`` with a ``.csv`` filename; this alias remains for compatibility.
     """
     if not _is_csv_path(output_file):
-        output_file = os.path.splitext(os.path.basename(output_file))[0] + ".csv"
+        output_file = os.path.splitext(output_file)[0] + ".csv"
     record_glove_data(
         device_id, duration, output_file,
         pump_events=pump_events,
         record_filtered=record_filtered,
     )
+
 
 
 def play_recording(device_info: SG_T.Device_Info, input_file: str, loop: bool = True):
@@ -560,16 +646,18 @@ def play_recording(device_info: SG_T.Device_Info, input_file: str, loop: bool = 
     
     Args:
         device_info: Device info of the simulator to play back on
-        input_file: Path to the recording file (JSON with metadata, or CSV from record_glove/device)
+        input_file: Bare filename (cwd/recordings/ then packaged demos), or an absolute /
+            cwd-relative path to a recording (.json or .csv)
         loop: Whether to loop the recording
         
-    Note: The simulator should be in STEADY_MODE to avoid conflicts with recording playback
+    Note: Put the simulator in PLAYBACK_MODE (not STEADY_MODE) so angles are driven only by
+    this playback and on_new_data is not fired twice per sample.
     """
-    global _playback_recorder
-    print("loading recording: ", input_file)
-    input_file = _resolve_recording_path(input_file)
     
-    _playback_recorder = GloveRecorder(device_info)
+    input_file = _resolve_recording_path(input_file)
+    print("loading recording: ", input_file)
+    
+    _playback_recorder = create_recorder(device_info)
     _playback_recorder.load_recording(input_file)
     
     # Initialize with first frame if available
@@ -593,7 +681,8 @@ def get_device_info(input_file: str) -> Optional[SG_T.Device_Info]:
     CSV: reads `<name>.meta.json` sidecar if present, else defaults.
     
     Args:
-        input_file: Path to the recording file (.json or .csv)
+        input_file: Bare filename (cwd/recordings/ then packaged demos), or an absolute /
+            cwd-relative path to a recording (.json or .csv)
         
     Returns:
         Device_Info with the recording's configuration, or None for legacy JSON without metadata
@@ -624,17 +713,17 @@ def get_device_info(input_file: str) -> Optional[SG_T.Device_Info]:
         print(f"Warning: Recording '{input_file}' has no metadata (old format)")
         return None
 
-def restart_playback():
+def restart_playback(device_id: int):
     """Reset playback clock to frame 0. Call when the 1 kHz timer actually starts."""
-    global _playback_recorder
-    if _playback_recorder is not None:
-        _playback_recorder.start_playback()
+    recorder = get_recorder(device_id)
+    if recorder is not None:
+        recorder.start_playback()
 
 
-def update():
+def update(device_id: int):
     """
     Update function to be called in the main update loop
     """
-    global _playback_recorder
-    if _playback_recorder is not None:
-        _playback_recorder.update_playback() 
+    recorder = get_recorder(device_id)
+    if recorder is not None:
+        recorder.update_playback() 

@@ -70,7 +70,7 @@ def main():
 
 
         # if you want to change the percentage bent coming out of the glove depending on raw original angles, you can use this:
-        # raw_flex, raw_abd = SG_main.get_raw_percentage_bent_angles(hand_id)
+        # raw_flex, raw_abd = SG_main.get_fingertip_angles_local(hand_id)
         # print(f"raw flexions: {_fmt_vals(raw_flex):<25}  "
         #     f"raw abductions: {_fmt_vals(raw_abd):<25}")
         # use this to then set the limits mapping from 0 to 10000

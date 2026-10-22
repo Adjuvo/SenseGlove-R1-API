@@ -30,6 +30,16 @@ The 0.4 will have a dot just above the version number printed. For the 0.3 this 
 
 This can be adjusted by changing FINGERTIP_OFFSET and FINGERTIP_OFFSET_ROT variable for the respective exoskeleton type within `SG_API.exo_dimensions`, which hold the offsets with respect to the final [exoskeleton position/rotation](#exo-positions-rotations). TODO: make this a user function.
 
+## Fingertip local rotations
+[get_fingertip_angles_local()](api-reference.md#SG_API.SG_main.get_fingertip_angles_local) retrieves the `flex_angles` and `abd_angles`. These are the flexion angle in radians relative to the straight finger. See is β in the image under the [percentage_bent section](tracking.md#percentage-bent).
+
+- Flexion: 0 for a straight finger. > 0 for a bent finger. 
+- For abduction/splay: > 0 towards the thumb, and < 0 away from the thumb.  
+- Thumb abduction: 0 in plane with the palm, > 0 for radially extended.
+
+
+
+
 ## TODO: Fingertip distances
 
 ## Percentage bent
@@ -59,7 +69,7 @@ The left hand on the image would give 0, the middle around 7000 and the right on
 
 
 ### Adjusting the min/max bent settings:
-***flex_angles*** and **abd_angles** can be obtained from `SG_main.get_raw_percentage_bent_angles()`.
+***flex_angles*** and **abd_angles** can be obtained from [get_fingertip_angles_local()](api-reference.md#SG_API.SG_main.get_fingertip_angles_local).
 These are the raw angles the percentage bent calculations are based on, and is β in the image.
 
 The min/max ranges of these angles were determined experimentally. These can be changed by overwriting the default values with `SG_main.set_percentage_bent_vars()`. 

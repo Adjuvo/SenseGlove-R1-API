@@ -172,13 +172,13 @@ You can record from any script using the following:
     print("Recording glove data for 10 seconds...")
     SG_recorder.record_glove_data(hand_id, 10.0, "myrecording.json")
 ```
-You can find this file in the `recordings/` folder. Recording again will overwrite it.
-You can play that recording back with:
+You can find this file in the `recordings/` folder under your current working directory (created automatically). Recording again will overwrite it.
+You can play that recording back with a simulated glove in **PLAYBACK_MODE** (see `examples/play_recording.py`):
 ```python
     print("Playing back recording...")
-    SG_recorder.play_recording(hand_id, "myrecording.json")
+    SG_recorder.play_recording(simulator.device_info, "myrecording.json")
 ```
-This will simulate the glove with these motions, so actually output all data you would expect via the API. There are existing recordings to work with in the recordings folder.
+This drives the simulated glove with those motions, so you get the same API outputs as a connected glove. There are existing demo recordings bundled with the package; bare filenames are looked up under `./recordings/` first, then the packaged demos. For the built-in open/close motion without a custom file, use `Simulation_Mode.FINGERS_OPEN_CLOSE`.
 
 
 

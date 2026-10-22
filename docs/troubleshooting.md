@@ -18,20 +18,22 @@ Run this script from the software packages.
 
 OR manually:
 
-1. Create a new rule file:
-  
-        sudo nano /etc/udev/rules.d/99-rembrandt.rules
-
-2. Paste the following:
-
-        SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="10f3", MODE="0666"
-
-3. Reload & Apply:
-
-        sudo udevadm control --reload-rules && sudo udevadm trigger
+```bash
+echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="2e8a", ATTR{idProduct}=="10f3", MODE="0666"' \
+  | sudo tee /etc/udev/rules.d/99-r1-glove.rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
 
 ## Step 2, check the device shows up.
+If it is not appearing when executing below instructions, check you used the correct power supply and cables of the correct specs. If this is is not done properly, the glove can disable itself. See [Getting started](./getting_started.md)
+### Linux
+```bash
+lsusb
+```
+Should print for example:
+```Bus 003 Device 019: ID 2e8a:10f3 SenseGlove R1```
+
+### Windows
 On Windows > Device Manager
 Under Universal Serial Bus Devices, it should show "R1" if a glove is connected.
 
-If it is not appearing there, check you used the correct power supply and cables of the correct specs. If this is is not done properly, the glove can disable itself. See [Getting started](./getting_started.md)

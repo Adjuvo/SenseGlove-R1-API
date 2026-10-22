@@ -15,41 +15,38 @@ If a simulated glove is desired next to a real one, (or simulating a third glove
 
 After creation, more specialized simulated glove functions can be accessed by getting the simulator.
 ```
-    simulator = SG_main.SG_simulated_glove.get_sim(device_id)
+    simulator = SG_main.SG_sim.get_sim(device_id)
 ```
-
 
 
 
 ## Simulate Tracking
 
-### Default functions
+### Simulation modes
 
-Are adjustable with the parameter init or the  `SG_main.SG_sim.set_mode()` function.
+Set via the `SIMULATION_MODE` argument to `init` / `init_rembrandt_sim`, or afterwards with `SG_main.SG_sim.set_mode()`.
 
-Creates a non moving exoskeleton.
-
-
-Creates a simulation that can be used to call sim.update_angles(desired_exo_angles) yourself or via a playback recording script.
-```python
-    device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.PLAYBACK_MODE) 
-```
-
-Creates fingers that gradually open and close (no real data but a sine, and not the full range of motion). If needed a full range of motion, play back a recording instead via that script.
-```python
-    device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 
-```
-
-Creates fingers where the angles are set by a pure sine.
-```python
-    device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.SINE_MODE) 
-```
-
+**STEADY_MODE** — non-moving exoskeleton; the sim still fires the data callback each update.
 ```python
     device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.STEADY_MODE) 
 ```
 
-or, after the init for any simulator:
+**PLAYBACK_MODE** — passive mode for `SG_recorder.play_recording` or manual `set_angles_*`. Prefer this over STEADY_MODE when you drive angles yourself, so `on_new_data` is not fired twice per sample.
+```python
+    device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.PLAYBACK_MODE) 
+```
+
+**FINGERS_OPEN_CLOSE** — auto-plays the bundled `finger_close_open.csv` recording (full open/close). One playback stream per simulated glove (`device_id`).
+```python
+    device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE) 
+```
+
+**FINGERS_OPEN_CLOSE_SINE** — sine-based open/close around the starting pose (not full range of motion). For full ROM, use FINGERS_OPEN_CLOSE or play a recording in PLAYBACK_MODE.
+```python
+    device_ids = SG_main.init(1, SG_T.Com_type.SIMULATED_GLOVE, SG_main.SG_sim.Simulation_Mode.FINGERS_OPEN_CLOSE_SINE) 
+```
+
+**CUSTOM_FUNCTION** — angles from a user function (set with `set_simulation_fn`, then switch mode):
 ```python
     SG_main.SG_sim.set_mode(hand_id, SG_main.SG_sim.Simulation_Mode.CUSTOM_FUNCTION)
 ```
@@ -78,7 +75,7 @@ Or alternatively:
 ```
 
 ### Play glove recording
-See `examples/play_recording.py` for an example. We have pre existing recordings of opening and closing each finger and pinching. You can also record your own recording with `examples/record_glove.py`.
+See `examples/play_recording.py` for an example. Use **PLAYBACK_MODE**. We have pre-existing recordings of opening and closing each finger and pinching. You can also record your own with `examples/record_glove.py`.
 
 ```python
     SG_main.init(0, SG_T.Com_type.SIMULATED_GLOVE)
@@ -86,7 +83,13 @@ See `examples/play_recording.py` for an example. We have pre existing recordings
     recording_filename = "close_each_finger.json"
 
     recording_device_info = SG_recorder.get_device_info(recording_filename)
-    simulator = SG_main.init_rembrandt_sim(recording_device_info.hand, SG_main.SG_sim.Simulation_Mode.STEADY_MODE)
+    recording_device_info.device_id = (
+        9999 if recording_device_info.hand == SG_T.Hand.RIGHT else 9998
+    )
+    simulator = SG_main.SG_sim.create_glove_sim_device(
+        recording_device_info,
+        SG_main.SG_sim.Simulation_Mode.PLAYBACK_MODE,
+    )
     
     hand_id = simulator.device_id
     
@@ -97,7 +100,7 @@ See `examples/play_recording.py` for an example. We have pre existing recordings
 
     SG_recorder.play_recording(simulator.device_info, recording_filename, loop=True)
 ```
-The callback will now update the angles internally, and fingertips etc can be obtained in the loop or on_new_data as usual.
+The recorder updates angles per `device_id` in the high-freq loop; fingertips etc. can be obtained in the loop or `on_new_data` as usual.
 
 
 ### Custom function to adjust the angles
@@ -134,6 +137,5 @@ try:
 
 # below go your default on_new_data or loops similar to main_example.py. 
 ```
-You can find a working example in `internal_dev_scripts/custom_simulation_example.py`.
-
+You can find a working example in `examples/simulation_custom_example.py`.
 

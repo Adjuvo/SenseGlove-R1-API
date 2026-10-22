@@ -90,16 +90,6 @@ def wrap_angle_to_perc_range(angle):
     angle = (angle - perc_b_low) % range_size + perc_b_low
     return angle
 
-# Wrap window for the proximal-only (joint 1-3) flexion sum.
-# +-180 deg window centered on 0 instead; measured idle (~-80 to +85 deg) and flexed (~+88 to +123 deg) readings
-perc_b_proximal_low = -math.pi
-perc_b_proximal_high = math.pi
-proximal_range_size = perc_b_proximal_high - perc_b_proximal_low
-def wrap_angle_to_perc_range_proximal(angle):
-    angle = (angle - perc_b_proximal_low) % proximal_range_size + perc_b_proximal_low
-    return angle
-
-
 # this will be a child class of a glove interface in C++
 # Do not make an instance of this yourself. Instead add_device should be called from the communication setup
 class Rembrandt_Device_Internal(SG_IDevice_Internal):
@@ -133,15 +123,11 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         )
         
         self.set_percentage_bent_vars()
-        self.set_percentage_bent_distal_vars()
-        self.set_percentage_bent_proximal_vars()
         # ExoAnglesMedianFilter applies MedianFilter per joint across the full glove structure
         #self.exo_angles_filter = SG_filter.ExoAnglesMedianFilter(window_size=5)
         self.exo_angles_filter = SG_filter.ExoAnglesFilterSuspicion(hand=self.get_handedness())
         self.flex_angles = []
         self.abd_angles = []
-        self.flex_angles_distal = []
-        self.flex_angles_proximal = []
 
     #def update_received_data(self):
         
@@ -182,6 +168,8 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         self._perc_bent_calc()
 
         self._data.forces_sensed = SG_data.get_force_sensors(self._device_info)
+
+        SG_cb.on_post_update_internal.call_all(self._device_id)
         SG_cb.on_new_rembrandt_data.call_all(self._device_id)
         #self.callback_fps_updated_data.update()
 
@@ -316,7 +304,7 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         mid_thetas_abduction: midpoint of abduction angle: fingers are straight forward. Thumb is between flat hand and thumb radially extetnded.
         max_thetas: maximum angle the hand wearing the R1 range of freedom can do.
         All per finger, thumb to pinky.
-        Can be printed to calibrate this with get_raw_percentage_bent_angles
+        Can be printed to calibrate this with get_fingertip_angles_local
         """
 
         self._out_max_perc_bents = np.array([out_max_perc_bent] * self.nr_of_fingers_tracking())
@@ -325,38 +313,6 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         self._min_thetas_abduction = min_thetas_abduction
         self._max_thetas_abduction = max_thetas_abduction
         self._mid_thetas_abduction = mid_thetas_abduction
-
-
-    def set_percentage_bent_distal_vars(self,
-        min_thetas_flexion_distal: npt.NDArray[np.float64] = np.array([0.35, 0.39, 0.12, 0.05, 0.19]),
-        max_thetas_flexion_distal: npt.NDArray[np.float64] = np.array([1.62, 2.99, 2.93, 2.79, 2.65]),
-        out_max_perc_bent: int = 10000) -> None:
-        self._out_max_perc_bents_distal = np.array([out_max_perc_bent] * self.nr_of_fingers_tracking())
-        self._min_thetas_flexion_distal = min_thetas_flexion_distal
-        self._max_thetas_flexion_distal = max_thetas_flexion_distal
-        """
-        @Akshay, need info on what to print to get/tune these values. (For normal one, get_raw_percentage_bent_angles)
-        For the distal flexion (last fingertip), the exoskeleton range of freedom can do.
-        min_thetas: minimum angle the hand wearing the R1 range of freedom can do.
-        max_thetas: maximum angle the hand wearing the R1 range of freedom can do.
-        All per finger, thumb to pinky.
-        """
-
-
-    def set_percentage_bent_proximal_vars(self,
-        min_thetas_flexion_proximal = np.array([-0.762, -0.785, -0.836, -0.875, -0.897]),
-        max_thetas_flexion_proximal = np.array([-0.602, 0.257, 0.246, 0.190, 0.071]),
-        out_max_perc_bent: int = 10000) -> None:
-        """
-        @Akshay, need info on what to print to get/tune these values. (For normal one, get_raw_percentage_bent_angles)
-        For the proximal flexion (first joint in your hand), the exoskeleton range of freedom can do.
-        min_thetas: minimum angle the hand wearing the R1 range of freedom can do.
-        max_thetas: maximum angle the hand wearing the R1 range of freedom can do.
-        All per finger, thumb to pinky.
-        """
-        self._out_max_perc_bents_proximal = np.array([out_max_perc_bent] * self.nr_of_fingers_tracking())
-        self._min_thetas_flexion_proximal = min_thetas_flexion_proximal
-        self._max_thetas_flexion_proximal = max_thetas_flexion_proximal
 
 
     def set_force_goals_with_control_mode(self, force_goals : SG_T.Sequence[Union[int, float]], control_modes : Optional[Sequence[SG_T.Control_Mode]]):
@@ -506,22 +462,6 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
             _, flex_angles_from_fingertips = self._get_percentage_bents_flat(fingertip_rots_local, [0]*nr_fingers, [1]*nr_fingers, flexion_axes)
 
 
-        # Distal-only flexion: summing only exo joints 5 through the fingertip
-        flex_angles_from_fingertips_distal = []
-        for finger_idx in range(nr_fingers):
-            finger_angles = np.array(self._data.exo_angles_rad_filtered[finger_idx], dtype=float)
-            distal_sum = float(np.sum(finger_angles[5:]))
-            distal_sum = wrap_angle_to_perc_range(distal_sum)
-            flex_angles_from_fingertips_distal.append(distal_sum)
-
-        # Proximal-only flexion: summing only exo joints 1 through 3
-        flex_angles_from_fingertips_proximal = []
-        for finger_idx in range(nr_fingers):
-            finger_angles = np.array(self._data.exo_angles_rad_filtered[finger_idx], dtype=float)
-            proximal_sum = float(np.sum(finger_angles[1:4]))
-            proximal_sum = wrap_angle_to_perc_range_proximal(proximal_sum)
-            flex_angles_from_fingertips_proximal.append(proximal_sum)
-
         # Truncate min/max theta arrays to match the number of fingers
         min_thetas_flexion = self._min_thetas_flexion[:nr_fingers]
         max_thetas_flexion = self._max_thetas_flexion[:nr_fingers]
@@ -553,22 +493,8 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         #     min_thetas_abduction, mid_thetas_abduction, max_thetas_abduction,
         #     zeros, half_out, self._out_max_perc_bents,
         # )
-        self._data.abd_perc_bents = [int(round(v)) for v in SG_math.clamp(abductions, zeros, self._out_max_perc_bents).tolist()]
+        self._data.perc_bents_abduction = [int(round(v)) for v in SG_math.clamp(abductions, zeros, self._out_max_perc_bents).tolist()]
         self.abd_angles = abd_angles_direct
-
-        # Distal-only flexion
-        min_thetas_flexion_distal = self._min_thetas_flexion_distal[:nr_fingers]
-        max_thetas_flexion_distal = self._max_thetas_flexion_distal[:nr_fingers]
-        flexion_distal = SG_math.rescale(flex_angles_from_fingertips_distal, min_thetas_flexion_distal, max_thetas_flexion_distal, zeros, self._out_max_perc_bents_distal)
-        self._data.perc_bents_flexion_distal = [int(round(v)) for v in SG_math.clamp(flexion_distal, zeros, self._out_max_perc_bents_distal).tolist()]
-        self.flex_angles_distal = flex_angles_from_fingertips_distal
-
-        # Proximal-only flexion
-        min_thetas_flexion_proximal = self._min_thetas_flexion_proximal[:nr_fingers]
-        max_thetas_flexion_proximal = self._max_thetas_flexion_proximal[:nr_fingers]
-        flexion_proximal = SG_math.rescale(flex_angles_from_fingertips_proximal, min_thetas_flexion_proximal, max_thetas_flexion_proximal, zeros, self._out_max_perc_bents_proximal)
-        self._data.perc_bents_flexion_proximal = [int(round(v)) for v in SG_math.clamp(flexion_proximal, zeros, self._out_max_perc_bents_proximal).tolist()]
-        self.flex_angles_proximal = flex_angles_from_fingertips_proximal
 
 
     def get_percentage_bents(self) -> Tuple[SG_T.Sequence[int], SG_T.Sequence[int]]:
@@ -593,43 +519,12 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
             - It calculates this based on the fingertip orientation with respect to the finger base orientation.
             - This method is used because it's independent of user hand sizes, and requires no calibration.
         """
-        return self._data.perc_bents_flexion, self._data.abd_perc_bents
-
-    def get_percentage_bents_distal(self) -> SG_T.Sequence[int]:
-        """
-        Returns the distal-only flexion percentage bent for each finger: the bend of only the
-        distal joints (exo joint 5 through the fingertip), rather than the whole finger.
-
-        Returns:
-            List[int]: flexion_perc_bents_distal, an array of distal flexion percentages
-            (0-out_max_perc_bent (10000 by default)) per finger.
-
-        Notes:
-            - Well for notes, there is no abduction cuz we do not want to break our fingers.
-            - Use set_percentage_bent_distal_vars() to tune the min/max angles used to map to 0-10000,
-              exposed via get_raw_percentage_bent_distal_angles().
-        """
-        return self._data.perc_bents_flexion_distal
-
-    def get_percentage_bents_proximal(self) -> SG_T.Sequence[int]:
-        """
-        Returns the proximal-only flexion percentage bent for each finger: the bend of only the
-        proximal joints (exo joint 1 through 3), rather than the whole finger.
-
-        Returns:
-            List[int]: flexion_perc_bents_proximal, an array of proximal flexion percentages
-            (0-out_max_perc_bent (10000 by default)) per finger.
-
-        Notes:
-            - Use set_percentage_bent_proximal_vars() to tune the min/max angles used to map to
-              0-10000, exposed via get_raw_percentage_bent_proximal_angles().
-        """
-        return self._data.perc_bents_flexion_proximal
+        return self._data.perc_bents_flexion, self._data.perc_bents_abduction
 
     def get_device_info(self) -> SG_T.Device_Info:
         return self._device_info
 
-    def get_raw_percentage_bent_angles(self) -> Tuple[SG_T.Sequence[Union[int, float]], SG_T.Sequence[Union[int, float]]]:
+    def get_fingertip_angles_local(self) -> Tuple[SG_T.Sequence[Union[int, float]], SG_T.Sequence[Union[int, float]]]:
         """
         Returns the raw flexion and abduction angles used to calculate percentage bent.
         Returns: (flex_angles, abd_angles)
@@ -637,20 +532,6 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
         These angles are calculated from the fingertip orientations.
         """
         return self.flex_angles, self.abd_angles
-
-    def get_raw_percentage_bent_distal_angles(self) -> SG_T.Sequence[Union[int, float]]:
-        """
-        Returns the raw distal flexion angles (in radians) used to calculate get_percentage_bents_distal().
-        Array of the fingers, containing the summed angle of exo joint 5 through the fingertip.
-        """
-        return self.flex_angles_distal
-
-    def get_raw_percentage_bent_proximal_angles(self) -> SG_T.Sequence[Union[int, float]]:
-        """
-        Returns the raw proximal flexion angles (in radians) used to calculate get_percentage_bents_proximal().
-        Array of the fingers, containing the summed angle of exo joint 1 through 3.
-        """
-        return self.flex_angles_proximal
 
     def set_tracking_filter(self, filter_type: SG_T.Filter_type, smoothing_EWMA: float):
         """
@@ -671,6 +552,9 @@ class Rembrandt_Device_Internal(SG_IDevice_Internal):
 
 
 
+# Factory for Rembrandt devices. SG_Pro may replace this with Rembrandt_Device_Pro.
+_device_cls = Rembrandt_Device_Internal
+
 attempts_add_device = 0
 def _add_device(device_info : SG_T.Device_Info):
     global attempts_add_device
@@ -678,7 +562,7 @@ def _add_device(device_info : SG_T.Device_Info):
     if device_info.device_id not in _active_deviceIds:
         if device_info.device_type == SG_T.DeviceType.REMBRANDT:
 
-            _device = Rembrandt_Device_Internal(device_info)
+            _device = _device_cls(device_info)
             SG_data.setup_data_origin(device_id, device_info.data_origin)
     
             _active_devices.append(_device)
@@ -790,7 +674,7 @@ def update_data_rembrandt(device_id : int):
 
 
 
-def close_devices():
+def close_devices(remove: bool = True):
     global _shutdown_in_progress
     sg_logger.log("Closing devices", level=sg_logger.INFO)
     
@@ -815,8 +699,11 @@ def close_devices():
             SG_data.send_haptic_data(rb_device.get_device_info())
             sg_logger.log("Closing, set force goals to 0 for device " + str(id), level=sg_logger.USER_INFO)
 
-    for id in list(_active_deviceIds):
-        _remove_device(id)
+    if remove:
+        for id in list(_active_deviceIds):
+            _remove_device(id)
+
+
 
 
 

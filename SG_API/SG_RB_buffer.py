@@ -79,10 +79,8 @@ def create_buffer(device_info : SG_T.Device_Info):
 
 
 def get_buffer(device_id : int):
-    if device_id in _dict_device_id_raw_devices:
-        return _dict_device_id_raw_devices[device_id]
-    else:
-        raise RuntimeError("Device ID not found in _dict_device_id_raw_devices")
+    # Return None during teardown / disconnect races — callers already check for None.
+    return _dict_device_id_raw_devices.get(device_id)
 
 
 def clear_buffers():

@@ -4,8 +4,8 @@ Run this to record the glove tracking data .
 That can be played back with play_recording.py as a simulated glove.
 
 Set the file name and duration below. 
-Run the script. The gui will start up white screen for the set amount of seconds. DURING THIS TIME, IT IS RECORDING!!!
-After the seconds completed, you will then see the replay of the recording. That recording will be saved in the /recordings/ folder.
+Run the script. The gui will render, and during the set amount of seconds in the script IT IS RECORDING!!!
+After the seconds completed, you will then see the replay of the recording. That recording will be saved in ./recordings/ under the current working directory (or to an absolute / relative path if you set one).
 Use play_recording.py to play it back as a simulated glove.
 
 Questions? Written by:
@@ -53,6 +53,9 @@ gui.show()
 
 
 
+filename = "test_recording.csv" # no path will land in ./recordings (current working directory)
+#filename = "/home/amber/r1_dev/amrc_ws/src/rembrandt-api/SG_API/recordings/test_recording.csv" # absolute or relative path will land in the absolute path
+duration = 29.0
 
 
 
@@ -87,8 +90,6 @@ try:
 
     SG_main.subscr_r1_data_callback(on_new_data)
 
-    filename = "test_recording.csv"
-    duration = 20.0
     print("Recording glove data to recordings/" + filename + " for " + str(duration) + " seconds... (Screen is white during recording)")
     SG_recorder.record_glove_data(hand_id, duration, filename, pump_events=app.processEvents)
 
@@ -107,7 +108,7 @@ try:
 
     replay_device_id = simulator.device_id
     SG_recorder.play_recording(simulator.device_info, filename, loop=True)
-    SG_recorder.restart_playback()
+    SG_recorder.restart_playback(replay_device_id)
     on_new_data(replay_device_id)
 
 

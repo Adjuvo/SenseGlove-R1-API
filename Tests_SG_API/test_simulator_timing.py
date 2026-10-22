@@ -30,6 +30,7 @@ def _make_sim(mode):
     sim.starting_angles_rad_hand = np.zeros((5, 8))
     sim.start_time = 100.0
     sim.custom_sim_fn = None
+    sim.recording_filename = None
     return sim
 
 
@@ -46,8 +47,7 @@ def _capture_updates(sim):
 def _expected_fingers_open_close_angles(sim, elapsed_s):
     min_angle_rad = np.radians(55)
     max_angle_rad = np.radians(90)
-    # Matches SG_simulator.FINGERS_OPEN_CLOSE: half-speed cycle (t * 0.5)
-    t_normalized = 0.5 * (1 - np.cos(2 * np.pi * elapsed_s * 0.5))
+    t_normalized = 0.5 * (1 - np.cos(2 * np.pi * elapsed_s))
     angle = min_angle_rad + smoothstep(t_normalized) * (max_angle_rad - min_angle_rad)
     return sim.starting_angles_rad_hand + np.cos(angle)
 
@@ -55,8 +55,7 @@ def _expected_fingers_open_close_angles(sim, elapsed_s):
 @pytest.mark.parametrize(
     "mode,expected_fn",
     [
-        (Simulation_Mode.SINE_MODE, lambda sim, t: sim.starting_angles_rad_hand + np.sin(2 * t)),
-        (Simulation_Mode.FINGERS_OPEN_CLOSE, _expected_fingers_open_close_angles),
+        (Simulation_Mode.FINGERS_OPEN_CLOSE_SINE, _expected_fingers_open_close_angles),
     ],
 )
 def test_animation_uses_elapsed_wall_time_not_update_count(mode, expected_fn):

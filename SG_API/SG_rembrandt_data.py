@@ -62,10 +62,8 @@ class Rembrandt_v1_data:
     # Used for percentage bent calculations to avoid undoing transformations
     fingertips_rot_local : SG_T.Sequence[SG_T.Quat_type] = field(default_factory=lambda:    [(1,0,0,0),(1,0,0,0),(1,0,0,0),(1,0,0,0),(1,0,0,0)])
 
-    abd_perc_bents : List[int]          = field(default_factory=lambda:    [0,0,0,0,0]) # 0 to 10000, see tracking docs for more info
+    perc_bents_abduction : List[int]          = field(default_factory=lambda:    [0,0,0,0,0]) # 0 to 10000, see tracking docs for more info
     perc_bents_flexion : List[int]      = field(default_factory=lambda:    [0,0,0,0,0]) # 0 (open) to 10000 (closed), see tracking docs for more info
-    perc_bents_flexion_distal : List[int] = field(default_factory=lambda:    [0,0,0,0,0]) # 0 (open) to 10000 (closed), flexion of only the distal joints (joint 5 to fingertip)
-    perc_bents_flexion_proximal : List[int] = field(default_factory=lambda:    [0,0,0,0,0]) # 0 (open) to 10000 (closed), flexion of only the proximal joints (joint 1 to joint 3)
 
     perc_bents_flexion_firmware : List[int] = field(default_factory=lambda:    [0,0,0,0,0]) # 0 (open) to 65535 (closed)
 
@@ -103,9 +101,7 @@ def init_data_values(rb_v1_data : Rembrandt_v1_data):
     rb_v1_data.force_goals = [0] * nr   # fingers thumb to pinky containing force goals set on the glove in the controller
     rb_v1_data.control_modes = [int(SG_T.Control_Mode.FORCE_GOAL_DEFAULT)] * nr
     rb_v1_data.perc_bents_flexion = [0] * nr
-    rb_v1_data.perc_bents_flexion_distal = [0] * nr
-    rb_v1_data.perc_bents_flexion_proximal = [0] * nr
-    rb_v1_data.abd_perc_bents = [0] * nr
+    rb_v1_data.perc_bents_abduction = [0] * nr
 
     # Prepare vibration data: per vibration actuator (each finger + 3 palm)
     # Format: [command | Amplitude | total waveforms | waveform1_index, waveform1_phase, waveform1_amplitude | waveform2_index, waveform2_phase, waveform2_amplitude]

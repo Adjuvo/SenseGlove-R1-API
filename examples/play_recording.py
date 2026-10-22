@@ -1,6 +1,9 @@
 """
-Plays recordings of a real glove as a simulated glove. Can be used to develop without a physical glove.
-Record your own? See examples/record_glove.py.
+Plays recordings of a real glove as a simulated glove (Simulation_Mode.PLAYBACK_MODE).
+Can be used to develop without a physical glove.
+
+For the built-in open/close motion without picking a file, use main_example.py with
+FINGERS_OPEN_CLOSE instead. Record your own? See examples/record_glove.py.
 
 Questions? Written by:
 - Amber Elferink
@@ -49,9 +52,10 @@ app.processEvents()
 
 try:
     """
-        The recording file should be in "recordings/" or "internal/recordings/".
+        The recording file should be in "./recordings/" (cwd), packaged demos, or
+        "internal/recordings/", or pass an absolute / relative path to a custom recording.
     """
-    recording_filename = "finger_close_open.csv"
+    recording_filename = "finger_close_open.csv"  #(included in package) or absolute/relative path to a custom recording
 
     recording_device_info = SG_recorder.get_device_info(recording_filename)
     if recording_device_info is None:
@@ -87,13 +91,14 @@ try:
             gui.update_percentage_bent(flexion_perc_bents, abduction_perc_bents)
 
     SG_main.subscr_r1_data_callback(on_new_data)
-    SG_recorder.restart_playback()
+    SG_recorder.restart_playback(hand_id)
     on_new_data(hand_id)
 
     app.exec()
     
     sys.exit()
     
+
 
    
 
