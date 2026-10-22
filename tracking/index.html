@@ -410,6 +410,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fingertip-local-rotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fingertip local rotations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#todo-fingertip-distances" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -685,6 +696,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fingertip-local-rotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fingertip local rotations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#todo-fingertip-distances" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -832,6 +854,13 @@ When the wrist rotation is 0, 0, 0, the following is true:</p>
 <p><a href="../api-reference/#SG_API.SG_main.get_fingertips_pos_rot">get_fingertips_pos_rot()</a> gets the position (vec3) and rotation (quaternion) of each fingertip. The red point indicates this tip. </p>
 <p><img alt="Fingertip and rotation" src="../images/fingertip_pos_rot.png" /> </p>
 <p>This can be adjusted by changing FINGERTIP_OFFSET and FINGERTIP_OFFSET_ROT variable for the respective exoskeleton type within <code>SG_API.exo_dimensions</code>, which hold the offsets with respect to the final <a href="#exo-positions-rotations">exoskeleton position/rotation</a>. TODO: make this a user function.</p>
+<h2 id="fingertip-local-rotations">Fingertip local rotations</h2>
+<p><a href="../api-reference/#SG_API.SG_main.get_fingertip_angles_local">get_fingertip_angles_local()</a> retrieves the <code>flex_angles</code> and <code>abd_angles</code>. These are the flexion angle in radians relative to the straight finger. See is β in the image under the <a href="./#percentage-bent">percentage_bent section</a>.</p>
+<ul>
+<li>Flexion: 0 for a straight finger. &gt; 0 for a bent finger. </li>
+<li>For abduction/splay: &gt; 0 towards the thumb, and &lt; 0 away from the thumb.  </li>
+<li>Thumb abduction: 0 in plane with the palm, &gt; 0 for radially extended.</li>
+</ul>
 <h2 id="todo-fingertip-distances">TODO: Fingertip distances</h2>
 <h2 id="percentage-bent">Percentage bent</h2>
 <p>Percentage bent can be retrieved with the function <a href="../api-reference/#SG_API.SG_main.get_percentage_bents">get_percentage_bents()</a>. This returns <code>flexion_perc_bents</code> and <code>abduction_perc_bents</code>. Each is an array with as length of the number of fingers.</p>
@@ -865,7 +894,7 @@ When the wrist rotation is 0, 0, 0, the following is true:</p>
 <p>The orientations of these arrows are used. We calculate these by adding up the exoskeleton flexion angles for flexion percentage bent, and use the single abduction sensor for abduction percentage bent. This is then normalized between 0 and 10000 normalized based on a pre-set open and closed finger value. 
 The left hand on the image would give 0, the middle around 7000 and the right one around 4000 in default settings. We use this algorithm because it is independent of different hand sizes.</p>
 <h3 id="adjusting-the-minmax-bent-settings">Adjusting the min/max bent settings:</h3>
-<p><strong><em>flex_angles</em></strong> and <strong>abd_angles</strong> can be obtained from <code>SG_main.get_raw_percentage_bent_angles()</code>.
+<p><strong><em>flex_angles</em></strong> and <strong>abd_angles</strong> can be obtained from <a href="../api-reference/#SG_API.SG_main.get_fingertip_angles_local">get_fingertip_angles_local()</a>.
 These are the raw angles the percentage bent calculations are based on, and is β in the image.</p>
 <p>The min/max ranges of these angles were determined experimentally. These can be changed by overwriting the default values with <code>SG_main.set_percentage_bent_vars()</code>. </p>
 <h2 id="todo-gripper-open-close">TODO: Gripper open close</h2>

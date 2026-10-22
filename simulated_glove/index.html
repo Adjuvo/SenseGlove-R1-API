@@ -481,10 +481,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#default-functions" class="md-nav__link">
+  <a href="#simulation-modes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Default functions
+        Simulation modes
       
     </span>
   </a>
@@ -614,10 +614,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#default-functions" class="md-nav__link">
+  <a href="#simulation-modes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Default functions
+        Simulation modes
       
     </span>
   </a>
@@ -689,24 +689,24 @@ If SG_main.init(2, ...) is called, a left simulated glove will be created additi
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>    <span class="n">SG_main</span><span class="o">.</span><span class="n">init_rembrandt_sim</span><span class="p">(</span><span class="n">SG_T</span><span class="o">.</span><span class="n">Hand</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">FINGERS_OPEN_CLOSE</span><span class="p">)</span>
 </span></code></pre></div></p>
 <p>After creation, more specialized simulated glove functions can be accessed by getting the simulator.
-<div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>    simulator = SG_main.SG_simulated_glove.get_sim(device_id)
+<div class="language-text highlight"><span class="filename">Text Only</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>    simulator = SG_main.SG_sim.get_sim(device_id)
 </span></code></pre></div></p>
 <h2 id="simulate-tracking">Simulate Tracking</h2>
-<h3 id="default-functions">Default functions</h3>
-<p>Are adjustable with the parameter init or the  <code>SG_main.SG_sim.set_mode()</code> function.</p>
-<p>Creates a non moving exoskeleton.</p>
-<p>Creates a simulation that can be used to call sim.update_angles(desired_exo_angles) yourself or via a playback recording script.
-<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>    <span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">PLAYBACK_MODE</span><span class="p">)</span> 
+<h3 id="simulation-modes">Simulation modes</h3>
+<p>Set via the <code>SIMULATION_MODE</code> argument to <code>init</code> / <code>init_rembrandt_sim</code>, or afterwards with <code>SG_main.SG_sim.set_mode()</code>.</p>
+<p><strong>STEADY_MODE</strong> — non-moving exoskeleton; the sim still fires the data callback each update.
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>    <span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">STEADY_MODE</span><span class="p">)</span> 
 </span></code></pre></div></p>
-<p>Creates fingers that gradually open and close (no real data but a sine, and not the full range of motion). If needed a full range of motion, play back a recording instead via that script.
-<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>    <span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">FINGERS_OPEN_CLOSE</span><span class="p">)</span> 
+<p><strong>PLAYBACK_MODE</strong> — passive mode for <code>SG_recorder.play_recording</code> or manual <code>set_angles_*</code>. Prefer this over STEADY_MODE when you drive angles yourself, so <code>on_new_data</code> is not fired twice per sample.
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>    <span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">PLAYBACK_MODE</span><span class="p">)</span> 
 </span></code></pre></div></p>
-<p>Creates fingers where the angles are set by a pure sine.
-<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>    <span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">SINE_MODE</span><span class="p">)</span> 
+<p><strong>FINGERS_OPEN_CLOSE</strong> — auto-plays the bundled <code>finger_close_open.csv</code> recording (full open/close). One playback stream per simulated glove (<code>device_id</code>).
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>    <span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">FINGERS_OPEN_CLOSE</span><span class="p">)</span> 
 </span></code></pre></div></p>
-<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>    <span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">STEADY_MODE</span><span class="p">)</span> 
-</span></code></pre></div>
-<p>or, after the init for any simulator:
+<p><strong>FINGERS_OPEN_CLOSE_SINE</strong> — sine-based open/close around the starting pose (not full range of motion). For full ROM, use FINGERS_OPEN_CLOSE or play a recording in PLAYBACK_MODE.
+<div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>    <span class="n">device_ids</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">FINGERS_OPEN_CLOSE_SINE</span><span class="p">)</span> 
+</span></code></pre></div></p>
+<p><strong>CUSTOM_FUNCTION</strong> — angles from a user function (set with <code>set_simulation_fn</code>, then switch mode):
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>    <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">CUSTOM_FUNCTION</span><span class="p">)</span>
 </span></code></pre></div></p>
 <h3 id="custom-angles">Custom angles</h3>
@@ -730,24 +730,30 @@ Or alternatively:
 </span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>        <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">set_angles_rad</span><span class="p">(</span><span class="n">SG_main</span><span class="o">.</span><span class="n">get_device_info</span><span class="p">(</span><span class="n">hand_id</span><span class="p">),</span> <span class="n">angles_rad</span><span class="p">)</span>
 </span></code></pre></div></p>
 <h3 id="play-glove-recording">Play glove recording</h3>
-<p>See <code>examples/play_recording.py</code> for an example. We have pre existing recordings of opening and closing each finger and pinching. You can also record your own recording with <code>examples/record_glove.py</code>.</p>
+<p>See <code>examples/play_recording.py</code> for an example. Use <strong>PLAYBACK_MODE</strong>. We have pre-existing recordings of opening and closing each finger and pinching. You can also record your own with <code>examples/record_glove.py</code>.</p>
 <p><div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>    <span class="n">SG_main</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Com_type</span><span class="o">.</span><span class="n">SIMULATED_GLOVE</span><span class="p">)</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="n">recording_filename</span> <span class="o">=</span> <span class="s2">&quot;close_each_finger.json&quot;</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="n">recording_device_info</span> <span class="o">=</span> <span class="n">SG_recorder</span><span class="o">.</span><span class="n">get_device_info</span><span class="p">(</span><span class="n">recording_filename</span><span class="p">)</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">simulator</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">init_rembrandt_sim</span><span class="p">(</span><span class="n">recording_device_info</span><span class="o">.</span><span class="n">hand</span><span class="p">,</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">STEADY_MODE</span><span class="p">)</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="n">hand_id</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">device_id</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>
-</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
-</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="n">exo_poss</span><span class="p">,</span> <span class="n">rots</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_exo_joints_poss_rots</span><span class="p">(</span><span class="n">hand_id</span><span class="p">)</span>
-</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="n">gui</span><span class="o">.</span><span class="n">create_hand_exo</span><span class="p">(</span><span class="n">exo_poss</span><span class="p">)</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">recording_device_info</span><span class="o">.</span><span class="n">device_id</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>        <span class="mi">9999</span> <span class="k">if</span> <span class="n">recording_device_info</span><span class="o">.</span><span class="n">hand</span> <span class="o">==</span> <span class="n">SG_T</span><span class="o">.</span><span class="n">Hand</span><span class="o">.</span><span class="n">RIGHT</span> <span class="k">else</span> <span class="mi">9998</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="p">)</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>    <span class="n">simulator</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">create_glove_sim_device</span><span class="p">(</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>        <span class="n">recording_device_info</span><span class="p">,</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>        <span class="n">SG_main</span><span class="o">.</span><span class="n">SG_sim</span><span class="o">.</span><span class="n">Simulation_Mode</span><span class="o">.</span><span class="n">PLAYBACK_MODE</span><span class="p">,</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="p">)</span>
 </span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>
-</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
-</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>    <span class="n">SG_recorder</span><span class="o">.</span><span class="n">play_recording</span><span class="p">(</span><span class="n">simulator</span><span class="o">.</span><span class="n">device_info</span><span class="p">,</span> <span class="n">recording_filename</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>    <span class="n">hand_id</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">device_id</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>    <span class="n">exo_poss</span><span class="p">,</span> <span class="n">rots</span> <span class="o">=</span> <span class="n">SG_main</span><span class="o">.</span><span class="n">get_exo_joints_poss_rots</span><span class="p">(</span><span class="n">hand_id</span><span class="p">)</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>    <span class="n">gui</span><span class="o">.</span><span class="n">create_hand_exo</span><span class="p">(</span><span class="n">exo_poss</span><span class="p">)</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>    <span class="n">SG_recorder</span><span class="o">.</span><span class="n">play_recording</span><span class="p">(</span><span class="n">simulator</span><span class="o">.</span><span class="n">device_info</span><span class="p">,</span> <span class="n">recording_filename</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div>
-The callback will now update the angles internally, and fingertips etc can be obtained in the loop or on_new_data as usual.</p>
+The recorder updates angles per <code>device_id</code> in the high-freq loop; fingertips etc. can be obtained in the loop or <code>on_new_data</code> as usual.</p>
 <h3 id="custom-function-to-adjust-the-angles">Custom function to adjust the angles</h3>
 <p>To move the exoskeleton in a way you like, you can set a custom function for it to execute to change the angles.</p>
 <p><div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">_angles_deg_single_finger</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span> 
@@ -779,7 +785,7 @@ The callback will now update the angles internally, and fingertips etc can be ob
 </span><span id="__span-11-27"><a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a>
 </span><span id="__span-11-28"><a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="c1"># below go your default on_new_data or loops similar to main_example.py. </span>
 </span></code></pre></div>
-You can find a working example in <code>internal_dev_scripts/custom_simulation_example.py</code>.</p>
+You can find a working example in <code>examples/simulation_custom_example.py</code>.</p>
 
 
 

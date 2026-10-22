@@ -614,12 +614,12 @@ Don't forget that you can always hover on a function to see how to use it (in Vs
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recording glove data for 10 seconds...&quot;</span><span class="p">)</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">SG_recorder</span><span class="o">.</span><span class="n">record_glove_data</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;myrecording.json&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-You can find this file in the <code>recordings/</code> folder. Recording again will overwrite it.
-You can play that recording back with:
+You can find this file in the <code>recordings/</code> folder under your current working directory (created automatically). Recording again will overwrite it.
+You can play that recording back with a simulated glove in <strong>PLAYBACK_MODE</strong> (see <code>examples/play_recording.py</code>):
 <div class="language-python highlight"><span class="filename">Python</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Playing back recording...&quot;</span><span class="p">)</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">SG_recorder</span><span class="o">.</span><span class="n">play_recording</span><span class="p">(</span><span class="n">hand_id</span><span class="p">,</span> <span class="s2">&quot;myrecording.json&quot;</span><span class="p">)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">SG_recorder</span><span class="o">.</span><span class="n">play_recording</span><span class="p">(</span><span class="n">simulator</span><span class="o">.</span><span class="n">device_info</span><span class="p">,</span> <span class="s2">&quot;myrecording.json&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-This will simulate the glove with these motions, so actually output all data you would expect via the API. There are existing recordings to work with in the recordings folder.</p>
+This drives the simulated glove with those motions, so you get the same API outputs as a connected glove. There are existing demo recordings bundled with the package; bare filenames are looked up under <code>./recordings/</code> first, then the packaged demos. For the built-in open/close motion without a custom file, use <code>Simulation_Mode.FINGERS_OPEN_CLOSE</code>.</p>
 <h3 id="convenience-tip">Convenience tip:</h3>
 <p>In .vscode / launch.json you can set "program": "${workspaceFolder}/your_file.py", and press F5 to play that script no matter the file you have open.</p>
 <h2 id="tracking-and-control">Tracking and Control</h2>
