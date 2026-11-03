@@ -9,6 +9,11 @@ git pull
 pip install .
 ```
 
+## v0.1.3
+2026-11-03
+
+Minor recording doc changes
+
 ## v0.1.2
 2026-11-02
 
