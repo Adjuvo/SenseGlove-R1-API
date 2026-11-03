@@ -1,5 +1,9 @@
 # Recordings / Machine learning functionality
-Examples:
+We provide basic recording and replay functionality to develop without real glove present. For further instructions on machine learning recordings we also provide some recommendations down below.
+
+Install the [Rx python API](https://github.com/Adjuvo/SenseGlove-R1-API), see [Python Getting started](python_getting_started.md).
+
+## Examples
 
 - example recording of most commonly used glove data (fingertips, exo_angles, percentage_bent), see `SG_API/recordings/fingers_close_open_all_data.csv`.
 - To replay/use a recording live, as if a real glove was attached: `examples/recording_and_playback/play_recording.py` 
@@ -47,10 +51,7 @@ The API supports recording/playback of glove tracking recordings as if a real gl
 - To analyze fingertips data, etc, we made a script recordings_to_all_data_csv.py to post process it.
 
 You can also make your own recordings, see `examples/recordings_and_playback/record_glove_no_gui.py`
-
 If you require it processed for data analysis (to also have fingertips, etc), then run `recording_to_all_data_csv.py`.
-
-Or alternatively, if something is missing you can log to your own csv using python with any data from our API, including sensed forces.
 
 ## Imitation learning tips
 If you encounter the hand not properly learning to close, check the following:
