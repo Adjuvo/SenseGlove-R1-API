@@ -1,4 +1,4 @@
-site_name: SenseGlove Rembrandt API docs
+site_name: SenseGlove Rx API docs
 theme:
   name: material
   palette:
@@ -36,6 +36,7 @@ nav:
   - Forces: forces.md
   - Robot hand mapper: robot_hand_mapper.md
   - Simulated glove: simulated_glove.md
+  - Recordings and Machine learning: recordings_and_playback.md
   - API Reference: api-reference.md
 
 markdown_extensions:

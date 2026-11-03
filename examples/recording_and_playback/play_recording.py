@@ -2,14 +2,19 @@
 Plays recordings of a real glove as a simulated glove (Simulation_Mode.PLAYBACK_MODE).
 Can be used to develop without a physical glove.
 
-For the built-in open/close motion without picking a file, use main_example.py with
-FINGERS_OPEN_CLOSE instead. Record your own? See examples/record_glove.py.
+Set the recording filename in the top of the file.
+
+If you want to use the output in for example ROS, either use the built in simulated glove mode (only our prerecorded motions), 
+or adjust the SG_main.init + simulated glove/recording startup same as below to play your own recordings.
 
 Questions? Written by:
 - Amber Elferink
 Docs:    https://adjuvo.github.io/SenseGlove-R1-API/
 Support: https://www.senseglove.com/support/
 """
+
+recording_filename = "finger_close_open_all_data.csv"  #(included in package) or absolute/relative path to a custom recording
+
 
 # common imports
 import sys
@@ -42,7 +47,7 @@ app.processEvents()
 
 
 
-#------------- Rembrandt ----------
+#------------- Rx ----------
 
 
 
@@ -55,7 +60,6 @@ try:
         The recording file should be in "./recordings/" (cwd), packaged demos, or
         "internal/recordings/", or pass an absolute / relative path to a custom recording.
     """
-    recording_filename = "finger_close_open.csv"  #(included in package) or absolute/relative path to a custom recording
 
     recording_device_info = SG_recorder.get_device_info(recording_filename)
     if recording_device_info is None:

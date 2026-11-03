@@ -13,7 +13,7 @@ import numpy as np
 import json
 import csv
 import re
-from typing import List, Dict, Any, cast, Optional, Callable
+from typing import List, Dict, Any, Tuple, cast, Optional, Callable
 from SG_API import SG_main
 from SG_API import SG_types as SG_T
 from SG_API import SG_simulator as SG_sim
@@ -182,28 +182,23 @@ class GloveRecorder:
         with open(filename, "r", newline="") as f:
             reader = csv.reader(f)
             header = next(reader)
-            if not header or "timestamp" not in header:
-                raise ValueError("CSV must have a header row with a timestamp column")
+            ts_col = _timestamp_column(header)
+            ts_idx = header.index(ts_col)
 
             recorded_data: List[Dict[str, Any]] = []
+            origin_us: Optional[int] = None
             for row in reader:
                 if not row:
                     continue
-                ts = float(row[header.index("timestamp")])
-                has_prefixed_cols = any(
-                    name.startswith("raw_") or name.startswith("filtered_")
-                    for name in header
-                    if name != "timestamp"
-                )
-                if has_prefixed_cols:
-                    angles_rad = _unflatten_angles(header, row, prefix="raw_")
-                    if any(name.startswith("filtered_") for name in header):
-                        filtered_angles_rad = _unflatten_angles(header, row, prefix="filtered_")
-                    else:
-                        filtered_angles_rad = angles_rad
+                if ts_col == "timestamp_unix_us":
+                    # Keep timing as relative seconds via integer µs deltas (avoids float jitter)
+                    ts_us = int(row[ts_idx])
+                    if origin_us is None:
+                        origin_us = ts_us
+                    ts = (ts_us - origin_us) / 1_000_000.0
                 else:
-                    angles_rad = _unflatten_angles(header, row, prefix="")
-                    filtered_angles_rad = angles_rad
+                    ts = float(row[ts_idx])
+                angles_rad, filtered_angles_rad = _angles_from_csv_row(header, row)
                 recorded_data.append({
                     "timestamp": ts,
                     "angles_rad": angles_rad,
@@ -342,17 +337,38 @@ def _is_csv_recording(path: str) -> bool:
         return f.read(1) != "{"
 
 
-_ANGLE_COL_PATTERN = re.compile(r"^(?:raw_|filtered_)?f(\d+)_j(\d+)$")
+# raw_/filtered_ = record_glove CSV; exo_ = all_data export; bare fN_jM = legacy
+_ANGLE_COL_PATTERN = re.compile(r"^(?:raw_|filtered_|exo_)?f(\d+)_j(\d+)$")
+
+
+def _timestamp_column(header: List[str]) -> str:
+    if not header:
+        raise ValueError("CSV must have a header row with a timestamp column")
+    if "timestamp" in header:
+        return "timestamp"
+    if "timestamp_unix_us" in header:
+        return "timestamp_unix_us"
+    raise ValueError(
+        "CSV must have a header row with a timestamp or timestamp_unix_us column"
+    )
+
+
+def _is_timestamp_column(name: str) -> bool:
+    return name in ("timestamp", "timestamp_unix_us")
 
 
 def _unflatten_angles(header: List[str], row: List[str], prefix: Optional[str] = None) -> List[List[float]]:
     col_index = {name: i for i, name in enumerate(header)}
     by_finger: Dict[int, Dict[int, float]] = {}
     for name in header:
-        if name == "timestamp":
+        if _is_timestamp_column(name):
             continue
         if prefix is not None:
-            if prefix == "" and (name.startswith("raw_") or name.startswith("filtered_")):
+            if prefix == "" and (
+                name.startswith("raw_")
+                or name.startswith("filtered_")
+                or name.startswith("exo_")
+            ):
                 continue
             elif prefix and not name.startswith(prefix):
                 continue
@@ -367,10 +383,35 @@ def _unflatten_angles(header: List[str], row: List[str], prefix: Optional[str] =
     ]
 
 
+def _angles_from_csv_row(
+    header: List[str], row: List[str]
+) -> Tuple[List[List[float]], List[List[float]]]:
+    """
+    Extract angles from a CSV row.
+    Supports raw_/filtered_, exo_ (all_data), and legacy bare fN_jM.
+    Extra columns (fingertip_*, perc_*, ...) are ignored when exo_/raw_ are present.
+    """
+    has_raw = any(name.startswith("raw_") for name in header if not _is_timestamp_column(name))
+    has_exo = any(name.startswith("exo_") for name in header if not _is_timestamp_column(name))
+    if has_raw:
+        angles_rad = _unflatten_angles(header, row, prefix="raw_")
+        if any(name.startswith("filtered_") for name in header):
+            filtered_angles_rad = _unflatten_angles(header, row, prefix="filtered_")
+        else:
+            filtered_angles_rad = angles_rad
+    elif has_exo:
+        angles_rad = _unflatten_angles(header, row, prefix="exo_")
+        filtered_angles_rad = angles_rad
+    else:
+        angles_rad = _unflatten_angles(header, row, prefix="")
+        filtered_angles_rad = angles_rad
+    return angles_rad, filtered_angles_rad
+
+
 def _count_fingers_from_csv_header(header: List[str]) -> int:
     fingers = set()
     for name in header:
-        if name == "timestamp":
+        if _is_timestamp_column(name):
             continue
         match = _ANGLE_COL_PATTERN.match(name)
         if match:
@@ -694,8 +735,7 @@ def get_device_info(input_file: str) -> Optional[SG_T.Device_Info]:
     if _is_csv_recording(input_file):
         with open(input_file, "r", newline="") as f:
             header = next(csv.reader(f))
-        if not header or "timestamp" not in header:
-            raise ValueError("CSV must have a header row with a timestamp column")
+        _timestamp_column(header)  # validate
         nr_fingers = _count_fingers_from_csv_header(header)
         sidecar = load_sidecar_metadata(input_file)
         if sidecar is not None:

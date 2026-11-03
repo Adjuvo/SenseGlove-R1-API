@@ -1,4 +1,4 @@
-# CPPlibs __init__.py - Import the RembrandtPySDK module
+# CPPlibs __init__.py - Import the RxPySDK module
 import os
 import sys
 import ctypes
@@ -22,7 +22,7 @@ def _load_rembrandt_sdk():
     global REMBRANDT_SDK_LOAD_ERROR
     try:
         if _debug_enabled():
-            print(f"Loading RembrandtPySDK from: {current_dir}")
+            print(f"Loading RxPySDK from: {current_dir}")
         import RembrandtPySDK
         # Expose the module under the package namespace to avoid double-loading
         globals()["RembrandtPySDK"] = RembrandtPySDK

@@ -128,7 +128,7 @@ def init(wait_for_x_gloves : int, com_type : SG_T.Com_type, SIMULATION_MODE : SG
 
 def init_rembrandt_sim(handedness : SG_T.Hand, simulation_mode: SG_sim.Simulation_Mode, starting_angles = [0.0, -0.2617993877991494, 0.7853981633974483, -1.5707963267948966, 2.0943951023931953, -1.7453292519943295, 1.5707963267948966, 0.7]) -> Optional[SG_sim.Glove_Simulator]:
     """
-    Creates a simulated hand to test without physical Rembrandt glove. For more options directly create it via SG_sim.create_glove_sim_device(). Currently does max 2 gloves from this function. A right and a left one.
+    Creates a simulated hand to test without physical Rx glove. For more options directly create it via SG_sim.create_glove_sim_device(). Currently does max 2 gloves from this function. A right and a left one.
     
     Examples:
     ```python
@@ -358,7 +358,7 @@ def subscr_r1_data_callback(cb : Callable[[int], None]):
     """
     Expects a callback function that takes device_id as a parameter. 
     
-    That function will trigger if new data is available for the Rembrandt device.
+    That function will trigger if new data is available for the Rx device.
     Within your function, call other API functions to retrieve specific data.
 
 
@@ -367,7 +367,7 @@ def subscr_r1_data_callback(cb : Callable[[int], None]):
     > Do not put too heavy computing into this callback, since it will slow down the update rate of data retrieval from the glove, which must remain ~1kHz for optimal haptic performance. Preferably only place data into variables here.
     
     ```python
-    # on_new_data will be called when new data is available for the Rembrandt device
+    # on_new_data will be called when new data is available for the Rx device
     def on_new_data(device_id): 
         angles = SG_main.get_exo_angles_rad(device_id)
         

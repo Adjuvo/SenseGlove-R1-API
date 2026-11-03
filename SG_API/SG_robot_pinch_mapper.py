@@ -1,7 +1,7 @@
 """
 Robot Hand Mapping Module
 
-This module provides mapping between Rembrandt glove data and robot hand,
+This module provides mapping between Rx glove data and robot hand,
 including pinch detection and smooth transitions between normal and pinch modes.
 
 For use see examples/robot_hand_mapper_pbent.py.
@@ -38,7 +38,7 @@ FINGER_BIAS_GAIN = [1.0, 0.9, 0.9, 0.8]
 
 class Robot_Pinch_Mapper:
     """
-    Maps Rembrandt glove data to robot hand control with pinch detection.
+    Maps Rx glove data to robot hand control with pinch detection.
     """
     def __init__(self, device_id: Optional[int] = None, config: Optional[Robot_Pinch_Config] = None):
         self.device_id = device_id

@@ -214,6 +214,8 @@ def after_gap():
     }
     print(json.dumps(result), flush=True)
     SG_main.exit()
+    dual_gui.close()
+    app.quit()
 
 QTimer.singleShot(WARMUP_MS, after_warmup)
 app.exec()
