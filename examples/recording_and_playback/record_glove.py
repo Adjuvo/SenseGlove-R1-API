@@ -1,5 +1,7 @@
 
 """
+Slower/lower fps than record_glove_no_gui.py because it uses the GUI to render the hand, but it displays the exo.
+
 Run this to record the glove tracking data .
 That can be played back with play_recording.py as a simulated glove.
 
@@ -48,7 +50,7 @@ gui = GUI.UI_Exo_Display_With_PercentageBent()
 gui.show()
 
 
-#------------- Rembrandt ----------
+#------------- Rx ----------
 
 
 

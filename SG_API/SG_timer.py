@@ -1,5 +1,5 @@
 """
-SG_timer provides cross-platform high-precision timing functionality for the Rembrandt API, so it can call >1000 Hz.
+SG_timer provides cross-platform high-precision timing functionality for the Rx API, so it can call >1000 Hz.
 It is used to call the callback for the simulator for example at specific intervals.
 
 This module offers OS-level timer callbacks with minimal overhead:

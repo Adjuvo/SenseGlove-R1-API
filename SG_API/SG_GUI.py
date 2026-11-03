@@ -1,5 +1,5 @@
 """
-This is the GUI API for the Rembrandt glove. 
+This is the GUI API for the Rx glove. 
 It can be imported and called to get a Qt window that displays the exo and fingertip positions.
 See user_GUI.py for an example.
 
@@ -978,7 +978,7 @@ class UI_Exo_Display_With_SidePanel(QWidget):
     def __init__(
         self,
         banner_text: Optional[str] = None,
-        window_title: str = "Rembrandt Glove Display",
+        window_title: str = "Rx Glove Display",
         window_width: int = 1600,
         window_height: int = 700,
         exo_stretch: int = 6,
@@ -1074,7 +1074,7 @@ class UI_Exo_Display_With_PercentageBent(UI_Exo_Display_With_SidePanel):
     def __init__(self, window_width=1200, window_height=800):
         self.perc_bent_gui = PercentageBentGUI()
         super().__init__(
-            window_title="Rembrandt Glove Display",
+            window_title="Rx Glove Display",
             window_width=window_width,
             window_height=window_height,
             exo_stretch=5,
@@ -1105,7 +1105,7 @@ class DualHandGUI(QWidget):
 
     def __init__(self, window_width=1920, window_height=600):
         super().__init__()
-        self.setWindowTitle("Dual Hand Rembrandt Display")
+        self.setWindowTitle("Dual Hand Rx Display")
         self.setGeometry(0, 0, window_width, window_height)
 
         layout = QHBoxLayout()

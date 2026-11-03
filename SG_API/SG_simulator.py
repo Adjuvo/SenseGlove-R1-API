@@ -1,5 +1,5 @@
 """
-SenseGlove Rembrandt Simulator Module
+SenseGlove Rx Simulator Module
 
 This module provides glove simulation functionality for testing and development when no physical 
 device is connected. It simulates finger tracking data with various animation modes.
@@ -118,7 +118,7 @@ def smoothstep(t):
 
 class Glove_Simulator:
     """
-    Simulates a SenseGlove Rembrandt device for testing and development.
+    Simulates a SenseGlove Rx device for testing and development.
     
     Provides realistic finger tracking data without requiring physical hardware.
     Supports multiple animation modes and allows manual control of finger positions.

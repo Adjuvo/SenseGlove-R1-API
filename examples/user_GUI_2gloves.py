@@ -1,5 +1,5 @@
 """
-This is an example showing two Rembrandt gloves using a simple side-by-side layout.
+This is an example showing two Rx gloves using a simple side-by-side layout.
 It creates two GUI instances in a single window container.
 
 Questions? Written by:
@@ -32,7 +32,7 @@ app = QApplication(sys.argv)
 dual_gui = GUI.DualHandGUI()
 dual_gui.show()
 
-#------------- Rembrandt ----------
+#------------- Rx ----------
 
 try: 
     """

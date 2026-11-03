@@ -9,6 +9,13 @@ git pull
 pip install .
 ```
 
+## v0.1.2
+2026-11-02
+
+- Example recording script including fingertips, percentage bents, and angles
+- Docs with tips for recording and machine learning
+- Docs/comments changes from Rembrandt towards Rx
+
 ## v0.1.1
 2026-10-20
 
@@ -27,8 +34,15 @@ Init with for example FINGERS_OPEN_CLOSE or FINGER_PINCHES.
 If updating, run `pip install .` again after!
 
 ## v0.1.0
+2026-10-06
 BREAKING CHANGES! For users using Robot hand mapper and minor changes for percentage_bents. See notes below.
-- New robot hand mapper example.
+
+Better implementation, manual tuning GUI, and docs for the 1DOF RobotHandMapper included.
+
+For Pro users/integration projects, we can also provide a better handmapper, which moves in multiple DOFS per finger while still pinching well. If interested, please contact sales.
+
+In short:
+- New robot hand mapper example, with manual tuning GUI.
 - Simplified the robot hand mapper, made it easier to tune the pinches, and improved docs.
 - Renaming and other improvements for code consistency.
 - See examples/robot_pinch_mapper_example.py for an updated example.
@@ -52,6 +66,7 @@ Therefore we added midpoint angles now, to properly get 5000 with fingers straig
 It should not change too much. If you notices it changes your mapping undesirably, and you want to revert to old behavior, use set_perc_bent_vars() with midpoint [0.5, 0, 0, 0, 0], and min/max values of the previous release.
 
 
+
 ## v0.0.26
 2026-07-23
 
@@ -63,10 +78,6 @@ It should not change too much. If you notices it changes your mapping undesirabl
 2026-07-03
 Changed the jitter filter thresholds specifically for the first joint (abduction). These generally move slower.
 
-## v0.0.25
-Better implementation, manual tuning GUI, and docs for the 1DOF RobotHandMapper included.
-
-For Pro users/integration projects, we can also provide a better handmapper, which moves in multiple DOFS per finger while still pinching well. If interested, please contact sales.
 
 ## v0.0.24
 2026-06-26
@@ -141,4 +152,3 @@ First formal release of the R1 API going to customers with license on Github.
 
 ### v0.0.9
 First formal release of the R1 API going to customers.
-

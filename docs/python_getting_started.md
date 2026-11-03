@@ -36,7 +36,7 @@ For Windows, install the WinUSB driver: [Zadig](https://zadig.akeo.ie/). Linux d
    * Select R1 (Composite Parent) in the dropdown. Don't change any other settings. Click Install Driver.
 
 ### Linux
-To allow non-root access to the Rembrandt device over USB, you need to add a custom udev rule. After cloning this repo, run:
+To allow non-root access to the Rx device over USB, you need to add a custom udev rule. After cloning this repo, run:
 ```bash
 ./scripts/install_udev_rule.sh
 ```

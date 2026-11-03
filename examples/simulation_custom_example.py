@@ -36,7 +36,7 @@ from SG_API import SG_simulator
 
 from typing import Sequence, Union
 
-#------------- Rembrandt ----------
+#------------- Rx ----------
 
 
 _angles_deg_single_finger = np.array([0, -15, 45, -90, 120, -100, 90, 90]) 
